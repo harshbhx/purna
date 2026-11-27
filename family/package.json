@@ -10,11 +10,13 @@
     "db:migrate:remote": "wrangler d1 migrations apply purna --remote",
     "deploy": "wrangler d1 migrations apply purna --remote && wrangler deploy",
     "sample": "esbuild scripts/make-sample.ts --bundle --platform=node --format=esm --log-level=warning --outfile=.tmp/make-sample.mjs && node .tmp/make-sample.mjs",
-    "test:web": "vitest run -c vitest.web.config.ts"
+    "test:web": "vitest run -c vitest.web.config.ts",
+    "test:e2e": "playwright test"
   },
   "devDependencies": {
     "@cloudflare/vitest-plugin": "1.10.0",
     "@cloudflare/workers-types": "5.20261127.1",
+    "@playwright/test": "1.49.1",
     "@types/node": "22.15.17",
     "jsdom": "25.0.1",
     "typescript": "5.6.3",

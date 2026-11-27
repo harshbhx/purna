@@ -12,5 +12,5 @@
     "allowJs": true,
     "checkJs": false
   },
-  "include": ["web-test/**/*.ts", "vitest.web.config.ts"]
+  "include": ["e2e/**/*.ts", "web-test/**/*.ts", "playwright.config.ts", "vitest.web.config.ts"]
 }
