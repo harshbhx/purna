@@ -11,12 +11,14 @@ A SPECS Lens for people who miss the left side of the world after a stroke,<br>a
 [![CI](https://github.com/harshbhx/purna/actions/workflows/ci.yml/badge.svg)](https://github.com/harshbhx/purna/actions/workflows/ci.yml)
 [![Deploy](https://github.com/harshbhx/purna/actions/workflows/deploy.yml/badge.svg)](https://github.com/harshbhx/purna/actions/workflows/deploy.yml)
 ![Core coverage](https://img.shields.io/badge/core%20coverage-98.9%25-2f7d4f)
-![Tests](https://img.shields.io/badge/tests-153-2f7d4f)
+![Tests](https://img.shields.io/badge/tests-160-2f7d4f)
 [![License: MIT](https://img.shields.io/badge/license-MIT-c8651b)](LICENSE)
 
 [purna.dualmindlab.tech](https://purna.dualmindlab.tech) · Built for **Learn AR with SPECS, Round 2** · [Why it's built this way](docs/10-RESEARCH.md)
 
 </div>
+
+<img src="docs/img/hero.gif" alt="The Purna home page: a dark dining table with clay diyas. The right half lights up one by one while the left stays dark; a bell rings from the left, a beam sweeps left, and then the left half lights too.">
 
 ---
 
@@ -24,7 +26,7 @@ After a right-hemisphere stroke, many people stop noticing the left half of spac
 
 **Purna** (पूर्ण, "whole") moves that exercise onto the dining table at home. Through Snap SPECS, small clay **diyas** appear on the table. You light the whole ones with a pinch and leave the chipped ones alone. If you stay on the right too long, a temple bell rings from your left and a soft beam sweeps that way. **The hints point to the side, never to the answer.** When you finish, a glowing thread replays the path your search took, so the half you skipped becomes visible. One pinch sends the report home.
 
-**Purna Family** lets their children follow along: a plain-language card for each session, a trend over days, and a 7-day read-only link for the therapist, who can write a note back.
+**Purna Family** ([purna.dualmindlab.tech](https://purna.dualmindlab.tech)) opens with the table above, explains Purna to families and therapists, and then lets their children follow along: a plain-language card for each session, a trend over days, and a 7-day read-only link for the therapist, who can write a note back.
 
 > [!IMPORTANT]
 > Purna is a practice tool, not a medical device. It doesn't diagnose or treat.
@@ -96,7 +98,7 @@ These are **simulated players, not patients**. The bench proves the measures sep
 | Part | State |
 |---|---|
 | Core logic: layout, hints, beam fading, metrics, report | ✅ logic proven (47 tests) |
-| Purna Family: API, database, web app, doctor view | ✅ works end to end in Chrome (106 tests) |
+| Purna Family: landing, API, database, web app, doctor view | ✅ works end to end in Chrome (113 tests) |
 | Lens scene in Lens Studio (CLAD) | 🛠️ in progress; LEAF results land here |
 | How it feels to a real stroke survivor | ❓ feel unproven, not tested with patients |
 
@@ -129,8 +131,8 @@ flowchart LR
 |---|---|---|
 | Core + patient bench | `cd tools && npm test` | Layout rules on 500 seeds × 3 levels, hint timing, beam fading, metrics, the engine's phases, the bench (47 tests, coverage gate 85%) |
 | Worker + local D1 | `cd family && npm test` | Every API route and error, field-by-field validation, crypto, and the engine → server contract over every preset and add-on (68 tests) |
-| Browser code | `npm run test:web` | Replay and trend SVGs, CSV export with formula-injection guards, the API client, text-only DOM helpers (30 tests) |
-| End to end | `npm run test:e2e` | Real Chrome against `wrangler dev`: pair, dashboard, replay, doctor link, CSV, note, invite, import, delete, on phone and desktop (8 tests × 2) |
+| Browser code | `npm run test:web` | The landing's night-table animation, replay and trend SVGs, CSV export with formula-injection guards, the API client, text-only DOM helpers (34 tests) |
+| End to end | `npm run test:e2e` | Real Chrome against `wrangler dev`: the landing (animation, reduced motion, no sideways scroll), pair, dashboard, replay, doctor link, CSV, note, invite, import, delete, on phone and desktop (11 tests × 2) |
 
 **CI** ([`ci.yml`](.github/workflows/ci.yml)) runs all of it on every pull request, puts coverage in the job summary, lints the shell scripts, and fails if the bench chart or demo data are stale. **CD** ([`deploy.yml`](.github/workflows/deploy.yml)) runs after CI passes on `main`: D1 migrations, `wrangler deploy`, then a smoke test of the live site.
 

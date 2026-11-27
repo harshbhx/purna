@@ -64,8 +64,8 @@ Status 28 Nov, all in CI:
 |---|---|---|
 | Core + patient bench | `cd tools && npm test` | 47 tests, 98.9% lines |
 | Worker + local D1 (API, validator, crypto, engine contract) | `cd family && npm test` | 68 tests |
-| Browser code in jsdom (charts, CSV, API client, DOM helpers) | `npm run test:web` | 30 tests |
-| End-to-end, real Chrome vs `wrangler dev` (phone + desktop) | `npm run test:e2e` | 8 tests × 2 viewports |
+| Browser code in jsdom (night-table hero, charts, CSV, API client, DOM helpers) | `npm run test:web` | 34 tests |
+| End-to-end, real Chrome vs `wrangler dev` (phone + desktop) | `npm run test:e2e` | 11 tests × 2 viewports (landing animation, reduced motion, no sideways scroll at any width, every family and doctor flow) |
 
 The **contract test** runs the real engine with the simulated players through every preset × far board × warm-up and checks each session passes the server's validator and fits in 64 KB, so the Lens and Purna Family can't drift apart.
 
