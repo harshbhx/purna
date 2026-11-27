@@ -1,0 +1,82 @@
+name: Deploy Purna Family
+
+# Deploys purna.dualmindlab.tech after CI passes on main (or by hand).
+# Needs repository secrets: CLOUDFLARE_API_TOKEN (Workers + D1 edit), CLOUDFLARE_ACCOUNT_ID,
+# PURNA_D1_DATABASE_ID. Without them the job explains what's missing and stops cleanly.
+
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Migrate D1, deploy Worker, smoke test
+    if: github.event_name == 'workflow_dispatch' || (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push')
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: production
+      url: https://purna.dualmindlab.tech
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      PURNA_D1_DATABASE_ID: ${{ secrets.PURNA_D1_DATABASE_ID }}
+    defaults:
+      run:
+        working-directory: family
+    steps:
+      - name: Check secrets
+        id: secrets
+        working-directory: .
+        run: |
+          missing=""
+          [ -n "$CLOUDFLARE_API_TOKEN" ] || missing="$missing CLOUDFLARE_API_TOKEN"
+          [ -n "$CLOUDFLARE_ACCOUNT_ID" ] || missing="$missing CLOUDFLARE_ACCOUNT_ID"
+          [ -n "$PURNA_D1_DATABASE_ID" ] || missing="$missing PURNA_D1_DATABASE_ID"
+          if [ -n "$missing" ]; then
+            echo "::notice::Deploy skipped. Add these repository secrets to enable it:$missing"
+            echo "ok=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ok=true" >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/checkout@v4
+        if: steps.secrets.outputs.ok == 'true'
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+      - uses: actions/setup-node@v4
+        if: steps.secrets.outputs.ok == 'true'
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: family/package-lock.json
+      - if: steps.secrets.outputs.ok == 'true'
+        run: npm ci
+      - name: Point wrangler.toml at the production database
+        if: steps.secrets.outputs.ok == 'true'
+        run: sed -i "s/^database_id = .*/database_id = \"$PURNA_D1_DATABASE_ID\"/" wrangler.toml
+      - name: Apply D1 migrations
+        if: steps.secrets.outputs.ok == 'true'
+        run: npx wrangler d1 migrations apply purna --remote
+      - name: Deploy
+        if: steps.secrets.outputs.ok == 'true'
+        run: npx wrangler deploy
+      - name: Smoke test
+        if: steps.secrets.outputs.ok == 'true'
+        run: |
+          for i in 1 2 3 4 5 6; do
+            if curl -fsS https://purna.dualmindlab.tech/api/v1/health | grep -q '"ok":true'; then
+              curl -fsSI https://purna.dualmindlab.tech/ | grep -qi "content-security-policy" && echo "Live and serving the CSP." && exit 0
+            fi
+            sleep 10
+          done
+          echo "::error::purna.dualmindlab.tech didn't answer after deploy"; exit 1
