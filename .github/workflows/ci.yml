@@ -1,0 +1,116 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  WRANGLER_SEND_METRICS: "false"
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  core:
+    name: Core logic + patient bench
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: tools
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: tools/package-lock.json
+      - run: npm ci
+      - name: Typecheck (Core at ES2019 for Lens Studio, tests and scripts at ES2022)
+        run: npm run typecheck
+      - name: Unit tests + patient bench, coverage ≥ 85%
+        run: npm test
+      - name: Coverage summary
+        if: always()
+        run: |
+          node -e '
+            const s = require("./coverage/coverage-summary.json").total;
+            const row = (k) => `| ${k} | ${s[k].pct}% | ${s[k].covered}/${s[k].total} |`;
+            console.log(["### Core coverage", "| | % | covered |", "|---|---|---|", row("lines"), row("statements"), row("branches"), row("functions")].join("\n"));
+          ' >> "$GITHUB_STEP_SUMMARY"
+      - name: Bench chart is up to date
+        run: |
+          npm run chart
+          git diff --exit-code -- ../docs/img/bench.svg || { echo "::error::docs/img/bench.svg is stale. Run: cd tools && npm run chart"; exit 1; }
+
+  family:
+    name: Purna Family (Worker, D1, web code)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: family
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: family/package-lock.json
+      - run: npm ci
+      - run: npm run typecheck
+      - name: Worker + local D1 tests (API, validation, engine contract)
+        run: npm test
+      - name: Browser code unit tests (jsdom)
+        run: npm run test:web
+      - name: Demo data is up to date
+        run: |
+          npm run sample
+          git diff --exit-code -- samples public/demo || { echo "::error::Demo sessions are stale. Run: cd family && npm run sample"; exit 1; }
+
+  e2e:
+    name: End-to-end (Chrome, phone + desktop)
+    needs: family
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: family
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: family/package-lock.json
+      - run: npm ci
+      - name: Playwright against wrangler dev + fresh local D1
+        run: npm run test:e2e
+      - name: Upload report on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: |
+            family/playwright-report
+            family/test-results
+          retention-days: 7
+
+  scripts:
+    name: Shell scripts
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - run: shellcheck tools/*.sh
+      - name: create-issues.sh dry run skips finished tasks
+        run: |
+          DRY_RUN=1 bash tools/create-issues.sh > out.txt
+          if grep -q '✅' out.txt; then echo "::error::finished tasks would become issues"; exit 1; fi
+          grep -c 'gh issue create' out.txt

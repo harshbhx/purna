@@ -1,0 +1,25 @@
+name: Task
+description: A piece of work from docs/04-TASKS.md or a new one
+labels: []
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What
+      description: What needs doing, in a sentence or two.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Done when
+      description: How we'll know it's finished (tests, LEAF scenario, screenshot).
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options: [Lens (CLAD), Core logic, Purna Family, Docs, CI/CD]
+    validations:
+      required: true
