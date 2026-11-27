@@ -39,12 +39,15 @@ purna/                                  ← the Lens Studio project folder = the
 │   ├── wrangler.toml, package.json, tsconfig.json, vitest.config.ts
 │   ├── migrations/0001_init.sql
 │   ├── src/worker.ts (entry), src/api.ts (all /api/v1 routes), src/lib/{http,crypto,validate}.ts
-│   ├── public/  index.html, join.html, doctor.html, _headers (CSP), favicon.svg, demo/sessions.json
-│   │            assets/{app.css, api.js, ui.js, charts.js, csv.js, hero.js, session-view.js, home.js, doctor.js, join.js}, fonts/ (Mukta, OFL)
+│   ├── web/     the React app (Vite root): index.html, doctor.html, join.html
+│   │   ├── public/   _headers (CSP), favicon.svg, fonts/ (Mukta, OFL), demo/sessions.json
+│   │   └── src/      pages/ (Landing, Dashboard, Doctor, Join), components/{ui (shadcn/ui), reactbits, aceternity, purna},
+│   │                 lib/ (api, csv, format, session, types), hooks/, styles.css (Tailwind v4 tokens)
+│   ├── dist/    build output the Worker serves (git-ignored)
 │   ├── scripts/make-sample.ts         demo sessions from the real engine + simulated players
 │   ├── samples/*.json                 the same demo sessions, one file each (also used by tests)
 │   ├── test/      Worker tests: api, validate, crypto, contract (+ helpers, migrations setup)
-│   ├── web-test/  browser-code unit tests in jsdom
+│   ├── web-test/  React component, page and library tests in jsdom
 │   └── e2e/       Playwright specs (real Chrome vs wrangler dev, phone + desktop)
 ├── devpost/                            design-brief.md, plan-lens-answers.md
 ├── docs/                               this pack
@@ -334,7 +337,7 @@ D1 enforces foreign keys; `DELETE /me` still deletes child rows explicitly in on
 
 ### 6.5 Web app (`family/public`)
 
-Vanilla HTML/CSS/ES modules, no framework, no third-party scripts, CSP `default-src 'self'`.
+React 18 + Vite + Tailwind v4, built to `family/dist` and served by the same Worker (`[assets] directory = "./dist"`). Components: shadcn/ui patterns over Radix primitives, React Bits (BlurText, CountUp, SpotlightCard, ShinyText, Magnet), and Aceternity-style effects (lamp, spotlight, scroll timeline, dot background). Fonts are bundled (Geist) or self-hosted (Mukta). CSP keeps `script-src 'self'` with no inline scripts; `style-src` allows `'unsafe-inline'` because Radix's scroll lock and motion set inline styles. All user text is rendered by React as text.
 
 | Page | Purpose |
 |---|---|
