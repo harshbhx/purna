@@ -21,9 +21,9 @@ export default defineConfig({
     { name: "desktop", use: { viewport: { width: 1280, height: 900 }, channel: "chrome" } },
   ],
   webServer: {
-    command: `rm -rf .tmp/e2e-state && npx wrangler d1 migrations apply purna --local --persist-to .tmp/e2e-state && npx wrangler dev --port ${PORT} --persist-to .tmp/e2e-state --show-interactive-dev-session=false`,
+    command: `npx vite build --logLevel warn && rm -rf .tmp/e2e-state && npx wrangler d1 migrations apply purna --local --persist-to .tmp/e2e-state && npx wrangler dev --port ${PORT} --persist-to .tmp/e2e-state --show-interactive-dev-session=false`,
     url: `http://localhost:${PORT}/api/v1/health`,
-    timeout: 120_000,
+    timeout: 180_000,
     reuseExistingServer: !process.env.CI,
     stdout: "ignore",
   },
