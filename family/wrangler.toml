@@ -1,0 +1,19 @@
+name = "purna-family"
+main = "src/worker.ts"
+compatibility_date = "2026-11-01"
+routes = [{ pattern = "purna.dualmindlab.tech", custom_domain = true }]
+
+[assets]
+directory = "./public"
+binding = "ASSETS"
+run_worker_first = ["/api/*"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "purna"
+# Placeholder. The deploy workflow writes the real id from the PURNA_D1_DATABASE_ID secret.
+database_id = "00000000-0000-0000-0000-000000000000"
+migrations_dir = "migrations"
+
+[observability]
+enabled = true

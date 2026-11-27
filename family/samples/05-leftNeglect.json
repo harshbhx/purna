@@ -1,0 +1,305 @@
+{
+  "schema": "purna.session.v1",
+  "sessionId": "s_mwx0xog0_i000",
+  "lensVersion": "0.1.0",
+  "startedAt": "2026-11-26T04:00:00.000Z",
+  "durationS": 90.1,
+  "settings": {
+    "preset": "standard",
+    "hintDelayS": 6,
+    "beamStart": 3,
+    "drift": false,
+    "far": false,
+    "seed": 4
+  },
+  "near": {
+    "endedBy": "timeout",
+    "items": [
+      {
+        "id": 0,
+        "x": 30,
+        "u": -10.4,
+        "kind": "chipped",
+        "chip": "R",
+        "side": "R"
+      },
+      {
+        "id": 1,
+        "x": -27.7,
+        "u": 14.8,
+        "kind": "whole",
+        "chip": null,
+        "side": "L"
+      },
+      {
+        "id": 2,
+        "x": 9.5,
+        "u": -17.8,
+        "kind": "whole",
+        "chip": null,
+        "side": "R"
+      },
+      {
+        "id": 3,
+        "x": 20.8,
+        "u": 5.2,
+        "kind": "whole",
+        "chip": null,
+        "side": "R"
+      },
+      {
+        "id": 4,
+        "x": 30.5,
+        "u": 16.8,
+        "kind": "chipped",
+        "chip": "L",
+        "side": "R"
+      },
+      {
+        "id": 5,
+        "x": -30.8,
+        "u": 6.3,
+        "kind": "whole",
+        "chip": null,
+        "side": "L"
+      },
+      {
+        "id": 6,
+        "x": 4.8,
+        "u": 17.4,
+        "kind": "chipped",
+        "chip": "L",
+        "side": "R"
+      },
+      {
+        "id": 7,
+        "x": 10.5,
+        "u": -3.9,
+        "kind": "chipped",
+        "chip": "L",
+        "side": "R"
+      },
+      {
+        "id": 8,
+        "x": -3.6,
+        "u": 0.8,
+        "kind": "whole",
+        "chip": null,
+        "side": "L"
+      },
+      {
+        "id": 9,
+        "x": 24.2,
+        "u": -18.5,
+        "kind": "whole",
+        "chip": null,
+        "side": "R"
+      },
+      {
+        "id": 10,
+        "x": 30.7,
+        "u": 0.6,
+        "kind": "whole",
+        "chip": null,
+        "side": "R"
+      },
+      {
+        "id": 11,
+        "x": -8.9,
+        "u": -8.5,
+        "kind": "whole",
+        "chip": null,
+        "side": "L"
+      },
+      {
+        "id": 12,
+        "x": -17.4,
+        "u": 17.5,
+        "kind": "whole",
+        "chip": null,
+        "side": "L"
+      },
+      {
+        "id": 13,
+        "x": 21.5,
+        "u": -5.7,
+        "kind": "chipped",
+        "chip": "R",
+        "side": "R"
+      },
+      {
+        "id": 14,
+        "x": -24.5,
+        "u": -1.3,
+        "kind": "chipped",
+        "chip": "L",
+        "side": "L"
+      },
+      {
+        "id": 15,
+        "x": 15.4,
+        "u": 15.5,
+        "kind": "whole",
+        "chip": null,
+        "side": "R"
+      },
+      {
+        "id": 16,
+        "x": -18.8,
+        "u": -13.6,
+        "kind": "chipped",
+        "chip": "R",
+        "side": "L"
+      },
+      {
+        "id": 17,
+        "x": -6.1,
+        "u": 13.9,
+        "kind": "chipped",
+        "chip": "R",
+        "side": "L"
+      },
+      {
+        "id": 18,
+        "x": 3.4,
+        "u": 6.8,
+        "kind": "chipped",
+        "chip": "R",
+        "side": "R"
+      },
+      {
+        "id": 19,
+        "x": -29.3,
+        "u": -16.6,
+        "kind": "chipped",
+        "chip": "R",
+        "side": "L"
+      },
+      {
+        "id": 20,
+        "x": -12.5,
+        "u": 3.1,
+        "kind": "whole",
+        "chip": null,
+        "side": "L"
+      },
+      {
+        "id": 21,
+        "x": -5,
+        "u": -18,
+        "kind": "chipped",
+        "chip": "L",
+        "side": "L"
+      },
+      {
+        "id": 22,
+        "x": 3.2,
+        "u": -10.6,
+        "kind": "whole",
+        "chip": null,
+        "side": "R"
+      },
+      {
+        "id": 23,
+        "x": -21.4,
+        "u": 7.4,
+        "kind": "chipped",
+        "chip": "L",
+        "side": "L"
+      }
+    ],
+    "events": [
+      {
+        "t": 1.1,
+        "id": 22,
+        "r": "lit",
+        "yaw": -2.4
+      },
+      {
+        "t": 2.1,
+        "id": 9,
+        "r": "lit",
+        "yaw": -16.2
+      },
+      {
+        "t": 3.1,
+        "id": 8,
+        "r": "lit",
+        "yaw": 3.2
+      },
+      {
+        "t": 4.1,
+        "id": 10,
+        "r": "lit",
+        "yaw": -25.5
+      },
+      {
+        "t": 5.2,
+        "id": 11,
+        "r": "lit",
+        "yaw": 6.9
+      },
+      {
+        "t": 6.3,
+        "id": 2,
+        "r": "lit",
+        "yaw": -6.5
+      },
+      {
+        "t": 7.4,
+        "id": 15,
+        "r": "lit",
+        "yaw": -17.3
+      },
+      {
+        "t": 8.5,
+        "id": 3,
+        "r": "lit",
+        "yaw": -19.2
+      },
+      {
+        "t": 14.6,
+        "id": 20,
+        "r": "lit",
+        "yaw": 11.4
+      },
+      {
+        "t": 15.7,
+        "id": 12,
+        "r": "lit",
+        "yaw": 20.1
+      }
+    ],
+    "leftHits": 4,
+    "leftTotal": 6,
+    "rightHits": 6,
+    "rightTotal": 6,
+    "fpChipLeft": 0,
+    "fpChipRight": 0,
+    "revisits": 0,
+    "egoAsym": 0.2,
+    "alloAsym": 0,
+    "coc": 0.198,
+    "bestR": 0.677,
+    "crossings": 6,
+    "meanStepCm": 27.3,
+    "timeByColumnS": [
+      3.6,
+      1.1,
+      1
+    ]
+  },
+  "far": null,
+  "drift": null,
+  "head": {
+    "maxLeftDeg": 20.1,
+    "maxRightDeg": 25.5,
+    "pctTimeLeft": 0.028
+  },
+  "cues": {
+    "hint1": 2,
+    "hint2": 1,
+    "beamEnd": 3
+  },
+  "summary": "Found 4 of 6 on the left and 6 of 6 on the right. 3 hints. Turned up to 20° left."
+}
