@@ -1,0 +1,16 @@
+{
+  "name": "purna-tools",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "vitest run --coverage",
+    "coverage": "vitest run --coverage",
+    "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.test.json"
+  },
+  "devDependencies": {
+    "@types/node": "22.15.17",
+    "@vitest/coverage-v8": "2.1.8",
+    "typescript": "5.6.3",
+    "vitest": "2.1.8"
+  }
+}
