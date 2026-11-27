@@ -11,7 +11,7 @@ A SPECS Lens for people who miss the left side of the world after a stroke,<br>a
 [![CI](https://github.com/harshbhx/purna/actions/workflows/ci.yml/badge.svg)](https://github.com/harshbhx/purna/actions/workflows/ci.yml)
 [![Deploy](https://github.com/harshbhx/purna/actions/workflows/deploy.yml/badge.svg)](https://github.com/harshbhx/purna/actions/workflows/deploy.yml)
 ![Core coverage](https://img.shields.io/badge/core%20coverage-98.9%25-2f7d4f)
-![Tests](https://img.shields.io/badge/tests-160-2f7d4f)
+![Tests](https://img.shields.io/badge/tests-153-2f7d4f)
 [![License: MIT](https://img.shields.io/badge/license-MIT-c8651b)](LICENSE)
 
 [purna.dualmindlab.tech](https://purna.dualmindlab.tech) · Built for **Learn AR with SPECS, Round 2** · [Why it's built this way](docs/10-RESEARCH.md)
@@ -98,7 +98,7 @@ These are **simulated players, not patients**. The bench proves the measures sep
 | Part | State |
 |---|---|
 | Core logic: layout, hints, beam fading, metrics, report | ✅ logic proven (47 tests) |
-| Purna Family: landing, API, database, web app, doctor view | ✅ works end to end in Chrome (113 tests) |
+| Purna Family: landing, API, database, web app, doctor view | ✅ works end to end in Chrome (106 tests) |
 | Lens scene in Lens Studio (CLAD) | 🛠️ in progress; LEAF results land here |
 | How it feels to a real stroke survivor | ❓ feel unproven, not tested with patients |
 
@@ -121,6 +121,7 @@ flowchart LR
 
 - **One engine, two homes.** `Assets/Scripts/Core` has no Lens Studio globals. The Lens calls it every frame; Node tests run the same files.
 - **One contract.** The session JSON is [`purna.session.v1`](docs/03-ARCHITECTURE.md#5-data-contract-purnasessionv1). The Worker validates every field and size.
+- **The web app** is React with [shadcn/ui](https://ui.shadcn.com) components, motion from [React Bits](https://reactbits.dev) (BlurText, CountUp, SpotlightCard, ShinyText, Magnet) and effects in the style of [Aceternity UI](https://ui.aceternity.com) (the lamp under the code form, the spotlight, the scroll timeline), built with Vite and Tailwind into static files the same Worker serves. Credits: [`family/THIRD_PARTY.md`](family/THIRD_PARTY.md).
 - **Private by default.** The glasses send no identity; the family types a name. Family keys and doctor tokens are stored only as SHA-256 hashes; doctor links expire and can be revoked; "Delete everything" removes it all.
 
 <img src="docs/img/doctor.png" alt="The therapist view on desktop: a table of nine sessions with left and right found, Centre of Cancellation, asymmetries, search order, hints and head turn, above a trend chart">
@@ -131,10 +132,10 @@ flowchart LR
 |---|---|---|
 | Core + patient bench | `cd tools && npm test` | Layout rules on 500 seeds × 3 levels, hint timing, beam fading, metrics, the engine's phases, the bench (47 tests, coverage gate 85%) |
 | Worker + local D1 | `cd family && npm test` | Every API route and error, field-by-field validation, crypto, and the engine → server contract over every preset and add-on (68 tests) |
-| Browser code | `npm run test:web` | The landing's night-table animation, replay and trend SVGs, CSV export with formula-injection guards, the API client, text-only DOM helpers (34 tests) |
-| End to end | `npm run test:e2e` | Real Chrome against `wrangler dev`: the landing (animation, reduced motion, no sideways scroll), pair, dashboard, replay, doctor link, CSV, note, invite, import, delete, on phone and desktop (11 tests × 2) |
+| Web app | `npm run test:web` | React components in jsdom: the night-table animation and reduced motion, replay and trend SVGs, the app shell, dashboard dialogs and therapist view, CSV export with formula-injection guards, the API client (26 tests) |
+| End to end | `npm run test:e2e` | Real Chrome against the production build on `wrangler dev`: the landing (animation, reduced motion, no sideways scroll from 320 to 1440 px, phone menu), pair, dashboard, replay, doctor link, CSV, note, invite, import, delete, on phone and desktop (12 tests) |
 
-**CI** ([`ci.yml`](.github/workflows/ci.yml)) runs all of it on every pull request, puts coverage in the job summary, lints the shell scripts, and fails if the bench chart or demo data are stale. **CD** ([`deploy.yml`](.github/workflows/deploy.yml)) runs after CI passes on `main`: D1 migrations, `wrangler deploy`, then a smoke test of the live site.
+**CI** ([`ci.yml`](.github/workflows/ci.yml)) runs all of it on every pull request, builds the web app, puts coverage in the job summary, lints the shell scripts, and fails if the bench chart or demo data are stale. **CD** ([`deploy.yml`](.github/workflows/deploy.yml)) runs after CI passes on `main`: builds the web app, applies D1 migrations, runs `wrangler deploy`, then smoke-tests the live site.
 
 ## Run it yourself
 
@@ -145,7 +146,7 @@ cd tools && npm ci && npm test
 # Purna Family on http://localhost:8787
 cd family && npm ci
 npx wrangler d1 migrations apply purna --local
-npx wrangler dev
+npm run dev            # builds the React app, then wrangler dev
 npm run sample -- --post http://localhost:8787 0123456789abcdef0123456789abcdef   # prints a DIYA code
 ```
 
@@ -157,7 +158,7 @@ npm run sample -- --post http://localhost:8787 0123456789abcdef0123456789abcdef 
 | [`docs/`](docs) | [PRD](docs/01-PRD.md) · [design](docs/02-DESIGN.md) · [architecture](docs/03-ARCHITECTURE.md) · [tasks](docs/04-TASKS.md) · [prompts](docs/05-PROMPTS.md) · [testing](docs/06-TESTING.md) · [research](docs/10-RESEARCH.md) |
 | [`Assets/Scripts/Core/`](Assets/Scripts/Core) | The engine: layout, hints, metrics, report |
 | [`tools/`](tools) | Core tests, the patient bench, the bench chart |
-| [`family/`](family) | Purna Family: Worker, D1 migration, web app, all its tests |
+| [`family/`](family) | Purna Family: Worker (`src/`), D1 migration, React web app (`web/`), all its tests |
 | [`AGENTS.md`](AGENTS.md) | Rules for any coding agent working here |
 
 Found a security problem? See [SECURITY.md](SECURITY.md).
