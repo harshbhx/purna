@@ -1,5 +1,5 @@
 import { expect, type APIRequestContext, type Page } from "@playwright/test";
-import demo from "../public/demo/sessions.json" with { type: "json" };
+import demo from "../web/public/demo/sessions.json" with { type: "json" };
 
 export function deviceId(): string {
   return Array.from({ length: 32 }, () => "0123456789abcdef"[Math.floor(Math.random() * 16)]).join("");

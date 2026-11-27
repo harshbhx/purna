@@ -35,9 +35,9 @@ const out = plan.map((p, i) => {
   return s;
 });
 // The web app's "See an example" and hero replay read this copy.
-mkdirSync(join(process.cwd(), "public", "demo"), { recursive: true });
-writeFileSync(join(process.cwd(), "public", "demo", "sessions.json"), JSON.stringify(out) + "\n");
-console.log(`wrote ${out.length} sessions to samples/ and public/demo/sessions.json`);
+mkdirSync(join(process.cwd(), "web", "public", "demo"), { recursive: true });
+writeFileSync(join(process.cwd(), "web", "public", "demo", "sessions.json"), JSON.stringify(out) + "\n");
+console.log(`wrote ${out.length} sessions to samples/ and web/public/demo/sessions.json`);
 
 const i = process.argv.indexOf("--post");
 if (i > 0) {

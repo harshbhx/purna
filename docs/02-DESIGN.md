@@ -118,7 +118,9 @@ If the far board ran, the Left vs right tile shows "Table" and "Board" rows. Aft
 
 ## 9. Purna Family (web)
 
-**Feel:** a warm notebook, not a hospital dashboard. Mobile first (360 px), works to 1440 px.
+**Feel (redesign, 28 Nov):** a fresh, modern product look: white ground, ink-black main actions, Geist type, flame amber only for the diyas, orange = left side and blue = right side in data. The night table is the one bold element. Mockups: the Purna redesign canvas. Built with shadcn/ui, React Bits and Aceternity-style effects (`03-ARCHITECTURE.md` §6.5). The token table below is the original notebook palette, kept for the Lens-side colours' reference.
+
+Original feel: a warm notebook, not a hospital dashboard. Mobile first (360 px), works to 1440 px.
 
 | Token | Value |
 |---|---|
