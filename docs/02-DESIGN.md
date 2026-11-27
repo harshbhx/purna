@@ -1,0 +1,142 @@
+# 02 — Design
+
+Purna should feel like lighting lamps at home, not taking a test. Warm, calm, quiet, and honest.
+
+---
+
+## 1. Principles (in priority order)
+
+1. **Show as little as possible during a task.** Anything on screen can pull the eyes right.
+2. **Point to the side, never the answer.** Bell and beam only. Nothing highlights a particular diya.
+3. **No failure sounds.** Lit = warm tone. Chipped = neutral tick. Revisit = nothing.
+4. **Warm and bright.** The display is additive: black is invisible. Clay, gold, amber, warm white.
+5. **Big and forgiving.** Diyas ≥ 5 cm; buttons ≥ 4 cm tall; SIK hover highlight on.
+6. **Seen, not told.** The replay is the message. Text is short and kind.
+
+## 2. Spatial layout (seated, head at origin looking −z)
+
+| Element | Position (cm) | Size (cm) | Faces |
+|---|---|---|---|
+| Table (stand-in) | centre (0, −30, −65), flat | 70 × 45 × 2 | up |
+| Diyas | on the table top | 6 Ø × 3 high (Hard 5 Ø) | up |
+| Beam | x = −35, centred on the table's depth, bottom on the table | 2 wide × 25 tall × 45 deep (a thin vertical sheet along the edge) | user |
+| Hint speaker | (−35, −27, −65) | – | – |
+| Setup panel | (0, −12, −50) | 30 × 20 | user, tilted 20° back |
+| Report card | lying on the table at (0, −29, −62) | 28 × 18 | user, tilted 35° up toward the eyes |
+| Far board (stand-in) | centre (0, 0, −200), upright | 200 × 90 | user |
+| Far diyas | on the board face | 18 Ø | user |
+| Drift row | u = 0 line across the table | 6 Ø | up |
+
+At 65 cm the usable view is about 45 cm wide, so the setup panel, report card and the centre third of the table are in view with the head straight; the left and right thirds need a head turn. This is intentional.
+
+## 3. Colour (Lens)
+
+All values are display colours on an additive screen. Never below ~20% brightness for anything that must be seen.
+
+| Token | Hex | Use |
+|---|---|---|
+| clay | `#E9A36B` | Diya body (unlit and lit) |
+| clayRim | `#FFD9B0` | Diya rim highlight; chipped edge outline |
+| flameCore | `#FFF4C9` | Flame centre |
+| flame | `#FFB938` | Flame body, lit glow |
+| beam | `#FFB347` | Beam at level 3 (opacity 0.9 / 0.6 / 0.35 / 0 for levels 3–0) |
+| thread | `#FFD27A` | Replay thread, emissive |
+| missed | `#FF9E5E` | Missed whole diya pulse (opacity 0.35 ↔ 0.9) |
+| panel | `#F6EFE6` at 22% | UI Kit frame tint (light glass) |
+| text | `#FFF8EE` | All text |
+| textSoft | `#F3D9BD` | Secondary text |
+| table | `#CFC6BA` at 35% | Stand-in table (matte, low contrast so diyas stay brightest) |
+
+Chipped diyas: a clean wedge (about 70° of the rim) removed on the left or right side, with the cut edge outlined in `clayRim`. Readable at 65 cm; never shown as a dark patch.
+
+## 4. Type (Lens)
+
+UI Kit default font. Rule of thumb: body text at least 0.6° tall.
+- At 50–65 cm: body 0.8 cm, labels 0.7 cm, tile numbers 1.6 cm, titles 1.2 cm.
+- Max 8 words per line on the report card. Sentence case.
+
+## 5. Motion
+
+| Moment | Motion |
+|---|---|
+| Diya appears (task start) | Fade + rise 1 cm, 0.4 s, staggered 20 ms |
+| Lit | Flame scales 0 → 1 over 0.25 s, then flickers (scale 0.95–1.05, 0.6 s loop, random phase) |
+| Chipped pinch | Diya nudges down 3 mm and back, 0.15 s |
+| Hint 1 | Beam opacity pulses twice (0.25 → 1 → 0.25, 0.6 s each), even if its level is 0 |
+| Hint 2 | A bright band travels from the left edge to the centre and back over 3 s, ease in-out |
+| Beam level change | 0.8 s fade |
+| Drift | Constant 10 cm/s toward −x; flicker = flame on/off at 4 Hz for 2 s |
+| Replay | Thread grows segment by segment, 0.4 s each, a small spark at the head; missed diyas pulse (1.2 s loop) |
+| Report card | Fades in 0.5 s after the replay ends |
+
+No camera shake, no flashes, nothing faster than 4 Hz.
+
+## 6. Sound
+
+CLAD can generate these; keep them soft and short. Spatialise all except UI clicks.
+
+| Sound | Character | Where |
+|---|---|---|
+| light | Warm, soft tone (like a small brass bowl, ~660 Hz), 0.4 s, gentle attack | At the diya |
+| tick | Quiet wooden tick, 0.08 s, low volume | At the diya |
+| bell | Soft temple bell, one strike, 1.5 s decay | HintSpeaker at the table's left edge |
+| ui | Soft click | UI |
+| replay | Very soft shimmer per segment (optional) | Thread head |
+
+No music. No error buzz ever.
+
+## 7. Setup panel
+
+Title "Purna", subtitle "Set up today's practice". Rows (UI Kit):
+1. Difficulty: segmented Easy / **Standard** / Hard
+2. Hint after: segmented 4 s / **6 s** / 10 s
+3. Start with the beam: switch (on)
+4. Warm-up: switch (off) *(hidden if Drift isn't built)*
+5. Far board: switch (off) *(hidden if not built)*
+6. Share with family: switch (off)
+7. **Start** button, full width, 5 cm tall
+
+## 8. Report card
+
+```
+┌──────────────────────────────────────────────┐
+│  Left vs right        │  Chipped diyas        │
+│  ███████░░ 9 / 12 L   │  Gap on left   2      │
+│  █████████ 12 / 12 R  │  Gap on right  0      │
+├───────────────────────┼───────────────────────┤
+│  Search order         │  Head turn            │
+│  Orderly 0.82         │  24° left             │
+│  1 crossing · 0 revisits                      │
+├──────────────────────────────────────────────┤
+│ Practice result, not a diagnosis. Share it    │
+│ with your therapist.                          │
+│  [ Replay ]   [ Send to family ]   [ Done ]   │
+└──────────────────────────────────────────────┘
+```
+
+If the far board ran, the Left vs right tile shows "Table" and "Board" rows. After Send: replace the Send button's label with "Sent to family ✓", or show the pairing code in large letters with "Ask your family to enter this code at purna.dualmindlab.tech".
+
+## 9. Purna Family (web)
+
+**Feel:** a warm notebook, not a hospital dashboard. Mobile first (360 px), works to 1440 px.
+
+| Token | Value |
+|---|---|
+| `--bg` | `#FBF6EF` (light), `#1C1814` (dark) |
+| `--ink` | `#2A211A` / `#F4ECE2` |
+| `--muted` | `#6E5E50` / `#BCA996` |
+| `--accent` | `#C8651B` (saffron clay); text on accent `#FFFFFF` |
+| `--good` | `#2F7D4F` |
+| `--line` | `#E7DCCD` / `#3A322B` |
+| radius | 14 px cards, 10 px buttons |
+| font | system UI stack; numbers tabular |
+
+Contrast: all text ≥ 4.5:1 on its background in both themes (check with a contrast tool before merging).
+
+**Screens**
+1. **Home (logged out):** hero line, two-sentence explanation, a small diagram of the table, "Have a code from the glasses?" form (code + "What do you call them?"), disclaimer, link to the GitHub repo.
+2. **Dashboard:** greeting ("Papa's practice"), nudge if > 3 days, newest session card on top (summary sentence + two mini bars), trend chart, list of earlier sessions, doctor notes, buttons: Share with doctor · Invite family · Import from Logger · Delete everything.
+3. **Session detail:** the 2D replay (SVG, animates once, replay button), the four measures in plain words, technical numbers under "Details for the therapist".
+4. **Doctor view:** header with expiry date, table of sessions (date, preset, L/R found, CoC, ego/allo asymmetry, best r, crossings, revisits, hints, max left turn), trend, notes box, Download CSV, Print.
+
+**Accessibility:** keyboard reachable, visible focus, labels on every input, charts have text equivalents, `prefers-reduced-motion` respected, no colour-only meaning.
