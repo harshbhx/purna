@@ -1,0 +1,16 @@
+# Node
+node_modules/
+coverage/
+.tmp/
+
+# Cloudflare
+.wrangler/
+.dev.vars
+.env
+.env.*
+
+# Lens Studio caches (keep .meta files)
+Cache/
+Workspaces/
+*.lsproj.lock
+.DS_Store
