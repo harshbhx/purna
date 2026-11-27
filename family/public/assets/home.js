@@ -1,6 +1,7 @@
 // Home: landing + pairing, family dashboard, session detail (docs/02-DESIGN.md §9).
 import { api, ApiError, clearKey, getKey, parseImport, setKey, takeFragment } from "./api.js";
 import { miniBars, replay, trendChart } from "./charts.js";
+import { nightTable } from "./hero.js";
 import { kvList, measures, therapistRows } from "./session-view.js";
 import { $, copy, daysSince, el, fmtDate, fmtWhen, message, show } from "./ui.js";
 
@@ -15,12 +16,59 @@ async function loadDemo() {
   return state.demo;
 }
 
-async function heroReplay() {
+const reducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/** Fills the landing page from the demo sessions: the night table, a replay, and both previews. */
+async function landing() {
+  let demo;
   try {
-    const demo = await loadDemo();
-    const s = demo.find((x) => x.near.leftHits < x.near.leftTotal) || demo[0];
-    $("#hero-replay").replaceChildren(replay(s));
-  } catch { /* the hero still reads fine without it */ }
+    demo = await loadDemo();
+  } catch {
+    return; // the page still reads fine without the live pieces
+  }
+  const healthy = demo.find((x) => x.near.leftHits === x.near.leftTotal && x.near.fpChipLeft === 0) || demo[0];
+  const neglect = demo.find((x) => x.near.leftHits < x.near.leftTotal) || demo[0];
+
+  const table = nightTable(healthy);
+  $("#hero-table").replaceChildren(table.svg);
+  const caption = $("#hero-caption");
+  const again = $("#hero-again");
+  let cancel = () => {};
+  const onCaption = (text, done) => {
+    caption.textContent = text;
+    show(again, done && !reducedMotion());
+  };
+  const run = () => {
+    cancel();
+    if (reducedMotion()) table.showFinal(onCaption);
+    else cancel = table.play(onCaption);
+  };
+  again.addEventListener("click", run);
+  run();
+
+  $("#landing-replay").replaceChildren(replay(neglect, { animate: false }));
+
+  const recent = demo.slice().sort((a, b) => b.startedAt.localeCompare(a.startedAt));
+  const c = toCard(recent[0]);
+  const card = el("div", { class: "session-card" },
+    el("span", { class: "when", text: `${fmtDate(c.startedAt, { weekday: "short", day: "numeric", month: "short" })} · ${c.preset}` }),
+    el("p", { class: "line", text: c.summary }),
+    miniBars(c));
+  const trendBox = el("figure", { class: "preview-trend" });
+  $("#family-preview").replaceChildren(el("p", { class: "small muted", text: "Papa's practice (example)" }), card, trendBox);
+  const pts = recent.slice().reverse().map((x) => ({
+    date: x.startedAt, left: x.near.leftHits / x.near.leftTotal, right: x.near.rightHits / x.near.rightTotal,
+  }));
+  trendBox.append(trendChart(pts, trendBox.clientWidth || 420));
+
+  const rows = recent.slice(0, 5).map((x) => [
+    fmtDate(x.startedAt), `${x.near.leftHits}/${x.near.leftTotal}`, `${x.near.rightHits}/${x.near.rightTotal}`,
+    x.near.coc === null ? "–" : x.near.coc.toFixed(2), x.near.egoAsym.toFixed(2), String(x.cues.hint1 + x.cues.hint2), `${Math.round(x.head.maxLeftDeg)}°`,
+  ]);
+  $("#doctor-preview").replaceChildren(
+    el("caption", { class: "sr-only", text: "Example sessions as the therapist sees them" }),
+    el("thead", {}, el("tr", {}, ["Date", "Left", "Right", "CoC", "Ego asym", "Hints", "Max left"].map((h) => el("th", { scope: "col", text: h })))),
+    el("tbody", {}, rows.map((r) => el("tr", {}, r.map((v) => el("td", { text: v }))))));
 }
 
 $("#pair").addEventListener("submit", async (e) => {
@@ -45,7 +93,7 @@ $("#pair").addEventListener("submit", async (e) => {
   }
 });
 
-$("#demo").addEventListener("click", async () => {
+async function openDemo() {
   const demo = await loadDemo();
   const sessions = demo.slice().sort((a, b) => b.startedAt.localeCompare(a.startedAt));
   for (const s of sessions) state.sessions.set(s.sessionId, s);
@@ -55,7 +103,9 @@ $("#demo").addEventListener("click", async () => {
     notes: [{ id: "demo", text: "Good effort this week. Keep the hint delay at 6 s and try Hard on Friday.", createdAt: sessions[1].startedAt }],
     shares: [],
   }, true);
-});
+  window.scrollTo(0, 0);
+}
+for (const b of document.querySelectorAll(".js-demo")) b.addEventListener("click", openDemo);
 
 function toCard(s) {
   const n = s.near;
@@ -277,5 +327,5 @@ $("#signout").addEventListener("click", () => {
 const fromLink = takeFragment("k");
 if (fromLink) setKey(fromLink);
 state.key = getKey();
-heroReplay();
+landing();
 if (state.key) loadDashboard();

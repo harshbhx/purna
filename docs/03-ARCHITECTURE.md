@@ -40,7 +40,7 @@ purna/                                  ← the Lens Studio project folder = the
 │   ├── migrations/0001_init.sql
 │   ├── src/worker.ts (entry), src/api.ts (all /api/v1 routes), src/lib/{http,crypto,validate}.ts
 │   ├── public/  index.html, join.html, doctor.html, _headers (CSP), favicon.svg, demo/sessions.json
-│   │            assets/{app.css, api.js, ui.js, charts.js, csv.js, session-view.js, home.js, doctor.js, join.js}
+│   │            assets/{app.css, api.js, ui.js, charts.js, csv.js, hero.js, session-view.js, home.js, doctor.js, join.js}, fonts/ (Mukta, OFL)
 │   ├── scripts/make-sample.ts         demo sessions from the real engine + simulated players
 │   ├── samples/*.json                 the same demo sessions, one file each (also used by tests)
 │   ├── test/      Worker tests: api, validate, crypto, contract (+ helpers, migrations setup)

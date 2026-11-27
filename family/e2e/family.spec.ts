@@ -12,7 +12,7 @@ test("the whole family loop: pair, see, share with the doctor, get a note back, 
   await page.getByLabel("What do you call them?").fill("Papa");
   await page.getByRole("button", { name: "See their practice" }).click();
   await expect(page.getByRole("heading", { name: "Papa's practice" })).toBeVisible();
-  await expect(page.locator(".session-card")).toHaveCount(9);
+  await expect(page.locator("#dash .session-card")).toHaveCount(9);
   await expect(page.locator("#demo-badge")).toBeHidden();
 
   // The key survives a reload; the session detail opens from a card.
@@ -83,7 +83,7 @@ test("importing a Logger line adds the session", async ({ page, request }) => {
   const code = await sendDemoSessions(request);
   const { familyKey } = await (await request.post("/api/v1/pair", { data: { code, name: "Papa" } })).json();
   await page.goto("/join#k=" + familyKey);
-  await expect(page.locator(".session-card")).toHaveCount(9);
+  await expect(page.locator("#dash .session-card")).toHaveCount(9);
 
   const one = JSON.parse(readFileSync(new URL("../samples/09-healthy.json", import.meta.url), "utf8"));
   one.sessionId = "s_logger_" + Date.now().toString(36);
@@ -92,7 +92,7 @@ test("importing a Logger line adds the session", async ({ page, request }) => {
   await page.getByLabel("Session line").fill("12:01:03 PURNA_SESSION " + JSON.stringify(one));
   await page.getByRole("button", { name: "Import", exact: true }).click();
   await expect(page.locator("#import-msg")).toHaveText("Imported ✓");
-  await expect(page.locator(".session-card")).toHaveCount(10);
+  await expect(page.locator("#dash .session-card")).toHaveCount(10);
   await page.locator("#latest .session-card").click();
   await page.getByRole("dialog").getByText("Details for the therapist").click();
   await expect(page.getByRole("dialog")).toContainText(one.sessionId);

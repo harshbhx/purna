@@ -133,8 +133,13 @@ If the far board ran, the Left vs right tile shows "Table" and "Board" rows. Aft
 
 Contrast: all text ≥ 4.5:1 on its background in both themes (check with a contrast tool before merging).
 
+**Type:** Mukta (Ek Type, SIL OFL), self-hosted for the CSP, Latin and Devanagari so पूर्ण renders in the brand. 400 / 600 / 800 only.
+
 **Screens**
-1. **Home (logged out):** hero line, two-sentence explanation, a small diagram of the table, "Have a code from the glasses?" form (code + "What do you call them?"), disclaimer, link to the GitHub repo.
+1. **Home (logged out) = the landing page.** One bold element, everything else quiet:
+   - **Hero, "the night table":** a dark wooden table (`#1d1511` / `#3a2a20`) with the real layout of a session. The right half's diyas light one by one, the left stays dark; a bell ripples from the left edge and the beam sweeps; then the left lights from the centre outward. Captions narrate each beat; "Play again" when done; reduced motion shows the whole table at once.
+   - Then, as plain bands: the problem (half the plate, 7.6% OT access), the five steps of a session (numbered because they are a sequence) beside a real replay, what the family sees (a live session card + trend from the demo data), what the therapist gets (a live table), why it's built this way (four findings with sources), private by design, and the code form with "See an example".
+   - No card grids, no all-caps labels, no arrow links, no scroll-triggered animations.
 2. **Dashboard:** greeting ("Papa's practice"), nudge if > 3 days, newest session card on top (summary sentence + two mini bars), trend chart, list of earlier sessions, doctor notes, buttons: Share with doctor · Invite family · Import from Logger · Delete everything.
 3. **Session detail:** the 2D replay (SVG, animates once, replay button), the four measures in plain words, technical numbers under "Details for the therapist".
 4. **Doctor view:** header with expiry date, table of sessions (date, preset, L/R found, CoC, ego/allo asymmetry, best r, crossings, revisits, hints, max left turn), trend, notes box, Download CSV, Print.
