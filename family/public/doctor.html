@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Purna: therapist view</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/assets/app.css">
+  <script type="module" src="/assets/doctor.js"></script>
+</head>
+<body>
+<main class="wide">
+  <header class="top">
+    <a class="brand" href="/"><img src="/favicon.svg" alt="">Purna</a>
+    <span class="row no-print"><button type="button" id="csv" class="ghost" hidden>Download CSV</button><button type="button" id="print" class="ghost" hidden>Print</button></span>
+  </header>
+  <div id="out" aria-live="polite"><p>Loading…</p></div>
+
+  <section id="view" hidden>
+    <h1 id="title"></h1>
+    <p class="muted" id="expires"></p>
+    <p class="small">Read-only practice results from Purna (SPECS glasses). Not a diagnostic test. Measures follow cancellation-task conventions: Centre of Cancellation (−1 to +1, positive = found mostly on the right), egocentric asymmetry (right − left hits over total), allocentric asymmetry (chipped diyas lit with the gap on the left minus on the right), and best r (search organisation).</p>
+
+    <h2>Sessions</h2>
+    <div class="card table-wrap"><table class="data" id="table"></table></div>
+
+    <h2>Trend</h2>
+    <div class="card"><figure><div id="trend"></div><figcaption>Share found per side. Solid = left, dashed = right.</figcaption></figure></div>
+
+    <h2>Session replays</h2>
+    <div id="replays"></div>
+
+    <h2>Notes</h2>
+    <div id="notes"></div>
+    <form id="note-form" class="card no-print">
+      <label for="note">Add a note for the family</label>
+      <textarea id="note" maxlength="1000" placeholder="e.g. Good effort. Try hint delay 4 s next week."></textarea>
+      <div id="note-msg"></div>
+      <button type="submit">Save note</button>
+    </form>
+  </section>
+
+  <footer>
+    <p>Purna is a practice tool, not a medical device. It doesn't diagnose or treat.</p>
+  </footer>
+</main>
+</body>
+</html>
