@@ -67,12 +67,14 @@ jobs:
       - run: npm run typecheck
       - name: Worker + local D1 tests (API, validation, engine contract)
         run: npm test
-      - name: Browser code unit tests (jsdom)
+      - name: Web app unit and component tests (jsdom)
         run: npm run test:web
+      - name: Production build of the web app
+        run: npm run build
       - name: Demo data is up to date
         run: |
           npm run sample
-          git diff --exit-code -- samples public/demo || { echo "::error::Demo sessions are stale. Run: cd family && npm run sample"; exit 1; }
+          git diff --exit-code -- samples web/public/demo || { echo "::error::Demo sessions are stale. Run: cd family && npm run sample"; exit 1; }
 
   e2e:
     name: End-to-end (Chrome, phone + desktop)
@@ -90,7 +92,7 @@ jobs:
           cache: npm
           cache-dependency-path: family/package-lock.json
       - run: npm ci
-      - name: Playwright against wrangler dev + fresh local D1
+      - name: Playwright against the built app on wrangler dev + fresh local D1
         run: npm run test:e2e
       - name: Upload report on failure
         if: failure()
