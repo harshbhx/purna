@@ -1,10 +1,18 @@
 /* Purna Family: a warm notebook, not a hospital dashboard (docs/02-DESIGN.md §9). */
+/* Mukta by Ek Type (SIL OFL 1.1, see /fonts/OFL.txt): Latin and Devanagari, self-hosted for the CSP. */
+@font-face { font-family: Mukta; font-style: normal; font-weight: 400; font-display: swap; src: url(/fonts/mukta-latin-400-normal.woff2) format("woff2"); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+@font-face { font-family: Mukta; font-style: normal; font-weight: 400; font-display: swap; src: url(/fonts/mukta-devanagari-400-normal.woff2) format("woff2"); unicode-range: U+0900-097F,U+1CD0-1CF9,U+200C-200D,U+20A8,U+20B9,U+20F0,U+25CC,U+A830-A839,U+A8E0-A8FF; }
+@font-face { font-family: Mukta; font-style: normal; font-weight: 600; font-display: swap; src: url(/fonts/mukta-latin-600-normal.woff2) format("woff2"); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+@font-face { font-family: Mukta; font-style: normal; font-weight: 600; font-display: swap; src: url(/fonts/mukta-devanagari-600-normal.woff2) format("woff2"); unicode-range: U+0900-097F,U+1CD0-1CF9,U+200C-200D,U+20A8,U+20B9,U+20F0,U+25CC,U+A830-A839,U+A8E0-A8FF; }
+@font-face { font-family: Mukta; font-style: normal; font-weight: 800; font-display: swap; src: url(/fonts/mukta-latin-800-normal.woff2) format("woff2"); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+@font-face { font-family: Mukta; font-style: normal; font-weight: 800; font-display: swap; src: url(/fonts/mukta-devanagari-800-normal.woff2) format("woff2"); unicode-range: U+0900-097F,U+1CD0-1CF9,U+200C-200D,U+20A8,U+20B9,U+20F0,U+25CC,U+A830-A839,U+A8E0-A8FF; }
+
 :root {
   --bg: #FBF6EF; --card: #FFFDF9; --ink: #2A211A; --muted: #6E5E50; --accent: #C8651B; --accent-ink: #FFFFFF;
   --accent-dark: #A4510F; --good: #2F7D4F; --warn: #9A3B12; --line: #E7DCCD; --flame: #E8912B;
   --left: #9A3B12; --right: #2F6F8F;
   --r-card: 14px; --r-btn: 10px;
-  --font: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", sans-serif;
+  --font: Mukta, system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", sans-serif;
   color-scheme: light dark;
 }
 @media (prefers-color-scheme: dark) {
@@ -13,7 +21,7 @@
 }
 * { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; }
-body { margin: 0; background: var(--bg); color: var(--ink); font: 17px/1.55 var(--font); }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 18px/1.55 var(--font); }
 main { max-width: 760px; margin: 0 auto; padding: 20px 18px 64px; }
 h1, h2, h3 { line-height: 1.2; margin: 0 0 .5em; }
 h1 { font-size: clamp(1.9rem, 6vw, 2.6rem); letter-spacing: -.01em; }
