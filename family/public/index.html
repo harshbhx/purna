@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Purna: practice that makes the world whole again</title>
+  <meta name="description" content="Purna is a 4-minute daily exercise on SPECS glasses for people who miss the left side after a stroke. Their family sees how it went. Their therapist gets the numbers.">
+  <meta property="og:title" content="Purna">
+  <meta property="og:description" content="Practice that makes the world whole again.">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/assets/app.css">
+  <script type="module" src="/assets/home.js"></script>
+</head>
+<body>
+<main>
+  <header class="top">
+    <a class="brand" href="/"><img src="/favicon.svg" alt="">Purna</a>
+    <button id="signout" class="ghost small no-print" hidden>Sign out here</button>
+  </header>
+
+  <div id="flash" aria-live="polite"></div>
+
+  <section id="landing">
+    <div class="hero">
+      <h1>Practice that makes the world whole again.</h1>
+      <p class="sub">Purna is a 4-minute daily exercise on SPECS glasses for people who miss the left side after a stroke. Their family sees how it went. Their therapist gets the numbers.</p>
+    </div>
+
+    <div class="card">
+      <h2 class="sr-only">What a session looks like</h2>
+      <figure>
+        <div id="hero-replay"></div>
+        <figcaption>Diyas appear on the dining table through the glasses. They light the whole ones and leave the chipped ones alone. The thread is the path their eyes took; dashed circles are the ones they missed. (Example data from a simulated player.)</figcaption>
+      </figure>
+    </div>
+
+    <div class="card flat">
+      <h2>How it works</h2>
+      <p><b>1. Practice.</b> They sit at the table with the glasses on and light the diyas. If they stay on the right too long, a temple bell rings from the left and a soft beam sweeps that way. Hints point to the side, never at the answer.</p>
+      <p><b>2. See it.</b> The glasses show a replay of their search and a short report. One pinch sends it here.</p>
+      <p><b>3. Share it.</b> The family sees progress over days. A 7-day link gives the therapist every number, and room for a note back.</p>
+    </div>
+
+    <form id="pair" class="card" novalidate>
+      <h2>Have a code from the glasses?</h2>
+      <label for="code">Code</label>
+      <input id="code" name="code" class="code-input" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="DIYA-7K3P" required maxlength="12">
+      <label for="name">What do you call them?</label>
+      <input id="name" name="name" autocomplete="off" placeholder="Papa" required maxlength="40">
+      <div id="pair-msg"></div>
+      <div class="row"><button type="submit">See their practice</button><button type="button" id="demo" class="ghost">See an example</button></div>
+    </form>
+  </section>
+
+  <section id="dash" hidden>
+    <h1><span id="greeting"></span><span id="demo-badge" class="demo-badge" hidden>Example</span></h1>
+    <div id="nudge"></div>
+    <div id="latest"></div>
+
+    <h2>Over time</h2>
+    <div class="card"><figure><div id="trend"></div><figcaption id="trend-cap"></figcaption></figure></div>
+
+    <h2>Earlier sessions</h2>
+    <div id="earlier"></div>
+
+    <h2>Notes from the therapist</h2>
+    <div id="notes"></div>
+
+    <div class="no-print" id="tools">
+      <h2>Share and manage</h2>
+      <div class="actions">
+        <button type="button" data-panel="share-panel">Share with doctor</button>
+        <button type="button" class="ghost" data-panel="invite-panel">Invite family</button>
+        <button type="button" class="ghost" data-panel="import-panel">Import from Logger</button>
+        <button type="button" class="danger" data-panel="delete-panel">Delete everything</button>
+      </div>
+
+      <div id="share-panel" class="card" hidden>
+        <h3>Share with doctor</h3>
+        <p class="muted small">Makes a read-only link to every session. It stops working after 7 days, or when you stop it here.</p>
+        <button type="button" id="share-make">Make a 7-day link</button>
+        <div id="share-new"></div>
+        <div id="share-list"></div>
+        <div id="share-msg"></div>
+      </div>
+
+      <div id="invite-panel" class="card" hidden>
+        <h3>Invite family</h3>
+        <p class="muted small">Send this link to a brother, sister or carer. Anyone with it can see this practice, so share it only with family.</p>
+        <div id="invite-link" class="linkbox"></div>
+        <p></p><button type="button" id="invite-copy" class="ghost">Copy invite link</button>
+      </div>
+
+      <form id="import-panel" class="card" hidden>
+        <h3>Import from Logger</h3>
+        <p class="muted small">If the glasses couldn't send, copy the line that starts with <code>PURNA_SESSION</code> from the Lens Studio Logger and paste it here.</p>
+        <label for="import-text">Session line</label>
+        <textarea id="import-text" spellcheck="false"></textarea>
+        <div id="import-msg"></div>
+        <button type="submit">Import</button>
+      </form>
+
+      <form id="delete-panel" class="card" hidden>
+        <h3>Delete everything</h3>
+        <p class="muted small">Removes every session, note, doctor link and the paired glasses. This can't be undone.</p>
+        <label for="delete-confirm" id="delete-label">Type the name to confirm</label>
+        <input id="delete-confirm" autocomplete="off">
+        <div id="delete-msg"></div>
+        <button type="submit" class="danger">Delete everything</button>
+      </form>
+    </div>
+  </section>
+
+  <dialog id="detail" aria-labelledby="detail-title">
+    <div class="dialog-head">
+      <h2 id="detail-title"></h2>
+      <button type="button" class="ghost" id="detail-close">Close</button>
+    </div>
+    <p id="detail-summary"></p>
+    <figure><div id="detail-replay"></div><figcaption>Numbers show the order they found the diyas. Dashed circles were missed.</figcaption></figure>
+    <p><button type="button" class="ghost" id="detail-again">Replay</button></p>
+    <div class="measures" id="detail-measures"></div>
+    <details><summary>Details for the therapist</summary><dl class="kv" id="detail-kv"></dl></details>
+    <p class="muted small">Practice result, not a diagnosis. Share it with your therapist.</p>
+  </dialog>
+
+  <footer>
+    <p>Purna is a practice tool, not a medical device. It doesn't diagnose or treat. Talk to your therapist.</p>
+    <p>No ads, no tracking. Names are whatever the family types; the glasses send no identity. Built for Learn AR with SPECS · <a href="https://github.com/harshbhx/purna">Source on GitHub</a></p>
+  </footer>
+</main>
+</body>
+</html>
