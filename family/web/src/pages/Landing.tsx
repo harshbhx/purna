@@ -250,6 +250,7 @@ export function Landing({ demo, onPaired, onExample }: { demo: SessionJson[]; on
                     ))}
                   </TableBody>
                 </Table>
+                <p className="m-0 mt-4 text-[15px]"><a id="doctor-demo-link" href="/doctor#demo">See the full therapist view with example data</a></p>
               </div>
               <p className="mt-2 mb-0 text-[13px] text-muted-foreground">First three sessions against the last three, from the example data.</p>
             </div>
