@@ -1,10 +1,11 @@
 // "/" is the landing page until a family key exists; then it's that family's dashboard.
-import { useCallback, useEffect, useRef, useState } from "react";
+import { lazy, Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { Alert } from "@/components/ui/alert";
 import { ApiError, api, clearKey, getKey, setKey, takeFragment } from "@/lib/api";
 import { toCard } from "@/lib/session";
 import type { Me, SessionJson } from "@/lib/types";
-import { Dashboard } from "@/pages/Dashboard";
+// The dashboard is only needed after pairing or "See an example", so it loads then, not with the landing page.
+const Dashboard = lazy(() => import("@/pages/Dashboard").then((m) => ({ default: m.Dashboard })));
 import { Landing } from "@/pages/Landing";
 
 type View = { kind: "landing" } | { kind: "loading" } | { kind: "dash"; me: Me; demo: boolean };
@@ -62,9 +63,11 @@ export function App({ demo }: { demo: SessionJson[] }) {
     window.scrollTo({ top: 0, behavior: "instant" });
   };
 
-  if (view.kind === "loading") return <p className="p-8 text-muted-foreground">Loading…</p>;
+  const loading = <p className="p-8 text-muted-foreground">Loading…</p>;
+  if (view.kind === "loading") return loading;
   if (view.kind === "dash") {
     return (
+      <Suspense fallback={loading}>
       <Dashboard
         me={view.me}
         demo={view.demo}
@@ -74,6 +77,7 @@ export function App({ demo }: { demo: SessionJson[] }) {
         onSignOut={() => toLanding("Signed out on this device. Use your invite link to come back.")}
         onDeleted={() => toLanding("Everything is deleted. To start again, send a session from the glasses for a new code.")}
       />
+      </Suspense>
     );
   }
   return (

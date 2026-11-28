@@ -20,6 +20,16 @@ export default defineConfig({
         doctor: resolve(web, "doctor.html"),
         join: resolve(web, "join.html"),
       },
+      // Named library chunks: the landing, dashboard and therapist pages share them from the browser cache.
+      output: {
+        manualChunks(id) {
+          if (!id.includes("node_modules")) return undefined;
+          if (/[\\/](react|react-dom|scheduler)[\\/]/.test(id)) return "react";
+          if (/[\\/](motion|motion-dom|motion-utils|framer-motion)[\\/]/.test(id)) return "motion";
+          if (id.includes("@radix-ui") || id.includes("@floating-ui") || id.includes("react-remove-scroll")) return "radix";
+          return "vendor";
+        },
+      },
     },
   },
   server: { proxy: { "/api": "http://localhost:8787" } },
