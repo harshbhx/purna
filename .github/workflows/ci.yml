@@ -47,7 +47,7 @@ jobs:
       - name: Bench chart is up to date
         run: |
           npm run chart
-          git diff --exit-code -- ../docs/img/bench.svg || { echo "::error::docs/img/bench.svg is stale. Run: cd tools && npm run chart"; exit 1; }
+          git diff --exit-code -- ../docs/img/bench.svg ../family/web/public/img/bench.svg || { echo "::error::docs/img/bench.svg is stale. Run: cd tools && npm run chart"; exit 1; }
 
   family:
     name: Purna Family (Worker, D1, web code)
