@@ -66,6 +66,17 @@ for (const scheme of ["light", "dark"] as const) {
       await ctx.close();
     });
 
+    test("the table in the browser: setup, the task and the result", async ({ page }) => {
+      await page.goto("/play");
+      await scan(page, "play setup");
+      await page.getByRole("button", { name: "Start" }).click();
+      await expect(page.locator("#play-table")).toBeVisible();
+      await scan(page, "play task");
+      await page.locator("#play-finish").click();
+      await expect(page.getByRole("heading", { name: "Your search" })).toBeVisible();
+      await scan(page, "play result");
+    });
+
     test("the example therapist view, with its new charts and context card", async ({ page }) => {
       await page.goto("/doctor#demo");
       await expect(page.locator("#reference")).toBeVisible();

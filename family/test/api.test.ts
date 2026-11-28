@@ -284,3 +284,62 @@ describe("pair codes", () => {
     expect(normalizePairCode("DIYA-7K3")).toBeNull();
   });
 });
+
+describe("therapist sets the next session", () => {
+  it("the doctor sets a plan; the family and the glasses see it; the next session uses it up", async () => {
+    const { dev, key } = await paired("Papa");
+    const sh = await body(await call("/api/v1/me/shares", { auth: key, body: {} }));
+
+    expect((await body(await call(`/api/v1/devices/${dev}/next`))).plan).toBeNull();
+    const set = await call("/api/v1/doctor/plan", { auth: sh.token, body: { preset: "easy", hintDelayS: 4 } });
+    expect(set.status).toBe(201);
+    const plan = (await body(set)).plan;
+    expect(plan).toMatchObject({ preset: "easy", hintDelayS: 4 });
+
+    const glasses = await call(`/api/v1/devices/${dev}/next`);
+    expect(glasses.headers.get("access-control-allow-origin")).toBe("*");
+    expect((await body(glasses)).plan).toEqual(plan);
+    expect((await body(await call("/api/v1/me", { auth: key }))).plan).toEqual(plan);
+    expect((await body(await call("/api/v1/doctor", { auth: sh.token }))).plan).toEqual(plan);
+
+    // Changing it replaces it.
+    await call("/api/v1/doctor/plan", { auth: sh.token, body: { preset: "hard", hintDelayS: 10 } });
+    expect((await body(await call(`/api/v1/devices/${dev}/next`))).plan).toMatchObject({ preset: "hard", hintDelayS: 10 });
+
+    await call("/api/v1/sessions", { body: { deviceId: dev, session: session() } });
+    expect((await body(await call(`/api/v1/devices/${dev}/next`))).plan).toBeNull();
+    expect((await body(await call("/api/v1/doctor", { auth: sh.token }))).plan).toBeNull();
+  });
+
+  it("can be cleared, validates its fields, and needs a live doctor link", async () => {
+    const { dev, key } = await paired("Papa");
+    const sh = await body(await call("/api/v1/me/shares", { auth: key, body: {} }));
+    for (const bad of [{ preset: "extreme", hintDelayS: 6 }, { preset: "easy", hintDelayS: 5 }, { preset: "easy" }, {}]) {
+      expect((await call("/api/v1/doctor/plan", { auth: sh.token, body: bad })).status).toBe(400);
+    }
+    await call("/api/v1/doctor/plan", { auth: sh.token, body: { preset: "standard", hintDelayS: 6 } });
+    expect((await call("/api/v1/doctor/plan", { method: "DELETE", auth: sh.token })).status).toBe(204);
+    expect((await body(await call(`/api/v1/devices/${dev}/next`))).plan).toBeNull();
+
+    await call(`/api/v1/me/shares/${sh.id}`, { method: "DELETE", auth: key });
+    expect((await call("/api/v1/doctor/plan", { auth: sh.token, body: { preset: "easy", hintDelayS: 4 } })).status).toBe(410);
+    expect((await call("/api/v1/doctor/plan", { body: { preset: "easy", hintDelayS: 4 } })).status).toBe(401);
+  });
+
+  it("the glasses get null for an unknown or unpaired device, and 400 for a bad id", async () => {
+    expect((await body(await call(`/api/v1/devices/${deviceId()}/next`))).plan).toBeNull();
+    const dev = deviceId();
+    await call("/api/v1/sessions", { body: { deviceId: dev, session: session() } });
+    expect((await body(await call(`/api/v1/devices/${dev}/next`))).plan).toBeNull();
+    expect((await call("/api/v1/devices/not-hex/next")).status).toBe(400);
+  });
+
+  it("goes with Delete everything", async () => {
+    const { key } = await paired("Papa");
+    const sh = await body(await call("/api/v1/me/shares", { auth: key, body: {} }));
+    await call("/api/v1/doctor/plan", { auth: sh.token, body: { preset: "easy", hintDelayS: 4 } });
+    const pid = ((await env.DB.prepare("SELECT patient_id FROM shares WHERE id = ?").bind(sh.id).first()) as { patient_id: string }).patient_id;
+    await call("/api/v1/me", { method: "DELETE", auth: key, body: { confirm: "Papa" } });
+    expect(await env.DB.prepare("SELECT 1 FROM plans WHERE patient_id = ?").bind(pid).first()).toBeNull();
+  });
+});

@@ -282,7 +282,23 @@
   "head": {
     "maxLeftDeg": 3.5,
     "maxRightDeg": 20,
-    "pctTimeLeft": 0
+    "pctTimeLeft": 0,
+    "attention": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0.027,
+      0.027,
+      0.919,
+      0.013,
+      0.007,
+      0.007,
+      0,
+      0
+    ]
   },
   "cues": {
     "hint1": 1,

@@ -140,6 +140,16 @@ export function validateSession(v: unknown): SessionJson {
   num(h, "maxLeftDeg", "session.head", 0, 180);
   num(h, "maxRightDeg", "session.head", 0, 180);
   num(h, "pctTimeLeft", "session.head", 0, 1);
+  if (h.attention !== undefined) {
+    if (!Array.isArray(h.attention) || h.attention.length < 1 || h.attention.length > 32) {
+      bad("session.head.attention", "must be a list of 1 to 32 shares");
+    }
+    for (const v of h.attention) {
+      if (typeof v !== "number" || !isFinite(v) || v < 0 || v > 1) {
+        bad("session.head.attention", "must hold numbers from 0 to 1");
+      }
+    }
+  }
   const c = obj(s.cues, "session.cues");
   for (const k of ["hint1", "hint2", "beamEnd"]) int(c, k, "session.cues", 0, 10000);
   if (typeof s.summary !== "string" || s.summary.trim().length === 0) bad("session.summary", "must be text");

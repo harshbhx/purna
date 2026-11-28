@@ -5,7 +5,7 @@
 import { CueTracker } from "./CueEngine";
 import { DriftPlan, driftVisible, driftX, flickerAt, planDrift } from "./Drift";
 import { generateLayout } from "./Layout";
-import { FieldResult, PinchEvent, fieldResult, headStats } from "./Metrics";
+import { FieldResult, PinchEvent, attentionMap, fieldResult, headStats } from "./Metrics";
 import {
   Cue,
   EndedBy,
@@ -64,6 +64,7 @@ export class PurnaEngine {
   private lastT = 0;
   private lastYawSampleT = -Infinity;
   private yawSamples: { t: number; yaw: number }[] = [];
+  private tableYaw: { yaw: number }[] = [];
   private cues: CueTracker;
   private fields: { [k in Space]: FieldState };
   private driftPlan: DriftPlan | null = null;
@@ -179,6 +180,7 @@ export class PurnaEngine {
     if (!this.isTask(p)) return this.frame(false, "none");
     if (t - this.lastYawSampleT >= YAW_SAMPLE_S && isFinite(yawDeg)) {
       this.yawSamples.push({ t, yaw: yawDeg });
+      if (p === "near") this.tableYaw.push({ yaw: yawDeg });
       this.lastYawSampleT = t;
     }
     const elapsed = t - this.taskStartT;
@@ -270,6 +272,17 @@ export class PurnaEngine {
     return fieldResult(st.field, st.items, st.events, st.endedBy || "finish");
   }
 
+  private head() {
+    const h = headStats(this.yawSamples);
+    h.attention = attentionMap(this.tableYaw, this.fields.near.field);
+    return h;
+  }
+
+  /** Where the head pointed on the table so far (share of time per 5 cm strip, left first). For the Lens's light map. */
+  attention(): number[] {
+    return attentionMap(this.tableYaw, this.fields.near.field);
+  }
+
   /** Builds the session JSON. Meant for the replay/report phase; works at any time for debugging. */
   report(startedAtIso: string, sessionId: string): SessionJson {
     const end = this.endT !== null ? this.endT : this.lastT;
@@ -284,7 +297,7 @@ export class PurnaEngine {
       near: this.result("near"),
       far: s.far ? this.result("far") : null,
       drift: s.drift ? { flickers: this.driftPlan ? this.driftPlan.flickers.length : 0, hits: this.driftHits, misses: this.driftMisses } : null,
-      head: headStats(this.yawSamples),
+      head: this.head(),
       cues: { hint1: this.cues.hint1Count, hint2: this.cues.hint2Count, beamEnd: this.cues.beamLevel },
       summary: "",
     };

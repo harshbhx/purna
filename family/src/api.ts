@@ -24,7 +24,7 @@ const MAX_SESSIONS_LISTED = 200;
 
 const CORS = {
   "access-control-allow-origin": "*",
-  "access-control-allow-methods": "POST, OPTIONS",
+  "access-control-allow-methods": "GET, POST, OPTIONS",
   "access-control-allow-headers": "content-type",
   "access-control-max-age": "86400",
 };
@@ -145,7 +145,14 @@ async function postSession(req: Request, env: Env): Promise<Response> {
     }
   }
 
-  if (!existing) await insertSession(env, session, deviceId, device.patient_id, now).run();
+  if (!existing) {
+    if (device.patient_id) {
+      // A new session uses up any plan the therapist set for it.
+      await env.DB.batch([insertSession(env, session, deviceId, device.patient_id, now), env.DB.prepare("DELETE FROM plans WHERE patient_id = ?").bind(device.patient_id)]);
+    } else {
+      await insertSession(env, session, deviceId, null, now).run();
+    }
+  }
 
   const out: Record<string, unknown> = { sessionId: session.sessionId, linked: !!device.patient_id };
   if (pairCode) {
@@ -212,8 +219,10 @@ async function getMe(p: PatientRow, env: Env): Promise<Response> {
     env.DB.prepare("SELECT id, text, created_at FROM notes WHERE patient_id = ? ORDER BY created_at DESC LIMIT 100").bind(p.id),
     env.DB.prepare("SELECT id, expires_at, created_at FROM shares WHERE patient_id = ? AND revoked = 0 AND expires_at > ? ORDER BY created_at DESC").bind(p.id, now),
   ]);
+  const plan = await activePlan(env, p.id);
   return json(200, {
     patient: { name: p.name, createdAt: new Date(p.created_at).toISOString() },
+    plan,
     sessions: (sessions.results as unknown as SessionRow[]).map(card),
     notes: (notes.results as { id: string; text: string; created_at: number }[]).map((n) => ({
       id: n.id,
@@ -276,6 +285,7 @@ async function deleteMe(p: PatientRow, req: Request, env: Env): Promise<Response
   }
   await env.DB.batch([
     env.DB.prepare("DELETE FROM notes WHERE patient_id = ?").bind(p.id),
+    env.DB.prepare("DELETE FROM plans WHERE patient_id = ?").bind(p.id),
     env.DB.prepare("DELETE FROM shares WHERE patient_id = ?").bind(p.id),
     env.DB.prepare("DELETE FROM sessions WHERE patient_id = ?").bind(p.id),
     env.DB.prepare("DELETE FROM sessions WHERE device_id IN (SELECT device_id FROM devices WHERE patient_id = ?)").bind(p.id),
@@ -308,8 +318,10 @@ async function getDoctor(req: Request, env: Env): Promise<Response> {
     env.DB.prepare(`SELECT json FROM sessions WHERE patient_id = ? ORDER BY started_at DESC LIMIT ${MAX_SESSIONS_LISTED}`).bind(patient.id),
     env.DB.prepare("SELECT id, text, created_at FROM notes WHERE patient_id = ? ORDER BY created_at DESC LIMIT 100").bind(patient.id),
   ]);
+  const plan = await activePlan(env, patient.id);
   return json(200, {
     patient: { name: patient.name },
+    plan,
     expiresAt: new Date(share.expires_at).toISOString(),
     sessions: (sessions.results as { json: string }[]).map((r) => JSON.parse(r.json)),
     notes: (notes.results as { id: string; text: string; created_at: number }[]).map((n) => ({
@@ -336,17 +348,72 @@ async function postDoctorNote(req: Request, env: Env): Promise<Response> {
   return json(201, { id, createdAt: new Date(now).toISOString() });
 }
 
+// ---------- next session set by the therapist ----------
+
+const PLAN_PRESETS = ["easy", "standard", "hard"];
+const PLAN_DELAYS = [4, 6, 10];
+
+interface PlanRow {
+  preset: string;
+  hint_delay_s: number;
+  set_at: number;
+}
+
+/** The plan still waiting for its session (a new session from the glasses deletes it), or null. */
+async function activePlan(env: Env, patientId: string) {
+  const r = await env.DB.prepare("SELECT preset, hint_delay_s, set_at FROM plans WHERE patient_id = ?").bind(patientId).first<PlanRow>();
+  return r ? { preset: r.preset, hintDelayS: r.hint_delay_s, setAt: new Date(r.set_at).toISOString() } : null;
+}
+
+async function postDoctorPlan(req: Request, env: Env): Promise<Response> {
+  const { share, patient } = await doctor(req, env);
+  await enforce(env.NOTE_LIMIT, `plan:${share.id}`);
+  const body = await readJson(req);
+  if (typeof body.preset !== "string" || PLAN_PRESETS.indexOf(body.preset) < 0) {
+    throw new HttpError(400, "bad_preset", "preset must be easy, standard or hard.");
+  }
+  if (typeof body.hintDelayS !== "number" || PLAN_DELAYS.indexOf(body.hintDelayS) < 0) {
+    throw new HttpError(400, "bad_delay", "hintDelayS must be 4, 6 or 10.");
+  }
+  const now = Date.now();
+  await env.DB.prepare(
+    `INSERT INTO plans (patient_id, preset, hint_delay_s, share_id, set_at) VALUES (?, ?, ?, ?, ?)
+     ON CONFLICT(patient_id) DO UPDATE SET preset = excluded.preset, hint_delay_s = excluded.hint_delay_s,
+       share_id = excluded.share_id, set_at = excluded.set_at`,
+  )
+    .bind(patient.id, body.preset, body.hintDelayS, share.id, now)
+    .run();
+  return json(201, { plan: { preset: body.preset, hintDelayS: body.hintDelayS, setAt: new Date(now).toISOString() } });
+}
+
+async function deleteDoctorPlan(req: Request, env: Env): Promise<Response> {
+  const { patient } = await doctor(req, env);
+  await env.DB.prepare("DELETE FROM plans WHERE patient_id = ?").bind(patient.id).run();
+  return json(204, null);
+}
+
+/** For the glasses' setup panel: the therapist's plan for this device's patient, if one is waiting. */
+async function getDeviceNext(deviceId: string, env: Env): Promise<Response> {
+  if (!validDeviceId(deviceId)) throw new HttpError(400, "bad_device", "deviceId must be 32 hex characters.");
+  await enforce(env.SESSION_LIMIT, `session:${deviceId}`);
+  const d = await env.DB.prepare("SELECT patient_id FROM devices WHERE device_id = ?").bind(deviceId).first<{ patient_id: string | null }>();
+  const plan = d && d.patient_id ? await activePlan(env, d.patient_id) : null;
+  return json(200, { plan }, CORS);
+}
+
 // ---------- router ----------
 
 export async function handleApi(req: Request, env: Env): Promise<Response> {
   const url = new URL(req.url);
   const path = url.pathname.replace(/\/+$/, "");
   const m = req.method;
-  const isSessions = path === "/api/v1/sessions";
+  const deviceNext = /^\/api\/v1\/devices\/([^/]{1,64})\/next$/.exec(path);
+  const isSessions = path === "/api/v1/sessions" || !!deviceNext;
   try {
     if (path === "/api/v1/health" && m === "GET") return json(200, { ok: true, version: API_VERSION });
     if (isSessions && m === "OPTIONS") return new Response(null, { status: 204, headers: CORS });
     if (isSessions && m === "POST") return await postSession(req, env);
+    if (deviceNext && m === "GET") return await getDeviceNext(deviceNext[1], env);
     if (path === "/api/v1/pair" && m === "POST") return await postPair(req, env);
 
     if (path === "/api/v1/me") {
@@ -362,6 +429,8 @@ export async function handleApi(req: Request, env: Env): Promise<Response> {
 
     if (path === "/api/v1/doctor" && m === "GET") return await getDoctor(req, env);
     if (path === "/api/v1/doctor/notes" && m === "POST") return await postDoctorNote(req, env);
+    if (path === "/api/v1/doctor/plan" && m === "POST") return await postDoctorPlan(req, env);
+    if (path === "/api/v1/doctor/plan" && m === "DELETE") return await deleteDoctorPlan(req, env);
 
     throw new HttpError(404, "no_route", "Not found.");
   } catch (e) {

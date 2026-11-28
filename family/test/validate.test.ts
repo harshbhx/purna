@@ -105,6 +105,17 @@ describe("validateSession", () => {
     expect(reason(b)).toMatch(/whole number/);
   });
 
+  it("accepts a missing attention map (older Lens builds) and rejects a malformed one", () => {
+    const old = fresh();
+    delete old.head.attention;
+    expect(() => validateSession(old)).not.toThrow();
+    for (const bad of ["warm", [], new Array(33).fill(0), [0.5, 1.2], [0.5, Number.NaN], [-0.1]]) {
+      const a = fresh();
+      a.head.attention = bad;
+      expect(reason(a)).toMatch(/session\.head\.attention/);
+    }
+  });
+
   it("rejects a malformed timeByColumnS", () => {
     const a = fresh();
     a.near.timeByColumnS = [1, 2];

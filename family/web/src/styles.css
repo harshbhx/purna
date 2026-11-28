@@ -4,7 +4,13 @@
 /* Mukta (Ek Type, SIL OFL 1.1) for Devanagari, self-hosted: see /fonts/OFL.txt */
 @font-face { font-family: Mukta; font-weight: 500; font-display: swap; src: url(/fonts/mukta-devanagari-600-normal.woff2) format("woff2"); unicode-range: U+0900-097F, U+200C-200D, U+25CC; }
 
-@custom-variant dark (@media (prefers-color-scheme: dark));
+/* Dark mode follows the system unless the header switch chose one (data-theme on <html>, set by public/theme.js). */
+@custom-variant dark {
+  &:where([data-theme="dark"], [data-theme="dark"] *) { @slot; }
+  @media (prefers-color-scheme: dark) {
+    &:where(:root:not([data-theme="light"]), :root:not([data-theme="light"]) *) { @slot; }
+  }
+}
 
 /* Purna tokens: a fresh product look. Flame amber belongs to the diyas; orange = left side, blue = right side. */
 :root {
@@ -34,8 +40,33 @@
   --danger-bg: #fef2f2;
   --radius: 12px;
 }
+:root { color-scheme: light; }
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --background: #120f0c;
+  --surface: #17130f;
+  --foreground: #f4ede4;
+  --muted: #221c17;
+  --muted-foreground: #b3a797;
+  --border: #2e2620;
+  --input: #3a3029;
+  --ring: #f4ede4;
+  --primary: #f4ede4;
+  --primary-foreground: #17140f;
+  --card: #1a1511;
+  --link: #f5b04a;
+  --left: #fb923c;
+  --right: #60a5fa;
+  --success: #6ee7b7;
+  --success-bg: #0f2a20;
+  --warn-bg: #2a1a0c;
+  --warn: #fdba74;
+  --danger: #fca5a5;
+  --danger-bg: #2a1212;
+}
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
     --background: #120f0c;
     --surface: #17130f;
     --foreground: #f4ede4;
@@ -135,3 +166,25 @@
 .thread { fill: none; stroke: var(--foreground); stroke-width: .55; stroke-linejoin: round; stroke-linecap: round; }
 .order { fill: #1c1611; font-size: 2.6px; font-weight: 700; }
 .rp-text { fill: var(--muted-foreground); font-size: 2.3px; }
+
+/* Segmented choice built from native radios (keyboard: arrow keys move inside a group). */
+.seg { display: inline-flex; flex-wrap: wrap; gap: 0; border: 1px solid var(--border); border-radius: 10px; padding: 3px; background: var(--muted); width: fit-content; }
+.seg label { position: relative; cursor: pointer; }
+.seg input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+.seg span { display: block; padding: 6px 14px; border-radius: 7px; font-size: 14px; color: var(--muted-foreground); }
+.seg input:checked + span { background: var(--card); color: var(--foreground); font-weight: 600; box-shadow: 0 1px 2px rgb(0 0 0 / .08); }
+.seg input:focus-visible + span { outline: 2px solid var(--ring); outline-offset: 1px; }
+
+/* /play: the table in a browser. */
+.diya-btn { cursor: pointer; outline: none; }
+.diya-btn:focus-visible .hit { fill: rgb(255 255 255 / .1); stroke: #fff; stroke-width: .4; }
+.diya-btn .nt-bowl { fill: #8a6a55; }
+.diya-btn .nt-chip .nt-bowl { fill: none; stroke: #c99a78; stroke-width: .7; }
+.diya-btn .nt-lamp.lit .nt-bowl { fill: #d9772b; }
+@keyframes beam-pulse { 0%, 100% { opacity: .25; } 50% { opacity: 1; } }
+@keyframes beam-sweep { 0% { transform: translateX(0); } 50% { transform: translateX(30px); } 100% { transform: translateX(0); } }
+@keyframes flame { 0%, 100% { transform: scale(.95); } 50% { transform: scale(1.05); } }
+.beam-pulse { animation: beam-pulse .6s ease-in-out 2; }
+.beam-sweep { animation: beam-sweep 3s ease-in-out 1; }
+.flame { transform-box: fill-box; transform-origin: center; animation: flame .6s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) { .beam-pulse, .beam-sweep, .flame { animation: none; } }

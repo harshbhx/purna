@@ -20,6 +20,7 @@ export default defineConfig({
         doctor: resolve(web, "doctor.html"),
         join: resolve(web, "join.html"),
         docs: resolve(web, "docs.html"),
+        play: resolve(web, "play.html"),
       },
       // Named library chunks: the landing, dashboard and therapist pages share them from the browser cache.
       output: {
@@ -33,5 +34,5 @@ export default defineConfig({
       },
     },
   },
-  server: { proxy: { "/api": "http://localhost:8787" } },
+  server: { proxy: { "/api": "http://localhost:8787" }, fs: { allow: [resolve(__dirname, "..")] } },
 });

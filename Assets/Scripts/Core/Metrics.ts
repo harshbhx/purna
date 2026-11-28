@@ -46,7 +46,12 @@ export interface HeadStats {
   maxLeftDeg: number;
   maxRightDeg: number;
   pctTimeLeft: number;
+  /** Share of table-task time the head pointed at each strip of the table, left edge first (ATTENTION_BINS strips). */
+  attention?: number[];
 }
+
+/** The attention map splits the table into this many strips, 5 cm each on the 70 cm table. */
+export const ATTENTION_BINS = 14;
 
 /** Degrees of yaw that count as "turned left" for pctTimeLeft. */
 export const LEFT_TURN_DEG = 5;
@@ -155,4 +160,26 @@ export function headStats(samples: { t: number; yaw: number }[]): HeadStats {
     if (s.yaw > LEFT_TURN_DEG) left++;
   }
   return { maxLeftDeg: round1(maxL), maxRightDeg: round1(maxR), pctTimeLeft: round3(left / samples.length) };
+}
+
+/**
+ * Where the head pointed during the table task, as a share of time per strip of the table.
+ * The head sits at the origin and the table's centre line is `field.centerZ` cm ahead, so a yaw of
+ * θ (positive = left) points at x = centerZ · tan(θ) on that line (centerZ is negative). Points past
+ * the edges count for the edge strip. Samples are evenly spaced (YAW_SAMPLE_S), so a count is time.
+ */
+export function attentionMap(samples: { yaw: number }[], field: Field, bins: number = ATTENTION_BINS): number[] {
+  const out: number[] = [];
+  for (let i = 0; i < bins; i++) out.push(0);
+  if (samples.length === 0) return out;
+  const half = field.width / 2;
+  const dist = Math.abs(field.centerZ);
+  for (const s of samples) {
+    const x = field.centerX - dist * Math.tan((s.yaw * Math.PI) / 180);
+    let b = Math.floor(((x + half - field.centerX) / field.width) * bins);
+    if (b < 0) b = 0;
+    if (b > bins - 1) b = bins - 1;
+    out[b]++;
+  }
+  return out.map((c) => round3(c / samples.length));
 }

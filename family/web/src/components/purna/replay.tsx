@@ -17,7 +17,7 @@ export function chippedPath(cx: number, cy: number, r: number, side: "L" | "R" |
   return `M ${p(a0)} A ${r} ${r} 0 1 1 ${p(a1)}`;
 }
 
-export function Replay({ session, animate = true, replayKey = 0, className }: { session: SessionJson; animate?: boolean; replayKey?: number; className?: string }) {
+export function Replay({ session, animate = true, replayKey = 0, attention = true, className }: { session: SessionJson; animate?: boolean; replayKey?: number; attention?: boolean; className?: string }) {
   const reduce = useReducedMotion();
   const near = session.near;
   const r = (SIZE_CM[session.settings?.preset] ?? 6) / 2;
@@ -28,14 +28,25 @@ export function Replay({ session, animate = true, replayKey = 0, className }: { 
   const draw = animate && !reduce;
   const tr = useT();
   const missedL = near.leftTotal - near.leftHits, missedR = near.rightTotal - near.rightHits;
+  const attn = attention ? session.head?.attention : undefined;
+  const attnMax = attn && attn.length ? Math.max(...attn) : 0;
+  const attnLeft = attn ? Math.round(attn.slice(0, Math.floor(attn.length / 2)).reduce((a, b) => a + b, 0) * 100) : 0;
   return (
     <svg
       viewBox={`${-W / 2 - 2} ${-D / 2 - 2} ${W + 4} ${D + 12}`}
       role="img"
       className={cn("block h-auto w-full", className)}
-      aria-label={tr.replayAria(order.length, missedL, missedR, near.fpChipLeft, near.fpChipRight)}
+      aria-label={tr.replayAria(order.length, missedL, missedR, near.fpChipLeft, near.fpChipRight) + (attnMax > 0 ? tr.attentionAria(attnLeft) : "")}
     >
       <rect x={-W / 2} y={-D / 2} width={W} height={D} rx="2" className="fill-surface stroke-border" strokeWidth=".5" />
+      {/* Where the head pointed during the table task: brighter = longer. The half never looked at stays dark. */}
+      {attnMax > 0 && (
+        <g className="attention" aria-hidden="true">
+          {attn!.map((v, i) => (
+            <rect key={i} x={-W / 2 + (i * W) / attn!.length} y={-D / 2} width={W / attn!.length + 0.05} height={D} fill="var(--flame)" opacity={(0.32 * v) / attnMax} />
+          ))}
+        </g>
+      )}
       <line x1="0" x2="0" y1={-D / 2} y2={D / 2} className="stroke-muted-foreground/50" strokeWidth=".3" strokeDasharray="1 1" />
       {near.items.map((it) =>
         it.kind === "whole" ? (
