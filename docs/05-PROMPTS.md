@@ -63,7 +63,7 @@ All done criteria and LEAF tests must keep passing.
 
 ## 5. Coding agent: Purna Family (T40–T50)
 
-> Read AGENTS.md, docs/03-ARCHITECTURE.md §5–§6, docs/01-PRD.md §7 and §9, docs/02-DESIGN.md §9 and docs/06-TESTING.md §4. Implement issue #<n> in family/. Vanilla HTML/CSS/ES modules for the web app, TypeScript for the Worker, no frameworks or third-party scripts. Run `cd family && npm test`. Open a PR that says "Closes #<n>".
+> Read AGENTS.md, docs/03-ARCHITECTURE.md §5–§6, docs/01-PRD.md §7 and §9, docs/02-DESIGN.md §9 and docs/06-TESTING.md §4. Implement issue #<n> in family/. React + Vite + Tailwind for the web app (rules in AGENTS.md §3), TypeScript for the Worker, no third-party scripts at runtime. Run `cd family && npm run typecheck && npm test && npm run test:web && npm run build && npm run test:e2e`. Open a PR that says "Closes #<n>".
 
 ## 6. Emergencies
 
