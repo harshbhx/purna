@@ -23,6 +23,8 @@ Three scripted searchers each played the real engine on the same 200 table layou
 | Time the head pointed at the left half of the table | 49.9% | 4.4% | 51.9% |
 | Layouts where at least one left diya was missed | 0 of 200 | 196 of 200 | 0 of 200 |
 
+![Bar charts over 200 simulated sessions per player. Left diyas found: healthy 100%, left neglect 65%, object neglect 100%. Hints needed: 0, 2.9, 0. Chipped-on-left diyas lit: 0, 0, 5.6. Head turned left: 27°, 16°, 29°.](/img/bench.svg)
+
 **What it shows:** the left-neglect searcher stands out on left diyas found, hints, Centre of Cancellation, head turn and the attention map; the object-neglect searcher finds every diya but stands out on chipped diyas with a gap on the left. On 4 of 200 layouts the left-neglect searcher found every left diya thanks to the hints, and the hint count and head turn still gave it away.
 
 The checks run on every change: for example, on every layout the left-neglect searcher's Centre of Cancellation is at least the healthy searcher's, it needs at least one hint, and it spends less time turned left.

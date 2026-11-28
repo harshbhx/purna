@@ -8,7 +8,7 @@ const show = (id: string) => { history.replaceState(null, "", `/docs#${id}`); re
 
 describe("Docs content", () => {
   it("has the pages a medical-adjacent product needs, each with a review date", () => {
-    expect(DOCS.map((d) => d.id)).toEqual(["overview", "safety", "setup", "carers", "therapists", "measures", "results", "evidence", "glossary", "privacy", "terms", "accessibility", "report"]);
+    expect(DOCS.map((d) => d.id)).toEqual(["overview", "judges", "safety", "setup", "carers", "therapists", "measures", "results", "evidence", "architecture", "glossary", "privacy", "terms", "accessibility", "report"]);
     for (const d of DOCS) expect(d.body, d.id).toMatch(/Last reviewed: \d{1,2} \w+ \d{4}\./);
   });
 
@@ -17,7 +17,7 @@ describe("Docs content", () => {
     for (const d of DOCS) {
       for (const [, href] of d.body.matchAll(/\]\(([^)\s]+)\)/g)) {
         if (href.startsWith("#")) expect(ids.has(href.slice(1)), `${d.id} → ${href}`).toBe(true);
-        else expect(href, `${d.id} → ${href}`).toMatch(/^(https:\/\/|mailto:harshbhx@gmail\.com$)/);
+        else expect(href, `${d.id} → ${href}`).toMatch(/^(https:\/\/|mailto:harshbhx@gmail\.com$|\/img\/[a-z-]+\.svg$)/);
       }
     }
   });
@@ -63,7 +63,7 @@ describe("Docs page", () => {
 
   it("follows hash changes, with previous and next links", () => {
     show("safety");
-    expect(within(screen.getByRole("navigation", { name: "Previous and next page" })).getByRole("link", { name: /Overview/ })).toBeTruthy();
+    expect(within(screen.getByRole("navigation", { name: "Previous and next page" })).getByRole("link", { name: /For judges/ })).toBeTruthy();
     location.hash = "#setup";
     fireEvent(window, new HashChangeEvent("hashchange"));
     expect(screen.getByRole("heading", { level: 1, name: "Setting up the glasses" })).toBeTruthy();

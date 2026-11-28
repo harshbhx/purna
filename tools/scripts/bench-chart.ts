@@ -95,5 +95,7 @@ ${body}
 
 const out = join(process.cwd(), "..", "docs", "img", "bench.svg");
 writeFileSync(out, svg);
+// The same chart on the site's Results page (/docs#results).
+writeFileSync(join(process.cwd(), "..", "family", "web", "public", "img", "bench.svg"), svg);
 for (const s of stats) console.log(s.name.padEnd(15), `left ${s.leftPct.toFixed(0)}%  hints ${s.hints.toFixed(2)}  chipL ${s.chipLeft.toFixed(2)}  turn ${s.turn.toFixed(1)}°`);
 console.log("wrote", out);
