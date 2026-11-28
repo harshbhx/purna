@@ -1,0 +1,22 @@
+name: Idea or feature request
+description: Suggest something that would help patients, families or therapists
+labels: [enhancement]
+body:
+  - type: dropdown
+    id: who
+    attributes:
+      label: Who would it help?
+      options:
+        - People practising with Purna
+        - Carers and families
+        - Therapists and doctors
+        - Developers
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: The idea
+      description: What should happen, and why it matters. If it touches the measures or anything medical, say what evidence it rests on.
+    validations:
+      required: true

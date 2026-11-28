@@ -1,1 +1,11 @@
 blank_issues_enabled: false
+contact_links:
+  - name: Safety concern, or a security or privacy problem
+    url: mailto:harsh@dualmindlab.tech
+    about: Please email instead of opening a public issue. Never post codes, links, keys or anyone's health details.
+  - name: How to use Purna safely
+    url: https://purna.dualmindlab.tech/docs
+    about: Safety, setting up the glasses, guides for carers and therapists, privacy.
+  - name: Medical emergency
+    url: https://purna.dualmindlab.tech/docs#safety
+    about: Purna can't help in an emergency. Call your local emergency number now.
