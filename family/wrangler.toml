@@ -38,5 +38,9 @@ namespace_id = "26013"
   limit = 10
   period = 60
 
+# Daily retention clean-up at 03:17 UTC (src/cleanup.ts).
+[triggers]
+crons = ["17 3 * * *"]
+
 [observability]
 enabled = true
