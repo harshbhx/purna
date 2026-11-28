@@ -188,3 +188,42 @@
 .beam-sweep { animation: beam-sweep 3s ease-in-out 1; }
 .flame { transform-box: fill-box; transform-origin: center; animation: flame .6s ease-in-out infinite; }
 @media (prefers-reduced-motion: reduce) { .beam-pulse, .beam-sweep, .flame { animation: none; } }
+
+/* Theme switch: the new theme grows as a circle from the button (lib/theme.ts). Turn off the default cross-fade. */
+html.theme-reveal::view-transition-old(root),
+html.theme-reveal::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
+html.theme-reveal::view-transition-old(root) { z-index: 1; }
+html.theme-reveal::view-transition-new(root) { z-index: 2; }
+/* The icon turns as it swaps: a moon in light mode (press for dark), a sun in dark mode. */
+.theme-toggle { position: relative; }
+.theme-toggle svg { position: absolute; transition: transform .45s cubic-bezier(.22,1,.36,1), opacity .3s; }
+.theme-toggle .sun { opacity: 0; transform: rotate(-90deg) scale(.5); }
+.theme-toggle .moon { opacity: 1; transform: rotate(0) scale(1); }
+:root[data-theme="dark"] .theme-toggle .sun { opacity: 1; transform: rotate(0) scale(1); }
+:root[data-theme="dark"] .theme-toggle .moon { opacity: 0; transform: rotate(90deg) scale(.5); }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .theme-toggle .sun { opacity: 1; transform: rotate(0) scale(1); }
+  :root:not([data-theme="light"]) .theme-toggle .moon { opacity: 0; transform: rotate(90deg) scale(.5); }
+}
+@media (prefers-reduced-motion: reduce) { .theme-toggle svg { transition: none; } }
+
+/* Docs: a warm header band with a faint dot grid, custom bullets, zebra tables. */
+.doc-band { background: color-mix(in srgb, var(--surface) 70%, transparent); }
+.doc-header {
+  background:
+    radial-gradient(60% 120% at 100% 0%, color-mix(in srgb, var(--flame) 14%, transparent), transparent 60%),
+    radial-gradient(circle at 1px 1px, color-mix(in srgb, var(--foreground) 10%, transparent) 1px, transparent 0) 0 0 / 18px 18px,
+    var(--card);
+}
+.doc-list { list-style: none; }
+.doc-list > li { position: relative; padding-left: 1.35rem; }
+.doc-list > li::before { content: ""; position: absolute; left: .2rem; top: .68em; width: .42rem; height: .42rem; border-radius: 999px; background: var(--flame); }
+.doc-table tbody tr:nth-child(even) td { background: color-mix(in srgb, var(--muted) 45%, transparent); }
+.doc-table tbody tr:last-child td { border-bottom: 0; }
+.doc-h2 { padding-top: .25rem; }
+.doc-body > .doc-h2:first-child, .doc-body > h2:first-child { margin-top: 2.5rem; }
+.doc-card:focus-visible, .doc-nav:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+@media print {
+  .doc-header { background: none; border: 0; padding: 0; }
+  #emergency-inline { display: none; }
+}

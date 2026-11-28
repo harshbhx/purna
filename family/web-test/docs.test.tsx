@@ -16,7 +16,7 @@ describe("Docs content", () => {
     for (const d of DOCS) {
       for (const [, href] of d.body.matchAll(/\]\(([^)\s]+)\)/g)) {
         if (href.startsWith("#")) expect(ids.has(href.slice(1)), `${d.id} → ${href}`).toBe(true);
-        else expect(href, `${d.id} → ${href}`).toMatch(/^(https:\/\/|mailto:harsh@dualmindlab\.tech$)/);
+        else expect(href, `${d.id} → ${href}`).toMatch(/^(https:\/\/|mailto:harshbhx@gmail\.com$)/);
       }
     }
   });
