@@ -66,6 +66,12 @@ for (const scheme of ["light", "dark"] as const) {
       await ctx.close();
     });
 
+    test("the example therapist view, with its new charts and context card", async ({ page }) => {
+      await page.goto("/doctor#demo");
+      await expect(page.locator("#reference")).toBeVisible();
+      await scan(page, "example therapist view");
+    });
+
     test("the error pages", async ({ page }) => {
       await page.goto("/doctor");
       await expect(page.getByRole("alert")).toBeVisible();

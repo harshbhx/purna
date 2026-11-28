@@ -71,3 +71,43 @@ export function progress(sessionsNewestFirst: SessionJson[]) {
     hints: [mean(first, (s) => s.cues.hint1 + s.cues.hint2), mean(last, (s) => s.cues.hint1 + s.cues.hint2)] as const,
   };
 }
+
+/**
+ * How much the left share usually moves from one session to the next: the median absolute change between
+ * consecutive sessions, drawn as a band around a 3-session rolling mean. A change inside the band may be chance.
+ * Input oldest first; null for sessions with no left diyas. Needs 4 sessions.
+ */
+export function dayToDay(leftsOldestFirst: (number | null)[]): { spread: number; centre: (number | null)[] } | null {
+  const vals = leftsOldestFirst.filter((v): v is number => v !== null);
+  if (vals.length < 4) return null;
+  const diffs = vals.slice(1).map((v, i) => Math.abs(v - vals[i])).sort((a, b) => a - b);
+  const mid = diffs.length >> 1;
+  const spread = diffs.length % 2 ? diffs[mid] : (diffs[mid - 1] + diffs[mid]) / 2;
+  const centre = leftsOldestFirst.map((v, i) => {
+    if (v === null) return null;
+    const win = leftsOldestFirst.slice(Math.max(0, i - 2), i + 1).filter((w): w is number => w !== null);
+    return win.reduce((a, b) => a + b, 0) / win.length;
+  });
+  return { spread, centre };
+}
+
+/**
+ * Where the searching time went: mean seconds to find a diya in the left, centre and right thirds, for the earliest
+ * and the most recent sessions (up to 3 each), plus the share of time the head was turned left.
+ */
+export function lookStats(sessionsNewestFirst: SessionJson[]) {
+  if (!sessionsNewestFirst.length) return null;
+  const k = sessionsNewestFirst.length >= 2 ? Math.max(1, Math.min(3, Math.floor(sessionsNewestFirst.length / 2))) : 1;
+  const recent = sessionsNewestFirst.slice(0, k);
+  const earlier = sessionsNewestFirst.length >= 2 ? sessionsNewestFirst.slice(-k) : null;
+  const cols = (ss: SessionJson[]) =>
+    [0, 1, 2].map((c) => {
+      const v = ss.map((s) => s.near.timeByColumnS[c]).filter((x): x is number => typeof x === "number");
+      return v.length ? v.reduce((a, b) => a + b, 0) / v.length : null;
+    }) as [number | null, number | null, number | null];
+  const left = (ss: SessionJson[]) => ss.reduce((a, s) => a + s.head.pctTimeLeft, 0) / ss.length;
+  return { k, recent: { cols: cols(recent), timeLeft: left(recent) }, earlier: earlier && { cols: cols(earlier), timeLeft: left(earlier) } };
+}
+
+/** Published references for the measures, shown as context only (docs/10-RESEARCH.md M7–M9). */
+export const COC_REFERENCE = 0.081;
