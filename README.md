@@ -11,7 +11,7 @@ A SPECS Lens for people who miss the left side of the world after a stroke,<br>a
 [![CI](https://github.com/harshbhx/purna/actions/workflows/ci.yml/badge.svg)](https://github.com/harshbhx/purna/actions/workflows/ci.yml)
 [![Deploy](https://github.com/harshbhx/purna/actions/workflows/deploy.yml/badge.svg)](https://github.com/harshbhx/purna/actions/workflows/deploy.yml)
 ![Core coverage](https://img.shields.io/badge/core%20coverage-98.9%25-2f7d4f)
-![Tests](https://img.shields.io/badge/tests-153-2f7d4f)
+![Tests](https://img.shields.io/badge/tests-181-2f7d4f)
 [![License: MIT](https://img.shields.io/badge/license-MIT-c8651b)](LICENSE)
 
 [purna.dualmindlab.tech](https://purna.dualmindlab.tech) · Built for **Learn AR with SPECS, Round 2** · [Why it's built this way](docs/10-RESEARCH.md)
@@ -26,7 +26,7 @@ After a right-hemisphere stroke, many people stop noticing the left half of spac
 
 **Purna** (पूर्ण, "whole") moves that exercise onto the dining table at home. Through Snap SPECS, small clay **diyas** appear on the table. You light the whole ones with a pinch and leave the chipped ones alone. If you stay on the right too long, a temple bell rings from your left and a soft beam sweeps that way. **The hints point to the side, never to the answer.** When you finish, a glowing thread replays the path your search took, so the half you skipped becomes visible. One pinch sends the report home.
 
-**Purna Family** ([purna.dualmindlab.tech](https://purna.dualmindlab.tech)) opens with the table above, explains Purna to families and therapists, and then lets their children follow along: a plain-language card for each session, a trend over days, and a 7-day read-only link for the therapist, who can write a note back.
+**Purna Family** ([purna.dualmindlab.tech](https://purna.dualmindlab.tech)) opens with the table above, explains Purna to families and therapists, shows what each measure catches with three simulated searchers on one table, and then lets their children follow along: a plain-language card for each session, a trend over days, and a 7-day read-only link for the therapist, who can write a note back.
 
 > [!IMPORTANT]
 > Purna is a practice tool, not a medical device. It doesn't diagnose or treat.
@@ -82,6 +82,10 @@ The **patient bench** drives the real engine with three scripted searchers on 20
 
 <img src="docs/img/bench.svg" alt="Bar charts over 200 simulated sessions per player. Left diyas found: healthy 100%, left neglect 65%, object neglect 100%. Hints needed: 0, 2.9, 0. Chipped-on-left diyas lit: 0, 0, 5.6. Head turned left: 27°, 16°, 29°.">
 
+On the family site the same idea is interactive: **Three ways to search the same table** plays one layout with all three searchers and marks the measures that give each one away.
+
+<img src="docs/img/three.png" alt="The explainer on the family site: three tabs for the three searchers, the replay of the left-neglect searcher with a scattered path and two missed left diyas, and five measures with the four that give it away highlighted">
+
 These are **simulated players, not patients**. The bench proves the measures separate search styles; it says nothing yet about real people.
 
 ## For judges
@@ -91,14 +95,14 @@ These are **simulated players, not patients**. The bench proves the measures sep
 | **Design** | One spatial moment done well: stuck, a bell from the left, the head turns. Layout in cm for a seated person, colours for an additive display, no score or timer during the task ([design](docs/02-DESIGN.md)) |
 | **Technical** | Logic in plain TypeScript shared by the Lens and Node, 98.9% covered; LEAF tests planned for every done criterion, with a head-yaw override; a contract test that every session the engine can produce passes the server; CI and CD on every merge |
 | **Innovation** | Cancellation-test measures from a pinch log and head yaw on real furniture; object-centred neglect with chipped diyas; a replay that shows the person their own blind half |
-| **Presentation** | The [brief](devpost/design-brief.md) from plan-lens, the [research](docs/10-RESEARCH.md), the video, and a live family site with a labelled example |
+| **Presentation** | The [brief](devpost/design-brief.md) from plan-lens, the [research](docs/10-RESEARCH.md), the [Devpost story](devpost/STORY.md) and [video plan](devpost/VIDEO.md), and a live family site with a labelled example and an interactive explainer |
 
 **Status, honestly:**
 
 | Part | State |
 |---|---|
 | Core logic: layout, hints, beam fading, metrics, report | ✅ logic proven (47 tests) |
-| Purna Family: landing, API, database, web app, doctor view | ✅ works end to end in Chrome (106 tests) |
+| Purna Family: landing, API, database, web app, doctor view | ✅ works end to end in Chrome, WCAG 2.1 AA checked (134 tests) |
 | Lens scene in Lens Studio (CLAD) | 🛠️ in progress; LEAF results land here |
 | How it feels to a real stroke survivor | ❓ feel unproven, not tested with patients |
 
@@ -132,8 +136,8 @@ flowchart LR
 |---|---|---|
 | Core + patient bench | `cd tools && npm test` | Layout rules on 500 seeds × 3 levels, hint timing, beam fading, metrics, the engine's phases, the bench (47 tests, coverage gate 85%) |
 | Worker + local D1 | `cd family && npm test` | Every API route and error, field-by-field validation, crypto, and the engine → server contract over every preset and add-on (68 tests) |
-| Web app | `npm run test:web` | React components in jsdom: the night-table animation and reduced motion, replay and trend SVGs, the app shell, dashboard dialogs and therapist view, CSV export with formula-injection guards, the API client (26 tests) |
-| End to end | `npm run test:e2e` | Real Chrome against the production build on `wrangler dev`: the landing (animation, reduced motion, no sideways scroll from 320 to 1440 px, phone menu), pair, dashboard, replay, doctor link, CSV, note, invite, import, delete, on phone and desktop (12 tests) |
+| Web app | `npm run test:web` | React components in jsdom: the night-table animation and reduced motion, replay and trend SVGs, the app shell, dashboard dialogs and therapist view, CSV export with formula-injection guards, the API client, the three-searcher explainer (one layout, verdicts from the numbers, arrow-key tabs), and every dashboard tool against a fake server: share and stop sharing, invite, import, delete, sign out (38 tests) |
+| End to end | `npm run test:e2e` | Real Chrome against the production build on `wrangler dev`: the landing (animation, reduced motion, no sideways scroll from 320 to 1440 px, phone menu), pair, dashboard, replay, doctor link, CSV, note, invite, import, delete; stopping a doctor link, the print layout, dead links; a keyboard-only walk (skip link, tabs, Enter and Escape with focus returned); and axe WCAG 2.1 AA scans of every screen and dialog in light and dark mode. Each runs on phone and desktop (28 tests) |
 
 **CI** ([`ci.yml`](.github/workflows/ci.yml)) runs all of it on every pull request, builds the web app, puts coverage in the job summary, lints the shell scripts, and fails if the bench chart or demo data are stale. **CD** ([`deploy.yml`](.github/workflows/deploy.yml)) runs after CI passes on `main`: builds the web app, applies D1 migrations, runs `wrangler deploy`, then smoke-tests the live site.
 
@@ -154,8 +158,8 @@ npm run sample -- --post http://localhost:8787 0123456789abcdef0123456789abcdef 
 
 | Path | What |
 |---|---|
-| [`devpost/`](devpost) | The plan-lens answers and the design brief CLAD builds from |
-| [`docs/`](docs) | [PRD](docs/01-PRD.md) · [design](docs/02-DESIGN.md) · [architecture](docs/03-ARCHITECTURE.md) · [tasks](docs/04-TASKS.md) · [prompts](docs/05-PROMPTS.md) · [testing](docs/06-TESTING.md) · [research](docs/10-RESEARCH.md) |
+| [`devpost/`](devpost) | The plan-lens answers, the design brief CLAD builds from, the Devpost story and the video script |
+| [`docs/`](docs) | [PRD](docs/01-PRD.md) · [design](docs/02-DESIGN.md) · [architecture](docs/03-ARCHITECTURE.md) · [tasks](docs/04-TASKS.md) · [prompts](docs/05-PROMPTS.md) · [testing](docs/06-TESTING.md) · [submission](docs/07-SUBMISSION.md) · [research](docs/10-RESEARCH.md) |
 | [`Assets/Scripts/Core/`](Assets/Scripts/Core) | The engine: layout, hints, metrics, report |
 | [`tools/`](tools) | Core tests, the patient bench, the bench chart |
 | [`family/`](family) | Purna Family: Worker (`src/`), D1 migration, React web app (`web/`), all its tests |
