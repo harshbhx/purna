@@ -38,7 +38,7 @@ Everything you need to judge Purna in a few minutes, with links to the evidence.
 |---|---|
 | Core logic (layout, hints, beam fading, metrics, report, next-session suggestion) | Logic proven: unit tests, 98.9% line coverage |
 | Do the measures tell search styles apart? | Logic proven on **simulated players** (200 layouts each); not yet on patients |
-| Purna Family (site, API, database, therapist view) | Works end to end in Chrome on phone and desktop; WCAG 2.1 AA checked with axe |
+| Purna Family (site, API, database, therapist view) | Works end to end in Chrome on phone and desktop; WCAG 2.1 AA checked with axe; the family dashboard also in Hindi |
 | The Lens | Built by CLAD; LEAF results are in the README |
 | How it feels to a stroke survivor | **Feel unproven.** Not yet tried with patients or therapists |
 

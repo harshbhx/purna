@@ -43,7 +43,7 @@ Do the 2-minute version, then add:
 | Why do hints only point to the side? | Because the searching is the exercise. Pointing at the diya would do the work for them. |
 | What did CLAD build, and what did you write first? | We wrote and tested the logic in plain TypeScript first; CLAD built the scene, the interactions and the LEAF tests from the plan-lens brief, calling that engine. |
 | What happens without internet? | The session prints to the Logger; the family can import it later. |
-| What's next? | Sessions with therapists and stroke survivors, Hindi on the glasses, a far board across the room. |
+| What's next? | Sessions with therapists and stroke survivors, Hindi on the glasses (the family dashboard already has it), a far board across the room. |
 | Biggest risk? | How it feels to an older person over four minutes, and whether the bell's direction is clear on real SPECS speakers. Both need real glasses. |
 
 ## If something breaks
