@@ -15,9 +15,9 @@ Priority: **P0** ships or we don't submit · **P1** makes it win · **P2** only 
 | T01 | Register for Learn AR with SPECS on Devpost | H | P0 | 5 min | Registered on learn-specs.devpost.com |
 | T02 | Install Lens Studio 5.23.2 and create the SPECS Base Template project | H | P0 | 30 min | `purna.esproj` saved; preview runs |
 | T03 | Install CLAD and connect the Lens Studio MCP in Claude Code | H | P0 | 20 min | `/mcp` shows lens-studio connected; `/plugin` lists ls-clad |
-| T04 | Create the GitHub repo and merge this pack into the Lens project folder | H | P0 | 20 min | Repo `harshbhx/purna` public; signed first commit; issues created |
+| T04 | ✅ Create the GitHub repo and merge this pack into the Lens project folder | H | P0 | 20 min | Repo `harshbhx/purna` public; signed first commit; issues created |
 | T05 | Install the skill pack and run plan-lens setup check in the project | H | P0 | 10 min | plan-lens confirms the setup; brief approved (`status: approved`) |
-| T06 | Create the D1 database and custom domain for Purna Family | H | P0 | 15 min | `wrangler d1 create purna` done; id in `family/wrangler.toml`; DNS ready |
+| T06 | ✅ Create the D1 database and custom domain for Purna Family | H | P0 | 15 min | `wrangler d1 create purna` done; id in `family/wrangler.toml`; DNS ready |
 
 ## Phase 1 — core logic (agent; Footlight pattern, before CLAD)
 
