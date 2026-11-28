@@ -5,7 +5,7 @@ A plan for the live review: what to have open, the order to show things, what to
 ## Before the call (by 22:00)
 
 - [ ] Lens Studio open with the project, **Preview** running, Standard selected, `PurnaDemoDirector` off. Audio on.
-- [ ] A browser with three tabs: [purna.dualmindlab.tech](https://purna.dualmindlab.tech), [the example therapist view](https://purna.dualmindlab.tech/doctor#demo), [the repo's JUDGES.md](https://github.com/harshbhx/purna/blob/main/JUDGES.md).
+- [ ] A browser with four tabs: [Try the table](https://purna.dualmindlab.tech/play) (headphones), [purna.dualmindlab.tech](https://purna.dualmindlab.tech), [the example therapist view](https://purna.dualmindlab.tech/doctor#demo), [the repo's JUDGES.md](https://github.com/harshbhx/purna/blob/main/JUDGES.md).
 - [ ] The demo video file ready to play locally, in case the live preview misbehaves.
 - [ ] Screen share tested; notifications off; the site checked live (it must answer, and **See an example** must work logged out).
 - [ ] Water. Speak slowly.

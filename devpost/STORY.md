@@ -31,16 +31,18 @@ We wanted that exercise at home, on the person's own dining table, in something 
 3. Pinch a whole diya and it lights with a warm tone. Pinch a chipped one and nothing happens but a soft tick. There is no score, no timer and no failure sound.
 4. Stuck on the right for 6 seconds with dark diyas still on the left? A **temple bell rings from the left** and a soft beam pulses there. Six seconds more, the beam sweeps left. **The hint points to the side, never to the answer.** The beam fades as the person starts finding left diyas on their own.
 5. When the table is done, a glowing **thread replays the search path**. The numbers show the order the diyas were found; the ones missed pulse where they were. The person sees their own blind half.
+   Then warm light fades up across the table where the head pointed during the task: an **attention map**. The half never looked at stays dark.
 6. A report card shows four measures in plain words, labelled "Practice result, not a diagnosis". One pinch sends it home.
-7. Next time, the setup panel suggests the level: two clean sessions in a row step it up, a hard one steps it down, with a one-line reason the carer can override.
+7. Next time, the setup panel suggests the level: two clean sessions in a row step it up, a hard one steps it down, with a one-line reason the carer can override. If the therapist set the next session from their link, the panel loads that instead: "Set by your therapist on 3 Dec".
 
 Every diya can be pinched with a ray from a hand resting in the lap, so nobody has to reach across the body with their stronger hand.
 
 **Purna Family** ([purna.dualmindlab.tech](https://purna.dualmindlab.tech)) is the web side:
 
 - **Families** type the code shown on the glasses once (like `DIYA-7K3P`). The dashboard switches to Hindi with one button. Then every session arrives as one plain sentence, two left/right bars and a trend line, and brothers and sisters join with an invite link.
-- **Therapists** get a read-only link that lasts 7 days and can be stopped at any time: every session with the numbers a cancellation test gives (Centre of Cancellation, egocentric and allocentric asymmetry, search order, crossings, revisits, head turn), a 2D replay, CSV export, a print layout, and a notes box that sends a note back to the family.
+- **Therapists** get a read-only link that lasts 7 days and can be stopped at any time: every session with the numbers a cancellation test gives (Centre of Cancellation, egocentric and allocentric asymmetry, search order, crossings, revisits, head turn), a 2D replay, CSV export, a print layout, a notes box that sends a note back to the family, and **Set the next session**: the level and hint delay the glasses will load next time.
 - The therapist view also shows each person's usual day-to-day change as a band on the trend (so a lucky day isn't read as recovery), where the searching time went across the table, and published cancellation-test references as context, never as a pass/fail line. Anyone can open [an example](https://purna.dualmindlab.tech/doctor#demo).
+- **Try the table** ([purna.dualmindlab.tech/play](https://purna.dualmindlab.tech/play)): the Lens's own engine in a browser, so anyone can play without glasses. Only a window as wide as the glasses' view shows its diyas; the mouse or arrow keys turn the head; the bell rings in the left ear; then the replay, the attention map and the report. **Feel neglect** fades the left of whatever you look at, so a family can feel what their father can't see.
 - **"Three ways to search the same table"** on the home page explains the measures: one layout, played by three simulated searchers through the real engine. Switch between them and the measures that give each one away light up.
 
 **[after CLAD]** Add-ons built: warm-up with diyas drifting leftward only / far board at 2 m (keep only what passed LEAF).
@@ -57,7 +59,7 @@ Every diya can be pinched with a ray from a hand resting in the lap, so nobody h
 
 **Purna Family** is a Cloudflare Worker with D1. Family keys and doctor tokens are 32 random bytes and stored only as SHA-256 hashes. The web app is React with shadcn/ui, React Bits and Aceternity-style effects, behind a strict Content Security Policy (no third-party scripts). A **contract test** runs the real engine through every level, add-on and searcher and checks that each session passes the server's validator, so the glasses and the server can't drift apart.
 
-**Tested like a product.** 253 automated tests: Core, bench and sounds 68, Worker and local D1 79, web components 64, and 42 end-to-end tests in real Chrome at phone and desktop sizes. The end-to-end suite runs axe accessibility checks (WCAG 2.1 AA) on every screen in light and dark mode, walks the keyboard path, and plays the whole family loop: pair, share with the doctor, note back, delete everything. GitHub Actions runs it all on every pull request and deploys after green CI on main.
+**Tested like a product.** 283 automated tests: Core, bench and sounds 79, Worker and local D1 84, web components 71, and 49 end-to-end tests in real Chrome at phone and desktop sizes. The end-to-end suite runs axe accessibility checks (WCAG 2.1 AA) on every screen in light and dark mode, walks the keyboard path, and plays the whole family loop: pair, share with the doctor, note back, delete everything. GitHub Actions runs it all on every pull request and deploys after green CI on main.
 
 **Safety and documentation, because it's health-adjacent.** The site has a [docs section](https://purna.dualmindlab.tech/docs): safety first (who shouldn't use it, when to stop, stroke warning signs and calling a local emergency number anywhere in the world), setting up the glasses, guides for carers and therapists, what the numbers mean, privacy (what's stored, for how long, and everyone's rights wherever they live), terms, accessibility, evidence and limits, and how to report a problem. Writing it found a real issue: the design had the warm-up flame flicker at 4 Hz, above the 3-flashes-a-second seizure limit, and seizures are common after stroke. It's now a smooth 1 Hz glow, and the brief forbids anything faster than three changes a second. Unpaired data is deleted automatically after 30 days.
 
@@ -70,6 +72,9 @@ Every diya can be pinched with a ray from a hand resting in the lap, so nobody h
 - **Keeping the glasses and the server in step.** Session JSON is one versioned contract (`purna.session.v1`), validated field by field, under 64 KB, and tested against everything the engine can produce.
 
 ## Accomplishments that we're proud of
+
+- One engine in three places: the glasses, the tests and the browser. The table you play at /play is scored by exactly the code the Lens runs.
+- The attention map: glasses know where you looked, not just where you tapped, and the side never looked at stays dark on your own table.
 
 - The replay. Showing people where they looked improved neglect and self-awareness in a crossover study, and on the glasses it's one glowing thread on their own table.
 - Every design choice traces to a published finding, listed with sources in `docs/10-RESEARCH.md`.
@@ -113,9 +118,10 @@ Every diya can be pinched with a ray from a hand resting in the lap, so nobody h
 
 ## Testing instructions for judges
 
-1. **The Lens:** open the project in Lens Studio 5.x, press Preview. Pick Standard, then Start. Light the right-side diyas and wait 6 s to hear the bell from the left. Light everything, watch the replay, read the report. **[after CLAD: any preview tips, e.g. right-drag to turn the head]**
-2. **Purna Family:** open https://purna.dualmindlab.tech and press **See an example**: a labelled demo dashboard from simulated sessions. Open any session for its replay and measures. The therapist side is at https://purna.dualmindlab.tech/doctor#demo.
+1. **Try the table (30 seconds, headphones):** https://purna.dualmindlab.tech/play. Stall on the right and listen; then tick **Feel neglect** and play again.
+2. **The Lens:** open the project in Lens Studio 5.x, press Preview. Pick Standard, then Start. Light the right-side diyas and wait 6 s to hear the bell from the left. Light everything, watch the replay, read the report. **[after CLAD: any preview tips, e.g. right-drag to turn the head]**
+3. **Purna Family:** open https://purna.dualmindlab.tech and press **See an example**: a labelled demo dashboard from simulated sessions. Open any session for its replay and measures. The therapist side is at https://purna.dualmindlab.tech/doctor#demo; try **Set the next session** there.
 
 A one-page guide for judges is in the repo: `JUDGES.md`.
-3. **Three ways to search:** on the home page, switch between the three searchers under "Three ways to search the same table".
-4. **Tests:** `cd tools && npm ci && npm test`, then `cd family && npm ci && npm test && npm run test:web && npm run test:e2e`.
+4. **Three ways to search:** on the home page, switch between the three searchers under "Three ways to search the same table".
+5. **Tests:** `cd tools && npm ci && npm test`, then `cd family && npm ci && npm test && npm run test:web && npm run test:e2e`.
