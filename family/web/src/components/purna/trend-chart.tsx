@@ -6,7 +6,10 @@ export interface TrendPoint { date: string; left: number | null; right: number |
 
 const pctText = (v: number | null | undefined) => (v === null || v === undefined ? "none" : Math.round(v * 100) + "%");
 
-export function TrendChart({ points, height }: { points: TrendPoint[]; height?: number }) {
+/** Optional: the person's usual session-to-session change, drawn as a soft band around the left line (lib/session dayToDay). */
+export interface TrendBand { spread: number; centre: (number | null)[] }
+
+export function TrendChart({ points, height, band }: { points: TrendPoint[]; height?: number; band?: TrendBand | null }) {
   const ref = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(640);
   useEffect(() => {
@@ -47,6 +50,14 @@ export function TrendChart({ points, height }: { points: TrendPoint[]; height?: 
             {new Date(p.date).toLocaleDateString(undefined, { day: "numeric", month: "short" })}
           </text>
         ))}
+        {band && (() => {
+          const pts = band.centre.map((c, i) => [x(i), c] as const).filter(([, c]) => c !== null) as [number, number][];
+          if (pts.length < 2) return null;
+          const clamp = (v: number) => Math.max(0, Math.min(1, v));
+          const top = pts.map(([px, c]) => `${px},${y(clamp(c + band.spread))}`);
+          const bottom = pts.slice().reverse().map(([px, c]) => `${px},${y(clamp(c - band.spread))}`);
+          return <polygon data-band points={[...top, ...bottom].join(" ")} className="fill-side-l/12" />;
+        })()}
         {series.map((s) => {
           const pts = points.map((p, i) => [x(i), p[s.key]] as const).filter(([, v]) => v !== null) as [number, number][];
           if (!pts.length) return null;
