@@ -3,9 +3,9 @@
 // Layout: the menu and search on the left, the page in the middle, "On this page" on the right (wide screens).
 import {
   Accessibility, ArrowLeft, ArrowRight, BarChart3, BookOpen, Clock, FileText, Flag, FlaskConical, Glasses, HeartHandshake,
-  Lock, Pencil, Phone, Printer, Search, ShieldAlert, Stethoscope, TriangleAlert, type LucideIcon,
+  BookA, ClipboardCheck, Lock, Pencil, Phone, Printer, Search, ShieldAlert, Stethoscope, TriangleAlert, type LucideIcon,
 } from "lucide-react";
-import { Children, isValidElement, useEffect, useMemo, useState, type ReactNode } from "react";
+import { Children, isValidElement, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import Markdown, { type Components } from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { AppHeader } from "@/components/purna/app-header";
@@ -13,6 +13,8 @@ import { SiteFooter } from "@/components/purna/site-footer";
 import { SkipLink } from "@/components/purna/skip-link";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { termLinker } from "@/lib/terms";
+import { GLOSSARY } from "@/data/glossary";
 import overview from "@/content/docs/overview.md?raw";
 import safety from "@/content/docs/safety.md?raw";
 import setup from "@/content/docs/setup.md?raw";
@@ -24,6 +26,8 @@ import terms from "@/content/docs/terms.md?raw";
 import accessibility from "@/content/docs/accessibility.md?raw";
 import evidence from "@/content/docs/evidence.md?raw";
 import report from "@/content/docs/report.md?raw";
+import results from "@/content/docs/results.md?raw";
+import glossary from "@/content/docs/glossary.md?raw";
 
 export interface DocPage { id: string; title: string; group: string; body: string; desc: string; icon: LucideIcon }
 
@@ -32,24 +36,29 @@ export const DOCS: DocPage[] = [
   { id: "safety", title: "Safety", group: "Start", body: safety, icon: ShieldAlert, desc: "Read before the first session: who shouldn't use it, a safe space, when to stop." },
   { id: "setup", title: "Setting up the glasses", group: "Start", body: setup, icon: Glasses, desc: "Get the Lens onto Spectacles, run a session, link it to the family site." },
   { id: "carers", title: "Guide for carers", group: "Guides", body: carers, icon: HeartHandshake, desc: "Your part: set it up, sit nearby, keep it gentle, share with the therapist." },
-  { id: "therapists", title: "Guide for therapists", group: "Guides", body: therapists, icon: Stethoscope, desc: "Reading the results, setting the next session, and the limits to keep in mind." },
-  { id: "measures", title: "What the numbers mean", group: "Guides", body: measures, icon: BarChart3, desc: "Each result in plain words, then exactly how it's worked out." },
+  { id: "therapists", title: "Guide for therapists", group: "Guides", body: therapists, icon: Stethoscope, desc: "Reading the results, setting the next session, limits, and how to pilot it with us." },
+  { id: "measures", title: "What the numbers mean", group: "Reference", body: measures, icon: BarChart3, desc: "Each result in plain words, then exactly how it's worked out." },
+  { id: "results", title: "Results so far", group: "Reference", body: results, icon: ClipboardCheck, desc: "What we tested and the numbers: the patient bench, 286 tests, accessibility." },
+  { id: "evidence", title: "Evidence and limits", group: "Reference", body: evidence, icon: FlaskConical, desc: "The research behind every design choice, with sources, and what isn't known." },
+  { id: "glossary", title: "Glossary", group: "Reference", body: glossary, icon: BookA, desc: "Every term used here, from allocentric neglect to WCAG, in plain words." },
   { id: "privacy", title: "Privacy", group: "Policies", body: privacy, icon: Lock, desc: "What's stored, where, for how long, and your rights wherever you live." },
   { id: "terms", title: "Terms of use", group: "Policies", body: terms, icon: FileText, desc: "Plain-language terms for using Purna and Purna Family." },
   { id: "accessibility", title: "Accessibility", group: "Policies", body: accessibility, icon: Accessibility, desc: "What we check, what isn't perfect yet, and how to tell us." },
-  { id: "evidence", title: "Evidence and limits", group: "About", body: evidence, icon: FlaskConical, desc: "Why it's built this way, with sources, and what we don't know yet." },
-  { id: "report", title: "Report a problem", group: "About", body: report, icon: Flag, desc: "Safety concerns, bugs and security problems: how to reach us." },
+  { id: "report", title: "Report a problem", group: "Help", body: report, icon: Flag, desc: "Safety concerns, bugs and security problems: how to reach us." },
 ];
 
 const GROUP_STYLE: Record<string, string> = {
   Start: "bg-[color-mix(in_srgb,var(--flame)_16%,transparent)] text-warn",
   Guides: "bg-[color-mix(in_srgb,var(--right)_14%,transparent)] text-[var(--right)]",
   Policies: "bg-muted text-muted-foreground",
-  About: "bg-[color-mix(in_srgb,var(--success)_14%,transparent)] text-success",
+  Reference: "bg-[color-mix(in_srgb,var(--success)_14%,transparent)] text-success",
+  Help: "bg-[color-mix(in_srgb,var(--danger)_12%,transparent)] text-danger",
 };
 
 const SOURCE = "https://github.com/harshbhx/purna/blob/main/family/web/src/content/docs/";
-const pageFromHash = (): DocPage => DOCS.find((d) => d.id === location.hash.slice(1)) ?? DOCS[0];
+const pageFromHash = (): DocPage => DOCS.find((d) => d.id === location.hash.slice(1).split("/")[0]) ?? DOCS[0];
+/** "/docs#glossary/hemianopia" points at one glossary entry. */
+const termFromHash = () => (location.hash.startsWith("#glossary/") ? location.hash.slice("#glossary/".length) : null);
 
 const text = (n: ReactNode): string =>
   Children.toArray(n).map((c) => (typeof c === "string" || typeof c === "number" ? String(c) : isValidElement<{ children?: ReactNode }>(c) ? text(c.props.children) : "")).join("");
@@ -72,6 +81,15 @@ function parts(body: string) {
   const reviewed = /Last reviewed: ([^.]+)\./.exec(body)?.[1] ?? null;
   const minutes = Math.max(1, Math.round(plain(body).split(" ").length / 200));
   return { title, lead: leadLines.join(" "), rest, sections, reviewed, minutes };
+}
+
+function mdWith(link: (c: ReactNode) => ReactNode): Components {
+  return {
+  ...MD,
+  p: ({ children }) => <p className="m-0 mt-4 max-w-[68ch] text-[16.5px] leading-[1.72]">{link(children)}</p>,
+  li: ({ children }) => <li>{link(children)}</li>,
+  td: ({ children }) => <td className="border-b border-border px-4 py-3 align-top leading-relaxed">{link(children)}</td>,
+  };
 }
 
 const MD: Components = {
@@ -120,17 +138,34 @@ export function Docs() {
   const [page, setPage] = useState<DocPage>(pageFromHash);
   const [q, setQ] = useState("");
   useEffect(() => {
-    const on = () => { setPage(pageFromHash()); setQ(""); window.scrollTo({ top: 0, behavior: "instant" }); document.getElementById("doc-body")?.focus({ preventScroll: true }); };
+    const on = () => {
+      setPage(pageFromHash());
+      setQ("");
+      const t = termFromHash();
+      if (t) { requestAnimationFrame(() => { const el = document.getElementById(`term-${t}`); el?.scrollIntoView({ block: "center" }); el?.focus({ preventScroll: true }); }); return; }
+      window.scrollTo({ top: 0, behavior: "instant" });
+      document.getElementById("doc-body")?.focus({ preventScroll: true });
+    };
     window.addEventListener("hashchange", on);
     return () => window.removeEventListener("hashchange", on);
   }, []);
   useEffect(() => { document.title = `${page.title}: Purna docs`; }, [page]);
+  useEffect(() => {
+    const t = termFromHash();
+    if (t) requestAnimationFrame(() => document.getElementById(`term-${t}`)?.scrollIntoView({ block: "center" }));
+  }, []);
 
   const p = useMemo(() => parts(page.body), [page]);
   const isHome = page.id === "overview";
   // The overview's "Start here" table becomes the cards below its header.
   const rest = isHome ? p.rest.replace(/## Start here[\s\S]*?(?=\n## )/, "") : p.rest;
-  const sections = isHome ? p.sections.filter((s) => s !== "Start here") : p.sections;
+  const isGlossary = page.id === "glossary";
+  const letters = useMemo(() => [...new Set(GLOSSARY.map((t) => t.name[0].toUpperCase()))].sort(), []);
+  const sections = isHome ? p.sections.filter((s) => s !== "Start here") : isGlossary ? letters : p.sections;
+  // One set of seen terms for the whole page, emptied at every render so each term is explained at its first use.
+  const seen = useRef(new Set<string>()).current;
+  seen.clear();
+  const components = useMemo(() => mdWith(termLinker(seen)), [seen]);
   const ids = useMemo(() => sections.map(slug), [sections]);
   const active = useActiveSection(ids);
 
@@ -269,9 +304,22 @@ export function Docs() {
           )}
 
           <div className="doc-body">
-            <Markdown remarkPlugins={[remarkGfm]} components={{ ...MD, h1: () => null }}>
+            <Markdown remarkPlugins={[remarkGfm]} components={{ ...(isGlossary ? MD : components), h1: () => null }}>
               {rest}
             </Markdown>
+            {isGlossary && letters.map((L) => (
+              <section key={L} aria-labelledby={slug(L)}>
+                <h2 id={slug(L)} className="doc-h2 m-0 mt-10 scroll-mt-24 text-[15px] font-semibold tracking-[0.02em] text-muted-foreground">{L}</h2>
+                <dl className="m-0 mt-3 grid gap-2.5">
+                  {GLOSSARY.filter((t) => t.name[0].toUpperCase() === L).map((t) => (
+                    <div key={t.slug} id={`term-${t.slug}`} tabIndex={-1} className="glossary-term scroll-mt-28 rounded-2xl border border-border bg-card px-4 py-3.5 outline-none">
+                      <dt className="text-[16px] font-semibold">{t.name}</dt>
+                      <dd className="m-0 mt-1 text-[15.5px] leading-relaxed text-muted-foreground [&_p]:m-0"><Markdown components={{ a: MD.a, p: ({ children }) => <p>{children}</p> }}>{t.short}</Markdown></dd>
+                    </div>
+                  ))}
+                </dl>
+              </section>
+            ))}
           </div>
 
           <div className="no-print mt-12 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border bg-surface px-5 py-4 text-[14px]">

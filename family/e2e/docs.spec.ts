@@ -2,7 +2,7 @@
 import { expect, test } from "@playwright/test";
 import { watchConsole } from "./helpers";
 
-const PAGES = ["overview", "safety", "setup", "carers", "therapists", "measures", "privacy", "terms", "accessibility", "evidence", "report"];
+const PAGES = ["overview", "safety", "setup", "carers", "therapists", "measures", "results", "evidence", "glossary", "privacy", "terms", "accessibility", "report"];
 
 test("the footer's Safety link opens the safety page", async ({ page }) => {
   await page.goto("/");
@@ -44,4 +44,20 @@ test("printing keeps the page and drops the menus", async ({ page, isMobile }) =
   await expect(page.locator("#doc-title")).toBeVisible();
   await expect(page.getByRole("navigation", { name: "Documentation" })).toBeHidden();
   await expect(page.getByRole("button", { name: "Print this page" })).toBeHidden();
+});
+
+test("hard words explain themselves and lead to the glossary", async ({ page }) => {
+  await page.goto("/docs#therapists");
+  const term = page.locator('#doc-body a.term[href="/docs#glossary/hemianopia"]');
+  await term.focus();
+  const card = page.getByRole("tooltip");
+  await expect(card).toContainText("Hemianopia");
+  await expect(card).toContainText("half the field of vision");
+  await page.keyboard.press("Escape");
+  await expect(card).toHaveCount(0);
+  await term.focus();
+  await page.keyboard.press("Enter");
+  await expect(page).toHaveURL(/#glossary\/hemianopia$/);
+  await expect(page.getByRole("heading", { level: 1, name: "Glossary" })).toBeVisible();
+  await expect(page.locator("#term-hemianopia")).toBeInViewport();
 });

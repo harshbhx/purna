@@ -49,9 +49,17 @@ On paper tests, an acute Centre of Cancellation above 0.081 on the Bells Test (0
 
 The glasses send no name, face, camera image or location; the family types the name they use. Your link is a random token stored only as a hash. Notes you write are kept with the family's data until they delete it. See [Privacy](#privacy).
 
-## Help us improve it
+## Pilot Purna with us
 
-We'd value your view on whether these measures are useful and what's missing: see [Report a problem](#report) for how to reach us. Clinical collaboration is welcome.
+Purna hasn't been used with patients yet, and it shouldn't be judged until it has. If you treat people with neglect, we'd value your help, at whatever level suits you:
+
+- **Look and tell us (15 minutes):** open the [example therapist view](https://purna.dualmindlab.tech/doctor#demo) and [try the table yourself](https://purna.dualmindlab.tech/play), then tell us what's useful, what's missing and what's misleading.
+- **Review the measures:** do left/right hits, Centre of Cancellation, chipped-diya errors, search order, head turn and the attention map answer the questions you'd ask? Which would you drop?
+- **A small pilot,** only with ethics approval where you work: a supervised first session in clinic, a couple of weeks of home practice, and standard tests before and after, so Purna's numbers can be compared with tools you trust.
+
+**What we bring:** the Lens and the site, set up for your patients; help in person or on a call; the data exported as CSV at any time; and no cost. **What we won't do:** claim results that a study hasn't shown, or use anyone's data for anything else.
+
+Write to [harshbhx@gmail.com](mailto:harshbhx@gmail.com). The numbers so far are on [Results so far](#results), and the reasoning behind every design choice is on [Evidence and limits](#evidence).
 
 Sources: [Rorden & Karnath 2010](https://pmc.ncbi.nlm.nih.gov/articles/PMC3129646) · [Fixed cut-offs and false positives, J Int Neuropsychol Soc 2020](https://www.psy.ox.ac.uk/publications/1098321) · [Apples Test standardisation, Mancuso et al. 2015](https://iris.uniroma1.it/bitstream/11573/780999/1/Mancuso_Italian_2015.pdf) · [Full research notes](https://github.com/harshbhx/purna/blob/main/docs/10-RESEARCH.md)
 

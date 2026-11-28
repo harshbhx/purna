@@ -2,12 +2,13 @@
 import { fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import { Docs, DOCS } from "@/pages/Docs";
+import { GLOSSARY } from "@/data/glossary";
 
 const show = (id: string) => { history.replaceState(null, "", `/docs#${id}`); return render(<Docs />); };
 
 describe("Docs content", () => {
   it("has the pages a medical-adjacent product needs, each with a review date", () => {
-    expect(DOCS.map((d) => d.id)).toEqual(["overview", "safety", "setup", "carers", "therapists", "measures", "privacy", "terms", "accessibility", "evidence", "report"]);
+    expect(DOCS.map((d) => d.id)).toEqual(["overview", "safety", "setup", "carers", "therapists", "measures", "results", "evidence", "glossary", "privacy", "terms", "accessibility", "report"]);
     for (const d of DOCS) expect(d.body, d.id).toMatch(/Last reviewed: \d{1,2} \w+ \d{4}\./);
   });
 
@@ -84,5 +85,23 @@ describe("Docs page", () => {
     const region = document.querySelector("#doc-body [role=region]")!;
     expect(region.getAttribute("tabindex")).toBe("0");
     expect(region.getAttribute("aria-label")).toBeTruthy();
+  });
+
+  it("explains glossary words in the text, once per page, and lists every term on the glossary page", async () => {
+    const { container, unmount } = show("therapists");
+    const terms = [...container.querySelectorAll("a.term")];
+    expect(terms.length).toBeGreaterThan(3);
+    const slugs = terms.map((a) => a.getAttribute("href"));
+    expect(new Set(slugs).size).toBe(slugs.length);
+    const h = terms.find((a) => a.getAttribute("href") === "/docs#glossary/hemianopia")!;
+    expect(h.getAttribute("href")).toBe("/docs#glossary/hemianopia");
+    expect(document.getElementById(h.getAttribute("aria-describedby")!)!.textContent).toMatch(/half the field of vision/);
+    fireEvent.focus(h);
+    expect((await screen.findByRole("tooltip")).textContent).toMatch(/Hemianopia/);
+    unmount();
+    const g = show("glossary");
+    expect(g.container.querySelectorAll("dl dt").length).toBe(GLOSSARY.length);
+    expect(g.container.querySelector("#term-centre-of-cancellation")).toBeTruthy();
+    expect(g.container.querySelectorAll("a.term")).toHaveLength(0);
   });
 });

@@ -20,6 +20,7 @@ test("play the table: narrow view, keyboard turns, pinches, report, replay and t
   const problems = watchConsole(page);
   await page.goto("/play");
   await expect(page.getByRole("heading", { level: 1, name: "Try the table yourself" })).toBeVisible();
+  await page.getByRole("radio", { name: "Top-down" }).check();
   await page.getByRole("button", { name: "Start" }).click();
   await expect(page.locator("#play-table")).toBeFocused();
 
@@ -53,6 +54,7 @@ test("play the table: narrow view, keyboard turns, pinches, report, replay and t
 test("feel neglect fades the left of the view, and the setup is keyboard-usable", async ({ page }) => {
   await page.goto("/play");
   await page.getByRole("radio", { name: "Standard" }).check();
+  await page.getByRole("radio", { name: "Top-down" }).check();
   await page.getByLabel(/Feel neglect/).check();
   await page.getByRole("button", { name: "Start" }).click();
   await expect(page.locator("#play-table [role=button]")).toHaveCount(24);
@@ -119,4 +121,26 @@ test("the theme switch flips light and dark, and remembers it on every page", as
   await page.goto("/");
   await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
   expect(await bg()).toBe(light);
+});
+
+test("the 3D glasses view draws the room, and the keyboard picks and lights diyas", async ({ page }) => {
+  const problems = watchConsole(page);
+  await page.goto("/play");
+  await expect(page.getByRole("radio", { name: "Through the glasses (3D)" })).toBeChecked();
+  await page.getByRole("button", { name: "Start" }).click();
+  const table = page.locator("#play-table");
+  await expect(table).toHaveAttribute("data-view", "glasses");
+  await expect(table.locator("canvas")).toBeVisible();
+  await expect(table).toContainText("What the glasses can draw");
+  await expect(table).toBeFocused();
+  for (let i = 0; i < 16 && (await table.getAttribute("data-lit")) === "0"; i++) {
+    await page.keyboard.press("ArrowDown");
+    await page.keyboard.press("Enter");
+  }
+  expect(Number(await table.getAttribute("data-lit"))).toBeGreaterThan(0);
+  // Switch to the top-down view mid-task; the same session carries on.
+  await page.getByRole("radiogroup", { name: "View" }).getByRole("radio", { name: "Top-down" }).check();
+  await expect(table).toHaveAttribute("data-view", "top");
+  await expect(page.locator('#play-table [aria-label="Lit diya"]').first()).toBeAttached();
+  expect(problems).toEqual([]);
 });

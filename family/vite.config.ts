@@ -28,6 +28,8 @@ export default defineConfig({
           if (!id.includes("node_modules")) return undefined;
           if (/[\\/](react|react-dom|scheduler)[\\/]/.test(id)) return "react";
           if (/[\\/](motion|motion-dom|motion-utils|framer-motion)[\\/]/.test(id)) return "motion";
+          // three.js stays in its own chunk, fetched only when the 3D glasses view opens on /play.
+          if (/[\\/]three[\\/]/.test(id)) return "three";
           if (id.includes("@radix-ui") || id.includes("@floating-ui") || id.includes("react-remove-scroll")) return "radix";
           return "vendor";
         },

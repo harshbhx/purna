@@ -22,6 +22,7 @@ import { ReferenceCard } from "@/components/purna/reference-card";
 import type { DoctorData, Note, Plan, SessionJson } from "@/lib/types";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
 import { SkipLink } from "@/components/purna/skip-link";
+import { termLinker } from "@/lib/terms";
 
 const TOKEN_KEY = "purna.doctorToken";
 /** /doctor#demo: the same view filled with the labelled demo sessions, so anyone (judges included) can see it. */
@@ -77,6 +78,7 @@ export function Doctor() {
   const [noteMsg, setNoteMsg] = useState<{ kind: "success" | "danger"; text: string } | null>(null);
   const [openIds, setOpenIds] = useState<Set<string>>(new Set());
   const [plan, setPlan] = useState<Plan | null>(null);
+  const explain = termLinker(new Set<string>(["centre-of-cancellation"]));
   const [planForm, setPlanForm] = useState<{ preset: Plan["preset"]; hintDelayS: number } | null>(null);
   const [planMsg, setPlanMsg] = useState<{ kind: "success" | "danger"; text: string } | null>(null);
 
@@ -316,7 +318,8 @@ export function Doctor() {
                 <Card>
                   <CardHeader><CardTitle>What the measures mean</CardTitle></CardHeader>
                   <CardContent className="pt-3">
-                    <dl className="m-0 flex flex-col gap-3">{GLOSSARY.map(([k, v]) => <div key={k}><dt className="text-[14px] font-semibold">{k}</dt><dd className="m-0 mt-0.5 text-[13px] leading-relaxed text-muted-foreground">{v}</dd></div>)}</dl>
+                    <dl className="m-0 flex flex-col gap-3">{GLOSSARY.map(([k, v]) => <div key={k}><dt className="text-[14px] font-semibold">{k}</dt><dd className="m-0 mt-0.5 text-[13px] leading-relaxed text-muted-foreground">{explain(v)}</dd></div>)}</dl>
+                    <p className="m-0 mt-4 text-[13px]"><a href="/docs#measures">Definitions and formulas</a> · <a href="/docs#glossary">Glossary</a></p>
                   </CardContent>
                 </Card>
               </aside>
