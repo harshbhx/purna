@@ -2,7 +2,7 @@
 
 Purna handles results from a health-related practice, so we collect as little as we can, keep it only as long as it's useful, and give you control. This page applies wherever you live.
 
-**Who runs Purna:** Harsh Bhanushali (DualMind Labs). Contact: [harsh@dualmindlab.tech](mailto:harsh@dualmindlab.tech).
+**Who runs Purna:** Harsh Bhanushali. Contact: [harshbhx@gmail.com](mailto:harshbhx@gmail.com).
 
 ## The short version
 
@@ -47,7 +47,7 @@ Purna Family runs on Cloudflare (Workers and the D1 database), which acts as our
 - **Correct** it: ask us, or delete and start again.
 - **Delete** it: **Delete everything** removes every session, note, doctor link and the paired glasses at once. It can't be undone.
 - **Withdraw** consent: turn **Share with family** off on the glasses, stop any doctor link, or delete everything.
-- **Ask us** anything, or ask for a copy of your data: write to [harsh@dualmindlab.tech](mailto:harsh@dualmindlab.tech). We'll reply within 30 days. We may need to confirm you hold the family link.
+- **Ask us** anything, or ask for a copy of your data: write to [harshbhx@gmail.com](mailto:harshbhx@gmail.com). We'll reply within 30 days. We may need to confirm you hold the family link.
 - **Complain** to the data-protection authority where you live (for example, a supervisory authority under the EU or UK GDPR, or India's Data Protection Board).
 
 ## Children

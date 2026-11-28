@@ -9,7 +9,7 @@
 | See how it feels without glasses | [purna.dualmindlab.tech/play](https://purna.dualmindlab.tech/play) |
 | Report a bug or ask for a feature | [Open an issue](https://github.com/harshbhx/purna/issues/new/choose) |
 | Report something that's hard to use | [Accessibility issue](https://github.com/harshbhx/purna/issues/new?template=accessibility.yml) |
-| Report a safety concern, or a privacy or security problem | Email **harsh@dualmindlab.tech** (not a public issue) |
-| Ask about your data or delete it | The dashboard's **Delete everything**, or email harsh@dualmindlab.tech ([privacy](https://purna.dualmindlab.tech/docs#privacy)) |
+| Report a safety concern, or a privacy or security problem | Email **harshbhx@gmail.com** (not a public issue) |
+| Ask about your data or delete it | The dashboard's **Delete everything**, or email harshbhx@gmail.com ([privacy](https://purna.dualmindlab.tech/docs#privacy)) |
 
-Purna is a hackathon project maintained by one person, Harsh Bhanushali (DualMind Labs). We aim to reply within 3 days.
+Purna is a hackathon project maintained by one person, Harsh Bhanushali. We aim to reply within 3 days.

@@ -30,6 +30,6 @@ Purna's code is open source under the MIT licence: [github.com/harshbhx/purna](h
 
 ## Changes and contact
 
-We may update these terms; the date below shows the latest version. Questions: [harsh@dualmindlab.tech](mailto:harsh@dualmindlab.tech).
+We may update these terms; the date below shows the latest version. Questions: [harshbhx@gmail.com](mailto:harshbhx@gmail.com).
 
 Last reviewed: 28 November 2026.

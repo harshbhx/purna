@@ -42,4 +42,4 @@ Purna is for people after a stroke, and for their families and therapists, many 
 
 ## Tell us
 
-Open an [accessibility issue](https://github.com/harshbhx/purna/issues/new?template=accessibility.yml), or email **harsh@dualmindlab.tech**. Say what you were trying to do, what got in the way, and what you use (screen reader, magnifier, keyboard, switch, voice). We aim to reply within 3 days.
+Open an [accessibility issue](https://github.com/harshbhx/purna/issues/new?template=accessibility.yml), or email **harshbhx@gmail.com**. Say what you were trying to do, what got in the way, and what you use (screen reader, magnifier, keyboard, switch, voice). We aim to reply within 3 days.
