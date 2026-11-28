@@ -340,6 +340,7 @@ D1 enforces foreign keys; `DELETE /me` still deletes child rows explicitly in on
 - `session.schema === "purna.session.v1"`; ≤ 64 items and ≤ 600 events per field; every number finite; strings ≤ 300 chars; `preset` in the enum; `startedAt` parses as a date.
 - `deviceId` = 32 hex chars. `name` 1–40 chars, trimmed. Note text 1–1000 chars.
 - `POST /sessions` allows CORS `*` (no cookies are ever used). All other routes are same-origin.
+- Retention (`src/cleanup.ts`, daily cron `17 3 * * *`): sessions from glasses never paired are deleted 30 days after arriving; unpaired glasses with no sessions and an expired code are deleted; doctor links are deleted 30 days after they expire or are stopped (notes stay). Paired families' data stays until "Delete everything".
 - Rate limits (Cloudflare's Rate Limiting binding, `src/lib/limits.ts`): `POST /pair` 10 a minute per caller IP (`CF-Connecting-IP`, which Cloudflare sets and clients can't forge; no IP in local dev means no limit), `POST /sessions` 20 a minute per `deviceId`, `POST /doctor/notes` 10 a minute per doctor link on top of the 50-note cap. Over the limit: `429 slow_down` with `Retry-After: 60` and a plain message. The binding counts per Cloudflare location and is approximate, so these slow down guessing and floods rather than set exact quotas; a strict global limit would need a Durable Object.
 - Responses never echo raw input in HTML; the web app renders all text with `textContent`.
 
@@ -353,6 +354,7 @@ React 18 + Vite + Tailwind v4, built to `family/dist` and served by the same Wor
 | `/#s=<id>` (dialog on `/`) | Session detail: plain summary, 2D table replay (SVG: lit order thread, missed diyas), four measures, therapist numbers |
 | `/join#k=<key>` | Saves the family key, redirects to `/` |
 | `/doctor#t=<token>` | Read-only: patient name, every measure per session, trends, CSV download (formula-safe), print layout, notes box (≤ 50 notes per link). The token moves from the URL to sessionStorage on load |
+| `/docs#<page>` | The docs: safety, setup, guides, measures, privacy, terms, accessibility, evidence, report. Markdown in `web/src/content/docs`, rendered with react-markdown (no raw HTML) |
 | `/doctor#demo` | The same view filled from `demo/sessions.json`, labelled as simulated, notes off. No API call |
 
 Charts are hand-drawn SVG (`assets/charts.js`): trend = two lines (left %, right %) over session dates; replay = table rectangle, diyas as circles (whole/chipped icons), thread in lit order.

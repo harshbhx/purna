@@ -11,7 +11,7 @@ A SPECS Lens for people who miss the left side of the world after a stroke,<br>a
 [![CI](https://github.com/harshbhx/purna/actions/workflows/ci.yml/badge.svg)](https://github.com/harshbhx/purna/actions/workflows/ci.yml)
 [![Deploy](https://github.com/harshbhx/purna/actions/workflows/deploy.yml/badge.svg)](https://github.com/harshbhx/purna/actions/workflows/deploy.yml)
 ![Core coverage](https://img.shields.io/badge/core%20coverage-98.9%25-2f7d4f)
-![Tests](https://img.shields.io/badge/tests-231-2f7d4f)
+![Tests](https://img.shields.io/badge/tests-253-2f7d4f)
 [![License: MIT](https://img.shields.io/badge/license-MIT-c8651b)](LICENSE)
 
 [purna.dualmindlab.tech](https://purna.dualmindlab.tech) · Built for **Learn AR with SPECS, Round 2** · [Why it's built this way](docs/10-RESEARCH.md)
@@ -29,7 +29,9 @@ After a right-hemisphere stroke, many people stop noticing the left half of spac
 **Purna Family** ([purna.dualmindlab.tech](https://purna.dualmindlab.tech)) opens with the table above, explains Purna to families and therapists, shows what each measure catches with three simulated searchers on one table, and then lets their children follow along: a plain-language card for each session, a trend over days, and a 7-day read-only link for the therapist, who can write a note back.
 
 > [!IMPORTANT]
-> Purna is a practice tool, not a medical device. It doesn't diagnose or treat.
+> Purna is a practice tool, not a medical device. It doesn't diagnose or treat, and no regulator has reviewed it. Before using it, read the **[safety guide](https://purna.dualmindlab.tech/docs#safety)**.
+
+**Docs on the site** ([purna.dualmindlab.tech/docs](https://purna.dualmindlab.tech/docs)): [safety](https://purna.dualmindlab.tech/docs#safety) · [setting up the glasses](https://purna.dualmindlab.tech/docs#setup) · [guide for carers](https://purna.dualmindlab.tech/docs#carers) · [guide for therapists](https://purna.dualmindlab.tech/docs#therapists) · [what the numbers mean](https://purna.dualmindlab.tech/docs#measures) · [privacy](https://purna.dualmindlab.tech/docs#privacy) · [terms](https://purna.dualmindlab.tech/docs#terms) · [accessibility](https://purna.dualmindlab.tech/docs#accessibility) · [evidence and limits](https://purna.dualmindlab.tech/docs#evidence) · [report a problem](https://purna.dualmindlab.tech/docs#report). The sources are markdown files in [`family/web/src/content/docs`](family/web/src/content/docs).
 
 <table>
 <tr>
@@ -104,7 +106,7 @@ These are **simulated players, not patients**. The bench proves the measures sep
 | Part | State |
 |---|---|
 | Core logic: layout, hints, beam fading, metrics, report, next-session suggestion | ✅ logic proven (55 tests) |
-| Purna Family: landing, API, database, web app, doctor view | ✅ works end to end in Chrome, WCAG 2.1 AA checked, rate-limited, family dashboard in English or Hindi (163 tests) |
+| Purna Family: landing, API, database, web app, doctor view | ✅ works end to end in Chrome, WCAG 2.1 AA checked, rate-limited, daily data clean-up, family dashboard in English or Hindi, safety and privacy docs (185 tests) |
 | Lens scene in Lens Studio (CLAD) | 🛠️ in progress; LEAF results land here |
 | How it feels to a real stroke survivor | ❓ feel unproven, not tested with patients |
 
@@ -137,9 +139,9 @@ flowchart LR
 | Suite | Command | What it proves |
 |---|---|---|
 | Core, patient bench, sounds | `cd tools && npm test` | Layout rules on 500 seeds × 3 levels, hint timing, beam fading, metrics, the engine's phases, the bench, the next-session suggestion, and each sound against the design spec (68 tests, coverage gate 85%) |
-| Worker + local D1 | `cd family && npm test` | Every API route and error, field-by-field validation, crypto, the engine → server contract over every preset and add-on, and the rate limits on pairing, uploads and notes (74 tests) |
-| Web app | `npm run test:web` | React components in jsdom: the night-table animation and reduced motion, replay and trend SVGs, the app shell, dashboard dialogs and therapist view, CSV export with formula-injection guards, the API client, the three-searcher explainer (one layout, verdicts from the numbers, arrow-key tabs), every dashboard tool against a fake server (share and stop sharing, invite, import, delete, sign out), the therapist view's day-to-day band, where-the-time-went chart, context card and example mode, and the Hindi dashboard (sentences built from the numbers, the toggle, the therapist view staying English) (53 tests) |
-| End to end | `npm run test:e2e` | Real Chrome against the production build on `wrangler dev`: the landing (animation, reduced motion, no sideways scroll from 320 to 1440 px, phone menu), pair, dashboard, replay, doctor link, CSV, note, invite, import, delete; stopping a doctor link, the print layout, dead links; a keyboard-only walk (skip link, tabs, Enter and Escape with focus returned); axe WCAG 2.1 AA scans of every screen and dialog in light and dark mode; the link preview and install files; the example therapist view; and the dashboard in Hindi (remembered, no sideways scroll, axe-clean). Each runs on phone and desktop (36 tests) |
+| Worker + local D1 | `cd family && npm test` | Every API route and error, field-by-field validation, crypto, the engine → server contract over every preset and add-on, and the rate limits on pairing, uploads and notes, and the daily retention clean-up (79 tests) |
+| Web app | `npm run test:web` | React components in jsdom: the night-table animation and reduced motion, replay and trend SVGs, the app shell, dashboard dialogs and therapist view, CSV export with formula-injection guards, the API client, the three-searcher explainer (one layout, verdicts from the numbers, arrow-key tabs), every dashboard tool against a fake server (share and stop sharing, invite, import, delete, sign out), the therapist view's day-to-day band, where-the-time-went chart, context card and example mode, the Hindi dashboard (sentences built from the numbers, the toggle, the therapist view staying English), and the docs (every link resolves, no raw HTML, the safety essentials and retention periods can't silently disappear) (64 tests) |
+| End to end | `npm run test:e2e` | Real Chrome against the production build on `wrangler dev`: the landing (animation, reduced motion, no sideways scroll from 320 to 1440 px, phone menu), pair, dashboard, replay, doctor link, CSV, note, invite, import, delete; stopping a doctor link, the print layout, dead links; a keyboard-only walk (skip link, tabs, Enter and Escape with focus returned); axe WCAG 2.1 AA scans of every screen and dialog in light and dark mode; the link preview and install files; the example therapist view; the dashboard in Hindi (remembered, no sideways scroll, axe-clean); and every docs page (axe-clean, no sideways scroll at 320 px, prints without menus). Each runs on phone and desktop (42 tests) |
 
 **CI** ([`ci.yml`](.github/workflows/ci.yml)) runs all of it on every pull request, builds the web app, puts coverage in the job summary, lints the shell scripts, and fails if the bench chart or demo data are stale. **CD** ([`deploy.yml`](.github/workflows/deploy.yml)) runs after CI passes on `main`: builds the web app, applies D1 migrations, runs `wrangler deploy`, then smoke-tests the live site.
 

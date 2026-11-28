@@ -42,7 +42,7 @@ Everything you need to judge Purna in a few minutes, with links to the evidence.
 | The Lens | Built by CLAD; LEAF results are in the README |
 | How it feels to a stroke survivor | **Feel unproven.** Not yet tried with patients or therapists |
 
-Purna is a practice tool, not a medical device. It doesn't diagnose or treat.
+Purna is a practice tool, not a medical device. It doesn't diagnose or treat. The site's [docs](https://purna.dualmindlab.tech/docs) cover safety, setup on the glasses, guides for carers and therapists, privacy, terms and accessibility.
 
 ## Questions you might have
 
@@ -58,7 +58,9 @@ Purna is a practice tool, not a medical device. It doesn't diagnose or treat.
 
 **Why does the warm-up only move left?** Leftward motion has been found to reduce neglect, while rightward motion may worsen it. A unit test fails the build if that ever changes.
 
-**What happens to the data?** Nothing identifying leaves the glasses. Sharing is off by default. Keys are stored as one-way hashes, doctor links expire, and one button deletes everything.
+**What happens to the data?** Nothing identifying leaves the glasses. Sharing is off by default. Keys are stored as one-way hashes, doctor links expire, data from glasses that are never paired is deleted after 30 days, and one button deletes everything. Details: [privacy](https://purna.dualmindlab.tech/docs#privacy).
+
+**Is it safe for stroke survivors?** It's designed to be gentle: seated, about four minutes, a carer nearby, no flashing (nothing changes brightness more than three times a second, because seizures are common after stroke), and a reminder on the setup panel. The [safety guide](https://purna.dualmindlab.tech/docs#safety) says who should ask a doctor first and when to stop. It hasn't been tried with patients.
 
 **What did AI tools do?** Claude wrote most of the code, tests and docs with Harsh directing, reviewing and testing; CLAD built the Lens scene in Lens Studio. Third-party code and fonts are credited in [`family/THIRD_PARTY.md`](family/THIRD_PARTY.md).
 
