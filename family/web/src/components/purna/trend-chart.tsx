@@ -1,6 +1,7 @@
 // Left and right found, per session, oldest to newest. Drawn at its container's real pixel width so labels
 // stay readable on a phone. Lines are labelled in text, and the left line is solid, so colour isn't the only cue.
 import { useEffect, useRef, useState } from "react";
+import { useLang, useT } from "@/lib/i18n";
 
 export interface TrendPoint { date: string; left: number | null; right: number | null }
 
@@ -10,6 +11,8 @@ const pctText = (v: number | null | undefined) => (v === null || v === undefined
 export interface TrendBand { spread: number; centre: (number | null)[] }
 
 export function TrendChart({ points, height, band }: { points: TrendPoint[]; height?: number; band?: TrendBand | null }) {
+  const lang = useLang();
+  const tr = useT();
   const ref = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(640);
   useEffect(() => {
@@ -30,15 +33,17 @@ export function TrendChart({ points, height, band }: { points: TrendPoint[]; hei
   const y = (v: number) => T + (1 - v) * (H - T - B);
   const step = Math.max(1, Math.ceil(n / Math.max(3, Math.floor((W - L - R) / 70))));
   const series = [
-    { key: "right" as const, name: "Right", cls: "stroke-side-r", fill: "fill-side-r", dash: "6 5" },
-    { key: "left" as const, name: "Left", cls: "stroke-side-l", fill: "fill-side-l", dash: undefined },
+    { key: "right" as const, name: tr.right, cls: "stroke-side-r", fill: "fill-side-r", dash: "6 5" },
+    { key: "left" as const, name: tr.left, cls: "stroke-side-l", fill: "fill-side-l", dash: undefined },
   ];
   const last = points[n - 1], first = points[0];
   const close = last && last.left !== null && last.right !== null && Math.abs(last.left - last.right) < 0.08;
   return (
     <div ref={ref} className="w-full">
       <svg viewBox={`0 0 ${W} ${H}`} role="img" className="block h-auto w-full"
-        aria-label={n ? `Trend over ${n} session${n === 1 ? "" : "s"}: left found went from ${pctText(first.left)} to ${pctText(last.left)}; right found went from ${pctText(first.right)} to ${pctText(last.right)}.` : "No sessions yet"}>
+        aria-label={!n ? (lang === "hi" ? "अभी कोई सत्र नहीं" : "No sessions yet") : lang === "hi"
+          ? `${n} सत्रों का रुझान: बाईं ओर मिले दीये ${pctText(first.left)} से ${pctText(last.left)} हुए; दाईं ओर ${pctText(first.right)} से ${pctText(last.right)}।`
+          : `Trend over ${n} session${n === 1 ? "" : "s"}: left found went from ${pctText(first.left)} to ${pctText(last.left)}; right found went from ${pctText(first.right)} to ${pctText(last.right)}.`}>
         {[0, 0.5, 1].map((v) => (
           <g key={v}>
             <line x1={L} x2={W - R} y1={y(v)} y2={y(v)} className="stroke-border" />
@@ -47,7 +52,7 @@ export function TrendChart({ points, height, band }: { points: TrendPoint[]; hei
         ))}
         {points.map((p, i) => (i % step === 0 || i === n - 1) && (
           <text key={p.date + i} x={x(i)} y={H - 8} textAnchor="middle" className="fill-muted-foreground text-[11px]">
-            {new Date(p.date).toLocaleDateString(undefined, { day: "numeric", month: "short" })}
+            {new Date(p.date).toLocaleDateString(lang === "hi" ? "hi-IN" : undefined, { day: "numeric", month: "short" })}
           </text>
         ))}
         {band && (() => {

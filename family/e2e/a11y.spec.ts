@@ -72,6 +72,14 @@ for (const scheme of ["light", "dark"] as const) {
       await scan(page, "example therapist view");
     });
 
+    test("the example dashboard in Hindi", async ({ page }) => {
+      await page.goto("/");
+      await page.getByRole("button", { name: "See an example" }).first().click();
+      await page.getByRole("button", { name: /Show this page in Hindi/ }).click();
+      await expect(page.getByRole("heading", { name: "Papa का अभ्यास" })).toBeVisible();
+      await scan(page, "example dashboard in Hindi");
+    });
+
     test("the error pages", async ({ page }) => {
       await page.goto("/doctor");
       await expect(page.getByRole("alert")).toBeVisible();

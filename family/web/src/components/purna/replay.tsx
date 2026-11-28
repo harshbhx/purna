@@ -4,6 +4,7 @@ import { m } from "motion/react";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
 import type { SessionJson } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { useT } from "@/lib/i18n";
 
 const W = 70, D = 45;
 const SIZE_CM: Record<string, number> = { easy: 6, standard: 6, hard: 5 };
@@ -25,13 +26,14 @@ export function Replay({ session, animate = true, replayKey = 0, className }: { 
   const chippedLit = new Set(near.events.filter((e) => e.r === "chipped").map((e) => e.id));
   const lit = new Set(order.map((it) => it.id));
   const draw = animate && !reduce;
+  const tr = useT();
   const missedL = near.leftTotal - near.leftHits, missedR = near.rightTotal - near.rightHits;
   return (
     <svg
       viewBox={`${-W / 2 - 2} ${-D / 2 - 2} ${W + 4} ${D + 12}`}
       role="img"
       className={cn("block h-auto w-full", className)}
-      aria-label={`Table seen from above. ${order.length} diyas lit, numbered in the order found. Missed: ${missedL} on the left, ${missedR} on the right. Chipped diyas lit by mistake: ${near.fpChipLeft} with the gap on the left, ${near.fpChipRight} with the gap on the right.`}
+      aria-label={tr.replayAria(order.length, missedL, missedR, near.fpChipLeft, near.fpChipRight)}
     >
       <rect x={-W / 2} y={-D / 2} width={W} height={D} rx="2" className="fill-surface stroke-border" strokeWidth=".5" />
       <line x1="0" x2="0" y1={-D / 2} y2={D / 2} className="stroke-muted-foreground/50" strokeWidth=".3" strokeDasharray="1 1" />
@@ -59,9 +61,9 @@ export function Replay({ session, animate = true, replayKey = 0, className }: { 
       {order.map((it, i) => (
         <text key={it.id} x={it.x} y={it.u + 0.95} textAnchor="middle" className="order">{i + 1}</text>
       ))}
-      <text x={-W / 2 + 1} y={D / 2 + 5} className="rp-text">← Left</text>
-      <text x={W / 2 - 1} y={D / 2 + 5} textAnchor="end" className="rp-text">Right →</text>
-      <text x="0" y={D / 2 + 8.5} textAnchor="middle" className="rp-text">they sit here</text>
+      <text x={-W / 2 + 1} y={D / 2 + 5} className="rp-text">{tr.replayLeft}</text>
+      <text x={W / 2 - 1} y={D / 2 + 5} textAnchor="end" className="rp-text">{tr.replayRight}</text>
+      <text x="0" y={D / 2 + 8.5} textAnchor="middle" className="rp-text">{tr.replaySeat}</text>
     </svg>
   );
 }
