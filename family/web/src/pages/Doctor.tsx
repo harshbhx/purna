@@ -18,6 +18,7 @@ import { fix, fmtDate, titleCase } from "@/lib/format";
 import { measures, progress, therapistRows } from "@/lib/session";
 import type { DoctorData, Note, SessionJson } from "@/lib/types";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
+import { SkipLink } from "@/components/purna/skip-link";
 
 const TOKEN_KEY = "purna.doctorToken";
 function readToken(): string | null {
@@ -100,12 +101,13 @@ export function Doctor() {
 
   return (
     <div className="flex min-h-dvh flex-col bg-surface">
+      <SkipLink />
       <AppHeader>
         <Badge variant="outline" className="hidden sm:inline-flex">Therapist view, read only</Badge>
         {data && data.sessions.length > 0 && <Button variant="outline" size="sm" onClick={downloadCsv}><Download />Download CSV</Button>}
         {data && <Button variant="outline" size="sm" onClick={() => { setOpenIds(new Set(data.sessions.map((s) => s.sessionId))); setTimeout(() => window.print(), 50); }}><Printer />Print</Button>}
       </AppHeader>
-      <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-6 px-4 py-8 sm:px-5 md:py-10">
+      <main id="main" tabIndex={-1} className="outline-none mx-auto flex w-full max-w-6xl flex-1 flex-col gap-6 px-4 py-8 sm:px-5 md:py-10">
         {error && <div id="out"><Alert variant="danger">{error}</Alert></div>}
         {!error && !data && <p className="text-muted-foreground">Loading…</p>}
         {data && (
@@ -139,7 +141,7 @@ export function Doctor() {
                   <CardHeader><CardTitle>Sessions</CardTitle></CardHeader>
                   <div className="pt-3">
                     {data.sessions.length ? (
-                      <Table id="table">
+                      <Table id="table" label="Every session, scrolls sideways">
                         <TableCaption>Every session, newest first</TableCaption>
                         <TableHeader><TableRow>{COLS.map(([h]) => <TableHead key={h}>{h}</TableHead>)}</TableRow></TableHeader>
                         <TableBody>{data.sessions.map((s) => <TableRow key={s.sessionId}>{COLS.map(([h, f]) => <TableCell key={h}>{f(s)}</TableCell>)}</TableRow>)}</TableBody>

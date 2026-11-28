@@ -1,9 +1,10 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
 
-export function Table({ className, ...props }: React.TableHTMLAttributes<HTMLTableElement>) {
+/** On narrow screens the wrapper scrolls sideways, so it is a labelled region keyboard users can focus and scroll. */
+export function Table({ className, label, ...props }: React.TableHTMLAttributes<HTMLTableElement> & { label: string }) {
   return (
-    <div className="relative w-full overflow-x-auto">
+    <div role="region" aria-label={label} tabIndex={0} className="relative w-full overflow-x-auto rounded-[inherit] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring">
       <table className={cn("w-full caption-bottom border-collapse text-sm tabular-nums", className)} {...props} />
     </div>
   );

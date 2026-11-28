@@ -26,6 +26,7 @@ import { fix, fmtDate } from "@/lib/format";
 import { progress, toCard } from "@/lib/session";
 import type { SessionJson } from "@/lib/types";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
+import { SkipLink } from "@/components/purna/skip-link";
 
 const HEADLINE = "Practice that makes the world whole again.";
 
@@ -92,8 +93,9 @@ export function Landing({ demo, onPaired, onExample }: { demo: SessionJson[]; on
 
   return (
     <div id="landing" className="bg-background">
+      <SkipLink />
       <SiteHeader onExample={onExample} />
-      <main>
+      <main id="main" tabIndex={-1} className="outline-none">
         {/* Hero */}
         <section id="top" aria-labelledby="hero-h" className="relative overflow-hidden">
           <DotBackground />
@@ -231,7 +233,7 @@ export function Landing({ demo, onPaired, onExample }: { demo: SessionJson[]; on
               )}
               <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-[0_24px_48px_-32px_rgba(23,20,15,0.3)]">
                 <div className="flex items-center justify-between border-b border-border px-4 py-3 text-[13px] text-muted-foreground"><span>Papa: Purna practice</span><span>Read only, 7-day link</span></div>
-                <Table id="doctor-preview">
+                <Table id="doctor-preview" label="Example therapist table, scrolls sideways">
                   <TableCaption>Example sessions as the therapist sees them</TableCaption>
                   <TableHeader><TableRow>{["Date", "Left", "Right", "CoC", "Ego asym", "Hints", "Max left"].map((h) => <TableHead key={h}>{h}</TableHead>)}</TableRow></TableHeader>
                   <TableBody>
