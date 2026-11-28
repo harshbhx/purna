@@ -86,6 +86,8 @@ const EN = {
   replayLeft: "← Left",
   replayRight: "Right →",
   replaySeat: "they sit here",
+  attentionAria: (leftPct: number) => ` Warm light on the table shows where the head pointed: ${leftPct}% of the time on the left half.`,
+  planSet: (level: string, delay: number, date: string) => `The therapist set the next session on ${date}: ${level}, hint after ${delay} s. The glasses will load it.`,
 };
 
 type Dict = typeof EN;
@@ -156,6 +158,8 @@ const HI: Dict = {
   replayLeft: "← बायाँ",
   replayRight: "दायाँ →",
   replaySeat: "आप यहाँ बैठते हैं",
+  attentionAria: (leftPct: number) => ` मेज़ पर गर्म रोशनी दिखाती है कि सिर किधर था: ${leftPct}% समय बाएँ आधे हिस्से पर।`,
+  planSet: (level: string, delay: number, date: string) => `थेरेपिस्ट ने ${date} को अगला सत्र तय किया: ${level}, ${delay} सेकंड बाद संकेत। चश्मा इसे अपने आप चुन लेगा।`,
   measures: { sides: "बायाँ बनाम दायाँ", chipped: "टूटे दीये", order: "खोजने का क्रम", head: "सिर का घुमाव" },
 };
 
