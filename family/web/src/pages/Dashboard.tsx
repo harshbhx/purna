@@ -16,7 +16,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { api, parseImport } from "@/lib/api";
 import { daysSince, fmtDate, fmtWhen } from "@/lib/format";
-import { measures, therapistRows } from "@/lib/session";
+import { dayToDay, measures, therapistRows } from "@/lib/session";
 import type { Me, SessionJson, Share } from "@/lib/types";
 import { SkipLink } from "@/components/purna/skip-link";
 
@@ -69,6 +69,7 @@ export function Dashboard(props: {
   const newest = me.sessions[0];
   const earlier = me.sessions.slice(1);
   const points = useMemo(() => me.sessions.slice().reverse().map((c) => ({ date: c.startedAt, left: c.leftPct, right: c.rightPct })), [me.sessions]);
+  const band = useMemo(() => dayToDay(points.map((p) => p.left)), [points]);
   const name = me.patient.name;
 
   async function openSession(id: string) {
@@ -169,7 +170,10 @@ export function Dashboard(props: {
           <div className="flex min-w-0 flex-col gap-6 lg:sticky lg:top-24">
             <Card>
               <CardHeader><CardTitle>Over time</CardTitle><CardDescription>Share of diyas found on each side. The solid line is the left side.</CardDescription></CardHeader>
-              <CardContent id="trend" className="pt-3">{points.length ? <TrendChart points={points} /> : <p className="m-0 text-muted-foreground">The chart appears after the first session.</p>}</CardContent>
+              <CardContent id="trend" className="pt-3">
+                {points.length ? <TrendChart points={points} band={band} /> : <p className="m-0 text-muted-foreground">The chart appears after the first session.</p>}
+                {band && <p id="band-note" className="m-0 mt-2 text-[13px] text-muted-foreground">Shaded: {me.patient.name}’s usual change from one session to the next. A change inside it may be chance.</p>}
+              </CardContent>
             </Card>
             <Card>
               <CardHeader><CardTitle>Notes from the therapist</CardTitle></CardHeader>
