@@ -6,6 +6,9 @@ declare global {
     interface Env {
       DB: D1Database;
       ASSETS: Fetcher;
+      PAIR_LIMIT: import("../src/lib/limits").RateLimiter;
+      SESSION_LIMIT: import("../src/lib/limits").RateLimiter;
+      NOTE_LIMIT: import("../src/lib/limits").RateLimiter;
       TEST_MIGRATIONS: D1Migration[];
     }
   }
