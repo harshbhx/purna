@@ -18,9 +18,10 @@ Script, chapters, YouTube title and description: [`devpost/VIDEO.md`](../devpost
 Paste-ready: [`devpost/STORY.md`](../devpost/STORY.md). Fill every **[after CLAD]** line with real results, then delete the markers.
 
 - [ ] Tagline, elevator pitch, story, built-with tags
+- [ ] Gallery: upload `devpost/gallery/01–05` (1500 × 1000), then add Lens preview screenshots
 - [ ] LEAF results in "How we built it"
 - [ ] Testing instructions for judges
-- [ ] Every number matches the README and CI (tests 200; bench numbers from `docs/img/bench.svg`)
+- [ ] Every number matches the README and CI (tests 223; bench numbers from `docs/img/bench.svg`)
 
 ## 3. Repository
 
@@ -37,5 +38,6 @@ In `devpost/STORY.md` § Disclosures: AI coding assistants (Claude, CLAD), React
 
 - [ ] CI green on `main`; https://purna.dualmindlab.tech is live and "See an example" works logged out
 - [ ] The Lens opens and runs in a clean Lens Studio install from a fresh clone
+- [ ] `JUDGES.md` matches the final build; the live-review notes (`08-LIVE-REVIEW.md`) are folded in
 - [ ] Judge simulation done (`06-TESTING.md` §7): someone new can say who it's for, the moment, why glasses, whether it works, and its limits
 - [ ] Devpost form: repo URL, video URL, text, tags, team, submitted

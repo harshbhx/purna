@@ -71,7 +71,7 @@ Voice is calm and slow, like explaining to a family. Music: none, or a soft orig
 | 2:04 | Desktop: share with doctor, the therapist view, table and replay. Note back. | The therapist gets a seven-day link with every number a cancellation test gives, and writes a note back. |
 | 2:12 | "Three ways to search the same table": switch tabs, highlighted measures. | And the site explains what the numbers mean. |
 | 2:16 | Code: `Assets/Scripts/Core`, then the bench chart, then GitHub Actions green. | Every rule is plain TypeScript, tested before Lens Studio opened. CLAD built the scene from our plan-lens brief, and LEAF checks each done criterion. |
-| 2:26 | Bench chart close-up. | Three simulated searchers on two hundred tables prove the report tells left neglect from object neglect. Two hundred automated tests run on every change. |
+| 2:26 | Bench chart close-up. | Three simulated searchers on two hundred tables prove the report tells left neglect from object neglect. Over two hundred automated tests run on every change. |
 | 2:36 | Back to the lit table, whole. Text: "Practice tool, not a medical device. Simulated players, not patients." | Purna is a practice tool, not a medical device, and it hasn't met a patient yet. That's next. |
 | 2:43 | Logo: Purna पूर्ण. "purna.dualmindlab.tech". | Purna. Whole. |
 
