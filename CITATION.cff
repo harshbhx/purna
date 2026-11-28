@@ -1,0 +1,27 @@
+cff-version: 1.2.0
+message: "If you use or refer to Purna, please cite it as below."
+type: software
+title: "Purna: head-turn practice for left spatial neglect on Snap Spectacles, with a family and therapist web app"
+abstract: >-
+  Purna moves the cancellation exercise for left spatial neglect after stroke onto the person's own dining table
+  through Snap Spectacles. Whole and chipped clay diyas measure egocentric and object-centred neglect; a bell from
+  the left points to the side, never the answer; a replay and an attention map show where the search and the head went.
+  Purna Family carries sessions to the family and the therapist, who can set the next session. A practice tool,
+  not a medical device.
+authors:
+  - family-names: Bhanushali
+    given-names: Harsh
+    affiliation: DualMind Labs
+repository-code: "https://github.com/harshbhx/purna"
+url: "https://purna.dualmindlab.tech"
+license: MIT
+version: "1.1.0"
+date-released: "2026-11-28"
+keywords:
+  - spatial neglect
+  - stroke rehabilitation
+  - augmented reality
+  - Snap Spectacles
+  - Lens Studio
+  - cancellation test
+  - Cloudflare Workers

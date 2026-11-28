@@ -1,0 +1,43 @@
+name: Live site
+
+# Purna Family deploys from main through Cloudflare Workers Builds (the Worker "purna-family" is connected
+# to this repo; no keys live in GitHub). This workflow checks the live site after each push to main and
+# once a day: health, every page and the security headers.
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "41 2 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  live:
+    name: Check purna.dualmindlab.tech
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Wait for the Cloudflare build, then check health
+        run: |
+          # A push to main starts a Workers Build (about 1-2 minutes). Give it time before judging.
+          [ "${{ github.event_name }}" = "push" ] && sleep 150
+          for i in $(seq 1 20); do
+            if curl -fsS https://purna.dualmindlab.tech/api/v1/health | grep -q '"ok":true'; then echo "healthy"; exit 0; fi
+            sleep 15
+          done
+          echo "::error::https://purna.dualmindlab.tech/api/v1/health did not answer ok"; exit 1
+      - name: Every page answers
+        run: |
+          for p in / /play /docs /doctor /join; do
+            code=$(curl -s -o /dev/null -w '%{http_code}' "https://purna.dualmindlab.tech$p")
+            echo "$p $code"; [ "$code" = 200 ] || { echo "::error::$p returned $code"; exit 1; }
+          done
+      - name: Security headers are in place
+        run: |
+          h=$(curl -sI https://purna.dualmindlab.tech/)
+          echo "$h" | grep -qi "content-security-policy: default-src 'self'" || { echo "::error::CSP missing"; exit 1; }
+          echo "$h" | grep -qi "x-content-type-options: nosniff" || { echo "::error::nosniff missing"; exit 1; }
+          curl -s -o /dev/null -w '%{http_code}' https://purna.dualmindlab.tech/api/v1/nope | grep -q 404

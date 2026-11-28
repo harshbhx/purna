@@ -1,18 +1,40 @@
-name: Bug
-description: Something in the Lens or Purna Family doesn't work as the docs say
+name: Bug report
+description: Something on the site, the API or the Lens doesn't work as it should
 labels: [bug]
 body:
-  - type: textarea
-    id: what
+  - type: markdown
     attributes:
-      label: What happened
-      description: What you did, what you expected, what you saw. Never paste family keys or doctor links.
-    validations:
-      required: true
+      value: |
+        Thanks for reporting. **Don't paste pairing codes, family or doctor links, keys, or anyone's health details.**
   - type: dropdown
     id: where
     attributes:
-      label: Where
-      options: [Lens Studio preview, SPECS device, purna.dualmindlab.tech (family), Doctor view, Tests / CI]
+      label: Where did it happen?
+      options:
+        - Purna Family website
+        - Try the table (/play)
+        - Therapist view
+        - The Lens (glasses or Lens Studio preview)
+        - API
+        - Docs
     validations:
       required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened, and what did you expect?
+      placeholder: I pressed Set next session and nothing changed. I expected a "Saved" message.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open …
+        2. Press …
+  - type: input
+    id: device
+    attributes:
+      label: Device and browser
+      placeholder: Android 15, Chrome 131 / Spectacles, Lens Studio 5.23.2 preview
