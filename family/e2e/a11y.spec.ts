@@ -21,7 +21,10 @@ for (const scheme of ["light", "dark"] as const) {
       await page.goto("/");
       await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
       await scan(page, "landing");
-      await page.getByRole("tab", { name: /each diya/ }).click();
+      const tab = page.getByRole("tab", { name: /each diya/ });
+      await tab.click();
+      await expect(tab).toHaveAttribute("aria-selected", "true");
+      await expect(page.getByRole("tab", { selected: false }).first()).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
       await scan(page, "explainer, object-neglect tab", "#read");
     });
 

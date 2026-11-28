@@ -96,7 +96,7 @@ export function ThreeSearchers() {
             tabIndex={i === j ? 0 : -1}
             onClick={() => setI(j)}
             className={cn(
-              "rounded-xl px-2 py-2 text-[13px] leading-tight font-medium sm:px-3.5 sm:text-[14px] transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none",
+              "rounded-xl px-2 py-2 text-[13px] leading-tight font-medium transition-colors motion-reduce:transition-none sm:px-3.5 sm:text-[14px] focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none",
               i === j ? "bg-foreground text-background" : "text-muted-foreground hover:bg-muted hover:text-foreground",
             )}
           >
