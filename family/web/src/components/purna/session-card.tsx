@@ -27,9 +27,9 @@ export function SessionCard({ c, onOpen, big = false, className }: { c: Card; on
     <button
       type="button"
       onClick={onOpen}
-      aria-label={`Open session from ${fmtWhen(c.startedAt)}`}
       className={cn("session-card group relative flex w-full flex-col gap-3 rounded-2xl border border-border bg-card p-4 pr-10 text-left shadow-[0_1px_2px_rgba(23,20,15,0.04)] transition-[border,box-shadow,transform] hover:border-foreground/20 hover:shadow-[0_12px_28px_-18px_rgba(23,20,15,0.35)] active:translate-y-px", className)}
     >
+      <span className="sr-only">Open session from </span>
       {body}
       <ChevronRight aria-hidden="true" className="absolute top-1/2 right-3 size-[18px] -translate-y-1/2 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
     </button>

@@ -28,3 +28,11 @@ export function watchConsole(page: Page, allow: RegExp[] = []): string[] {
   page.on("pageerror", (e) => problems.push(String(e)));
   return problems;
 }
+
+/** Sends the demo sessions and pairs them, as the family would; returns the family key. */
+export async function pairFamily(request: APIRequestContext, name: string): Promise<string> {
+  const code = await sendDemoSessions(request);
+  const r = await request.post("/api/v1/pair", { data: { code, name } });
+  expect(r.status()).toBe(200);
+  return (await r.json()).familyKey as string;
+}

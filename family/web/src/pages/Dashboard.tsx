@@ -1,5 +1,5 @@
 import { ChevronDown, Copy, FileUp, LogOut, Play, Share2, Trash2, UserPlus } from "lucide-react";
-import { Fragment, useEffect, useLayoutEffect, useMemo, useState, type FormEvent } from "react";
+import { Fragment, useEffect, useLayoutEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { AppHeader } from "@/components/purna/app-header";
 import { Replay } from "@/components/purna/replay";
 import { SessionCard } from "@/components/purna/session-card";
@@ -18,6 +18,7 @@ import { api, parseImport } from "@/lib/api";
 import { daysSince, fmtDate, fmtWhen } from "@/lib/format";
 import { measures, therapistRows } from "@/lib/session";
 import type { Me, SessionJson, Share } from "@/lib/types";
+import { SkipLink } from "@/components/purna/skip-link";
 
 type Msg = { kind: "success" | "danger" | "warn"; text: string } | null;
 type Panel = null | "share" | "invite" | "import" | "delete";
@@ -53,6 +54,9 @@ export function Dashboard(props: {
   const [msg, setMsg] = useState<Msg>(null);
   const [importText, setImportText] = useState("");
   const [confirm, setConfirm] = useState("");
+  const opener = useRef<HTMLElement | null>(null);
+  const remember = () => { opener.current = document.activeElement instanceof HTMLElement ? document.activeElement : null; };
+  const refocus = (e: Event) => { e.preventDefault(); opener.current?.focus(); };
   useEffect(() => setShares(me.shares), [me.shares]);
   useLayoutEffect(() => {
     // Open at the top, also after the browser settles focus and layout from the page we came from.
@@ -68,6 +72,7 @@ export function Dashboard(props: {
   const name = me.patient.name;
 
   async function openSession(id: string) {
+    remember();
     let s = sessionsById.get(id);
     if (!s && familyKey) {
       try {
@@ -78,7 +83,7 @@ export function Dashboard(props: {
     if (s) { setReplayKey((k) => k + 1); setOpen(s); }
   }
 
-  function closePanel(p: Panel) { setPanel(p); setMsg(null); setNewLink(null); }
+  function closePanel(p: Panel) { remember(); setPanel(p); setMsg(null); setNewLink(null); }
 
   async function makeShare() {
     try {
@@ -123,13 +128,14 @@ export function Dashboard(props: {
 
   return (
     <div id="dash" className="flex min-h-dvh flex-col bg-surface">
+      <SkipLink />
       <AppHeader>
         {demo && <Badge id="demo-badge" variant="warn">Example</Badge>}
         {!demo && <Button variant="ghost" size="sm" onClick={props.onSignOut}><LogOut />Sign out here</Button>}
         {demo && <Button variant="outline" size="sm" asChild><a href="/#code" className="no-underline">Pair glasses</a></Button>}
       </AppHeader>
 
-      <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-6 px-4 py-8 sm:px-5 md:py-10">
+      <main id="main" tabIndex={-1} className="outline-none mx-auto flex w-full max-w-5xl flex-1 flex-col gap-6 px-4 py-8 sm:px-5 md:py-10">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
             <p className="m-0 text-sm text-muted-foreground">{new Date().toLocaleDateString(undefined, { weekday: "long", day: "numeric", month: "long" })}</p>
@@ -192,7 +198,7 @@ export function Dashboard(props: {
       {/* Session detail */}
       <Dialog open={!!open} onOpenChange={(o) => !o && setOpen(null)}>
         {open && (
-          <DialogContent wide aria-describedby="detail-summary">
+          <DialogContent wide aria-describedby="detail-summary" onCloseAutoFocus={refocus}>
             <DialogHeader>
               <DialogTitle id="detail-title">{fmtWhen(open.startedAt)}</DialogTitle>
               <DialogDescription id="detail-summary">{open.summary}</DialogDescription>
@@ -229,7 +235,7 @@ export function Dashboard(props: {
 
       {/* Share with doctor */}
       <Dialog open={panel === "share"} onOpenChange={(o) => !o && setPanel(null)}>
-        <DialogContent>
+        <DialogContent onCloseAutoFocus={refocus}>
           <DialogHeader>
             <DialogTitle>Share with doctor</DialogTitle>
             <DialogDescription>Makes a read-only link to every session. It stops working after 7 days, or when you stop it here.</DialogDescription>
@@ -260,7 +266,7 @@ export function Dashboard(props: {
 
       {/* Invite */}
       <Dialog open={panel === "invite"} onOpenChange={(o) => !o && setPanel(null)}>
-        <DialogContent>
+        <DialogContent onCloseAutoFocus={refocus}>
           <DialogHeader>
             <DialogTitle>Invite family</DialogTitle>
             <DialogDescription>Send this link to a brother, sister or carer. Anyone with it can see this practice, so share it only with family.</DialogDescription>
@@ -272,7 +278,7 @@ export function Dashboard(props: {
 
       {/* Import */}
       <Dialog open={panel === "import"} onOpenChange={(o) => !o && setPanel(null)}>
-        <DialogContent>
+        <DialogContent onCloseAutoFocus={refocus}>
           <form onSubmit={doImport} className="flex flex-col gap-4">
             <DialogHeader>
               <DialogTitle>Import from Logger</DialogTitle>
@@ -287,7 +293,7 @@ export function Dashboard(props: {
 
       {/* Delete */}
       <Dialog open={panel === "delete"} onOpenChange={(o) => !o && setPanel(null)}>
-        <DialogContent>
+        <DialogContent onCloseAutoFocus={refocus}>
           <form id="delete-panel" onSubmit={doDelete} className="flex flex-col gap-4">
             <DialogHeader>
               <DialogTitle>Delete everything?</DialogTitle>
