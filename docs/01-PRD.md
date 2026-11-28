@@ -72,7 +72,7 @@ After a right-hemisphere stroke, many people stop attending to the left half of 
 | L10 | Report card: 4 tiles (§8) + "Practice result, not a diagnosis. Share it with your therapist." |
 | L11 | On report, print the session JSON (schema `purna.session.v1`, `03-ARCHITECTURE.md` §5) to the Logger in one line prefixed `PURNA_SESSION ` |
 | L12 | Send to family (only if sharing on): POST the JSON to `/api/v1/sessions`. Show "Sent ✓" or the pairing code. On any failure show "Couldn't send. Saved to the Logger." |
-| L13 | Drift (add-on): 8 diyas spawn at the right edge, move at 10 cm/s toward −x only; one flickers for 2 s every 3–4 s; pinch during flicker = hit |
+| L13 | Drift (add-on): 8 diyas spawn at the right edge, move at 10 cm/s toward −x only; one glows softly (1 Hz, never flashing) for 2 s every 3–4 s; pinch during the glow = hit |
 | L14 | Far board (add-on): `PreviewBoard (stand-in)` 200 × 90 cm at (0, 0, −200); Easy 6+6, Standard 8+8, Hard 10+10, 18 cm diyas, 22 cm gap; far pinch; its own report numbers; not in the replay |
 | L15 | No score, timer, text or progress during a task |
 | L16 | Debug-only `PurnaSelfTest` (prints PASS/FAIL per done criterion) and `PurnaDemoDirector` (plays a scripted session for recording); both off by default and never referenced by the controller |

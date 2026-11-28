@@ -65,11 +65,11 @@ UI Kit default font. Rule of thumb: body text at least 0.6° tall.
 | Hint 1 | Beam opacity pulses twice (0.25 → 1 → 0.25, 0.6 s each), even if its level is 0 |
 | Hint 2 | A bright band travels from the left edge to the centre and back over 3 s, ease in-out |
 | Beam level change | 0.8 s fade |
-| Drift | Constant 10 cm/s toward −x; flicker = flame on/off at 4 Hz for 2 s |
+| Drift | Constant 10 cm/s toward −x; "flicker" = the flame glows brighter and softer once a second (1 Hz, smooth) for 2 s, never fully off |
 | Replay | Thread grows segment by segment, 0.4 s each, a small spark at the head; missed diyas pulse (1.2 s loop) |
 | Report card | Fades in 0.5 s after the replay ends |
 
-No camera shake, no flashes, nothing faster than 4 Hz.
+No camera shake and no flashing. **Nothing in the Lens may change brightness more than three times a second** (WCAG 2.3.1's photosensitive-seizure limit), and nothing switches fully on and off: use smooth fades. This matters more than usual here, because seizures are a common complication after stroke (`10-RESEARCH.md` S6–S7). The fastest change allowed anywhere is the hint pulse (about 1.7 per second).
 
 ## 6. Sound
 
@@ -87,7 +87,7 @@ No music. No error buzz ever.
 
 ## 7. Setup panel
 
-Title "Purna", subtitle "Set up today's practice". Difficulty and Hint after arrive preselected from `suggestNext()` (Core `Next.ts`: two clean sessions in a row → a step harder, a hard session → a step easier), with its one-line reason in `textSoft` under them. Rows (UI Kit):
+Title "Purna", subtitle "Set up today's practice". Above the Start button, one line in `textSoft`: "Sit down, with someone nearby. Stop if you feel dizzy, sick or unwell." Difficulty and Hint after arrive preselected from `suggestNext()` (Core `Next.ts`: two clean sessions in a row → a step harder, a hard session → a step easier), with its one-line reason in `textSoft` under them. Rows (UI Kit):
 1. Difficulty: segmented Easy / **Standard** / Hard
 2. Hint after: segmented 4 s / **6 s** / 10 s
 3. Start with the beam: switch (on)
@@ -147,6 +147,8 @@ Contrast: all text ≥ 4.5:1 on its background in both themes (check with a cont
 4. **Doctor view:** header with expiry date, the glasses' next-session suggestion, progress tiles, table of sessions (date, preset, L/R found, CoC, ego/allo asymmetry, best r, crossings, revisits, hints, max left turn), trend with a day-to-day band (median session-to-session change around a 3-session rolling mean: "a change inside it may be chance"), "Where the time went" (seconds to find a diya per third, earliest vs latest, and time turned left), "Context from published tests" (the Bells Test CoC reference as a dashed line, Apples Test note, and why these are context, never a cut-off; `10-RESEARCH.md` M7–M9), notes box, Download CSV, Print. `/doctor#demo` shows the same view with the labelled demo sessions and notes switched off.
 
 **Hindi:** the family's own screens (the dashboard, its dialogs, a session, and the sign-out, delete and join messages) switch to Hindi with a button in the header ("हिन्दी" / "English"), remembered on that device, with `lang` set on the page. Sentences built from numbers (the session summary, the measures, the nudge) are composed in Hindi word order in `lib/i18n.ts`, not translated word by word. The landing stays in English, and so does the therapist view, because therapists work in English. Server error messages are still English.
+
+**Docs (`/docs`):** markdown pages in `web/src/content/docs`, rendered as React elements (react-markdown, no raw HTML), one page per hash (`/docs#safety`): overview, safety, setting up the glasses, carers, therapists, what the numbers mean, privacy, terms, accessibility, evidence, report a problem. Written for everyone, worldwide: emergencies say "call your local emergency number" with examples (911, 999, 000, 112). An emergency note sits beside every page; pages print without menus. The footer links the main pages; the header has "Docs"; the landing's "not a medical device" line links the safety guide.
 
 **Sharing and install:** the home page has Open Graph and Twitter preview tags with a 1200 × 630 image of the night table (left half dark), and a web manifest with maskable icons so families can add it to their home screen. The therapist and join pages are `noindex` and carry no preview.
 

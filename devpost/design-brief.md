@@ -40,7 +40,7 @@ Ramesh, 64, had a right-side stroke in March and now misses the left half of his
 - Pinch a chipped diya: a quiet neutral tick, nothing else. No red flash, no error buzz.
 - Pinch a lit diya: nothing visible; logged as a revisit.
 - No reaching: every diya on the table can be pinched with SIK's ray from a hand resting in his lap, as well as by touch. A right-hemisphere stroke often weakens the left arm, so lighting a left diya must never mean reaching across the body.
-- Setup panel (used by the carer): Difficulty (Easy 8+8 / Standard 12+12 / Hard 16+16) and Hint delay (4 / 6 / 10 s) arrive preselected with what the glasses suggest from the last sessions, with a one-line reason under them ("Every diya found without hints, twice in a row. Try Hard."); the carer can change either. Then Beam starts on/off, Drift warm-up on/off, Far board on/off, Share with family on/off (off by default), and a big Start button.
+- Setup panel (used by the carer): a one-line reminder above Start, "Sit down, with someone nearby. Stop if you feel dizzy, sick or unwell." Difficulty (Easy 8+8 / Standard 12+12 / Hard 16+16) and Hint delay (4 / 6 / 10 s) arrive preselected with what the glasses suggest from the last sessions, with a one-line reason under them ("Every diya found without hints, twice in a row. Try Hard."); the carer can change either. Then Beam starts on/off, Drift warm-up on/off, Far board on/off, Share with family on/off (off by default), and a big Start button.
 - Report card: Replay, Send to family (only shown if sharing is on), Done.
 - Far board: far pinch with SIK's ray, so he never stands or reaches.
 - Targets are big (5 cm or more) and highlight when aimed at.
@@ -54,7 +54,7 @@ Ramesh, 64, had a right-side stroke in March and now misses the left half of his
 - Never an arrow, glow or highlight on a particular diya. The hint points to the side, never to the answer.
 - No hint once every whole diya on the left is lit, even if the right isn't finished.
 - Beam fading: one step dimmer after every 4 left-side finds made without a hint; one step brighter whenever a hint fires (4 levels, full to off).
-- Drift (add-on): diyas only ever move leftward.
+- Drift (add-on): diyas only ever move leftward. The one to pinch glows softly once a second; it never flashes.
 - A task ends when every whole diya is lit or its time runs out: Drift 45 s, table 90 s, far board 60 s. Session about 4 minutes.
 - Replay: right after the last task, the thread draws through the lit table diyas in the order they were lit, about 0.4 s per step, while missed whole diyas pulse. Table only (default); the far board shows as its own numbers on the report.
 - Report card: after the replay. Four tiles: Left vs right; Chipped-diya test; Search order (with path crossings and revisits); Head turn. One line underneath: "Practice result, not a diagnosis. Share it with your therapist."
@@ -93,6 +93,7 @@ Add-on criteria (only if built): Drift diyas only ever move left; the far board 
 - Get the basic flow working first, then add detail.
 - Write LEAF scenarios for each done criterion, run them in preview, and report which pass. Say which criteria have no test.
 - Don't record, identify, or follow people.
+- Safety: nothing in the Lens may flash or change brightness more than three times a second, and nothing switches fully on and off; use smooth fades. Seizures are a common complication after stroke.
 - The logic already exists as plain TypeScript in `Assets/Scripts/Core/` (PurnaEngine, Layout, CueEngine, Metrics, Drift, Report) with Node tests in `tools/`. Do not reimplement it. Write one component, `PurnaController`, that calls `engine.start()`, feeds `engine.tick(t, yawDeg)` every frame, calls `engine.pinch(t, itemId, yawDeg)` on a SIK pinch, draws what the engine returns, plays the bell and pulses/sweeps the beam on `frame.cue`, and calls `engine.report()` at the end. See `docs/03-ARCHITECTURE.md`.
 - Head yaw: compute it from the camera's forward vector with `yawFromForward()` (positive = turned left). Give `PurnaController` a yaw-override input that tests can set; when set, it's used instead of the camera.
 - Remove the template's `SIKExamples` object; keep `SpectaclesInteractionKit`.
