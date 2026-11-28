@@ -19,7 +19,7 @@ import { daysSince, fmtDate, fmtWhen } from "@/lib/format";
 import { dayToDay, measures, therapistRows } from "@/lib/session";
 import type { Me, SessionJson, Share } from "@/lib/types";
 import { SkipLink } from "@/components/purna/skip-link";
-import { getLang, LangContext, measuresIn, saveLang, STRINGS, summaryOf, numbersOf, type Lang } from "@/lib/i18n";
+import { getLang, LangContext, measuresIn, presetName, saveLang, STRINGS, summaryOf, numbersOf, type Lang } from "@/lib/i18n";
 
 type Msg = { kind: "success" | "danger" | "warn"; text: string } | null;
 type Panel = null | "share" | "invite" | "import" | "delete";
@@ -158,6 +158,7 @@ export function Dashboard(props: {
 
         {demo && <Alert variant="warn">{t.demoAlert}</Alert>}
         {nudge && <Alert variant="warn" className="nudge">{nudge}</Alert>}
+        {me.plan && <Alert id="plan-note" variant="success">{t.planSet(presetName(me.plan.preset, lang), me.plan.hintDelayS, fmtDate(me.plan.setAt, { day: "numeric", month: "long" }, lang))}</Alert>}
         {msg && panel === null && <Alert variant={msg.kind}>{msg.text}</Alert>}
 
         <div className="grid items-start gap-6 lg:grid-cols-[1.1fr_1fr]">

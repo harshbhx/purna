@@ -19,7 +19,7 @@ export interface SessionBrief {
 export interface NextStep {
   preset: Preset;
   hintDelayS: number;
-  change: "harder" | "easier" | "same" | "start";
+  change: "harder" | "easier" | "same" | "start" | "therapist";
   /** One short sentence for the setup panel, in the same plain words as the report card. */
   reason: string;
 }
@@ -89,4 +89,35 @@ export function suggestNext(recentNewestFirst: SessionBrief[]): NextStep {
   }
 
   return { preset: last.preset, hintDelayS: HINT_DELAYS[d], change: "same", reason: `Same as last time: ${NAME[last.preset]}, hint after ${HINT_DELAYS[d]} s.` };
+}
+
+/** A next session chosen by the therapist from the doctor link (GET /api/v1/devices/:id/next). */
+export interface TherapistPlan {
+  preset: Preset;
+  hintDelayS: number;
+  /** When the therapist set it, ISO 8601. */
+  setAt: string;
+}
+
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+function validPlan(p: TherapistPlan | null | undefined): p is TherapistPlan {
+  return !!p && PRESET_ORDER.indexOf(p.preset) >= 0 && typeof p.hintDelayS === "number" && isFinite(p.hintDelayS);
+}
+
+/**
+ * What the setup panel preselects: the therapist's plan when there is one, otherwise suggestNext().
+ * The carer can still change either. The server only returns a plan until the next session arrives.
+ */
+export function chooseNext(recentNewestFirst: SessionBrief[], plan?: TherapistPlan | null): NextStep {
+  if (!validPlan(plan)) return suggestNext(recentNewestFirst);
+  const delay = HINT_DELAYS[delayIndex(plan.hintDelayS)];
+  const d = new Date(plan.setAt);
+  const when = isNaN(d.getTime()) ? "" : " on " + d.getUTCDate() + " " + MONTHS[d.getUTCMonth()];
+  return {
+    preset: plan.preset,
+    hintDelayS: delay,
+    change: "therapist",
+    reason: "Set by your therapist" + when + ": " + NAME[plan.preset] + ", hint after " + delay + " s.",
+  };
 }

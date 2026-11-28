@@ -1,6 +1,6 @@
 // suggestNext: two clean sessions → a step harder; a hard session → a step easier; otherwise stay.
 import { describe, expect, it } from "vitest";
-import { briefOf, HINT_DELAYS, PRESET_ORDER, SessionBrief, suggestNext } from "../../Assets/Scripts/Core/Next";
+import { briefOf, chooseNext, HINT_DELAYS, PRESET_ORDER, SessionBrief, suggestNext } from "../../Assets/Scripts/Core/Next";
 import { runPlayer } from "./bench";
 
 const b = (over: Partial<SessionBrief> = {}): SessionBrief => ({
@@ -57,5 +57,31 @@ describe("suggestNext", () => {
     const neglect = briefOf(runPlayer("leftNeglect", 23, { hintDelayS: 6 }));
     expect(neglect.hints).toBeGreaterThan(0);
     expect(["same", "easier"]).toContain(suggestNext([neglect]).change);
+  });
+});
+
+describe("chooseNext with a therapist plan", () => {
+  const brief = { preset: "standard" as const, hintDelayS: 6, leftHits: 6, leftTotal: 6, rightHits: 6, rightTotal: 6, hints: 0 };
+
+  it("falls back to suggestNext without a plan", () => {
+    expect(chooseNext([brief, brief], null)).toEqual(suggestNext([brief, brief]));
+    expect(chooseNext([])).toEqual(suggestNext([]));
+  });
+
+  it("uses the therapist's level and delay, and says so", () => {
+    const n = chooseNext([brief, brief], { preset: "easy", hintDelayS: 4, setAt: "2026-12-03T10:00:00.000Z" });
+    expect(n).toMatchObject({ preset: "easy", hintDelayS: 4, change: "therapist" });
+    expect(n.reason).toBe("Set by your therapist on 3 Dec: Easy, hint after 4 s.");
+  });
+
+  it("snaps an odd delay to the nearest offered one and survives a bad date", () => {
+    const n = chooseNext([], { preset: "hard", hintDelayS: 9, setAt: "not a date" });
+    expect(n.hintDelayS).toBe(10);
+    expect(n.reason).toBe("Set by your therapist: Hard, hint after 10 s.");
+  });
+
+  it("ignores a plan with an unknown level", () => {
+    const n = chooseNext([], { preset: "extreme" as never, hintDelayS: 6, setAt: "2026-12-03T10:00:00.000Z" });
+    expect(n.change).toBe("start");
   });
 });

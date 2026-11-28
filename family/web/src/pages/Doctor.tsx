@@ -17,15 +17,21 @@ import { toCsv } from "@/lib/csv";
 import { fix, fmtDate, titleCase } from "@/lib/format";
 import { dayToDay, measures, progress, therapistRows } from "@/lib/session";
 import { LookChart } from "@/components/purna/look-chart";
-import { briefOf, suggestNext } from "../../../../Assets/Scripts/Core/Next";
+import { briefOf, chooseNext, HINT_DELAYS, PRESET_ORDER, suggestNext } from "../../../../Assets/Scripts/Core/Next";
 import { ReferenceCard } from "@/components/purna/reference-card";
-import type { DoctorData, Note, SessionJson } from "@/lib/types";
+import type { DoctorData, Note, Plan, SessionJson } from "@/lib/types";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
 import { SkipLink } from "@/components/purna/skip-link";
 
 const TOKEN_KEY = "purna.doctorToken";
 /** /doctor#demo: the same view filled with the labelled demo sessions, so anyone (judges included) can see it. */
-const isDemo = () => typeof location !== "undefined" && location.hash === "#demo";
+const isDemo = () => typeof location !== "undefined" && (location.hash === "#demo" || location.hash === "#played");
+/** /doctor#played: the sessions you played on /play in this tab, shown as a therapist would see them. */
+const isPlayed = () => typeof location !== "undefined" && location.hash === "#played";
+
+function playedSessions(): SessionJson[] {
+  try { return JSON.parse(sessionStorage.getItem("purna.played") || "[]") as SessionJson[]; } catch { return []; }
+}
 
 function readToken(): string | null {
   if (isDemo()) return null;
@@ -70,15 +76,18 @@ export function Doctor() {
   const [note, setNote] = useState("");
   const [noteMsg, setNoteMsg] = useState<{ kind: "success" | "danger"; text: string } | null>(null);
   const [openIds, setOpenIds] = useState<Set<string>>(new Set());
+  const [plan, setPlan] = useState<Plan | null>(null);
+  const [planForm, setPlanForm] = useState<{ preset: Plan["preset"]; hintDelayS: number } | null>(null);
+  const [planMsg, setPlanMsg] = useState<{ kind: "success" | "danger"; text: string } | null>(null);
 
   useEffect(() => {
     if (!demo) return;
-    fetch("/demo/sessions.json")
-      .then((r) => r.json() as Promise<SessionJson[]>)
+    const played = isPlayed() ? playedSessions() : [];
+    (played.length ? Promise.resolve(played) : fetch("/demo/sessions.json").then((r) => r.json() as Promise<SessionJson[]>))
       .then((ss) => {
         const sessions = ss.slice().sort((a, b) => b.startedAt.localeCompare(a.startedAt));
-        const notes: Note[] = [{ id: "demo", text: "Example note: a good week. The left side is coming back; keep the 6 s hints.", createdAt: sessions[0]?.startedAt ?? new Date().toISOString() }];
-        setData({ patient: { name: "Papa" }, expiresAt: new Date(Date.now() + 7 * 864e5).toISOString(), sessions, notes });
+        const notes: Note[] = played.length ? [] : [{ id: "demo", text: "Example note: a good week. The left side is coming back; keep the 6 s hints.", createdAt: sessions[0]?.startedAt ?? new Date().toISOString() }];
+        setData({ patient: { name: played.length ? "You" : "Papa" }, expiresAt: new Date(Date.now() + 7 * 864e5).toISOString(), sessions, notes });
         setNotes(notes);
         if (sessions[0]) setOpenIds(new Set([sessions[0].sessionId]));
       })
@@ -88,7 +97,7 @@ export function Doctor() {
   useEffect(() => {
     if (!token) return;
     api<DoctorData>("/doctor", { auth: token })
-      .then((d) => { setData(d); setNotes(d.notes); if (d.sessions[0]) setOpenIds(new Set([d.sessions[0].sessionId])); })
+      .then((d) => { setData(d); setNotes(d.notes); setPlan(d.plan ?? null); if (d.sessions[0]) setOpenIds(new Set([d.sessions[0].sessionId])); })
       .catch((e) => setError((e as Error).message));
   }, [token]);
 
@@ -105,6 +114,36 @@ export function Doctor() {
       const d = await api<DoctorData>("/doctor", { auth: token });
       setNotes(d.notes);
     } catch (x) { setNoteMsg({ kind: "danger", text: (x as Error).message }); }
+  }
+
+  const PRESET_LABEL: Record<string, string> = { easy: "Easy", standard: "Standard", hard: "Hard" };
+  const suggested = data && data.sessions.length ? suggestNext(data.sessions.slice(0, 3).map(briefOf)) : null;
+  const form = planForm ?? (plan ? { preset: plan.preset, hintDelayS: plan.hintDelayS } : { preset: (suggested?.preset ?? "standard") as Plan["preset"], hintDelayS: suggested?.hintDelayS ?? 6 });
+
+  async function savePlan(e: FormEvent) {
+    e.preventDefault();
+    setPlanMsg(null);
+    const words = `${PRESET_LABEL[form.preset]}, hint after ${form.hintDelayS} s`;
+    if (demo) {
+      setPlan({ ...form, setAt: new Date().toISOString() });
+      setPlanMsg({ kind: "success", text: `Example only, not saved: the glasses would load ${words} next time.` });
+      return;
+    }
+    try {
+      const r = await api<{ plan: Plan }>("/doctor/plan", { method: "POST", body: form, auth: token });
+      setPlan(r.plan);
+      setPlanMsg({ kind: "success", text: `Saved. The glasses will load ${words} for the next session.` });
+    } catch (x) { setPlanMsg({ kind: "danger", text: (x as Error).message }); }
+  }
+
+  async function clearPlan() {
+    setPlanMsg(null);
+    try {
+      if (!demo) await api("/doctor/plan", { method: "DELETE", auth: token });
+      setPlan(null);
+      setPlanForm(null);
+      setPlanMsg({ kind: "success", text: "Cleared. The glasses will suggest the next step themselves." });
+    } catch (x) { setPlanMsg({ kind: "danger", text: (x as Error).message }); }
   }
 
   function downloadCsv() {
@@ -134,7 +173,7 @@ export function Doctor() {
       </AppHeader>
       <main id="main" tabIndex={-1} className="outline-none mx-auto flex w-full max-w-6xl flex-1 flex-col gap-6 px-4 py-8 sm:px-5 md:py-10">
         {error && <div id="out"><Alert variant="danger">{error}</Alert></div>}
-        {demo && data && <Alert id="demo-banner" variant="warn">Example: simulated sessions from Purna’s test players, not a real person. Saving notes is switched off here.</Alert>}
+        {demo && data && <Alert id="demo-banner" variant="warn">{data.patient.name === "You" ? "Your sessions from Try the table, kept only in this browser tab. Nothing was sent anywhere." : "Example: simulated sessions from Purna’s test players, not a real person. Saving notes is switched off here."}</Alert>}
         {!error && !data && <p className="text-muted-foreground">Loading…</p>}
         {data && (
           <div id="view" className="flex flex-col gap-6">
@@ -144,11 +183,11 @@ export function Doctor() {
             </div>
 
             {data.sessions.length > 0 && (() => {
-              const next = suggestNext(data.sessions.slice(0, 3).map(briefOf));
+              const next = chooseNext(data.sessions.slice(0, 3).map(briefOf), plan);
               return (
                 <p id="next-step" className="m-0 rounded-2xl border border-border bg-card px-4 py-3 text-[14.5px] leading-relaxed">
-                  <span className="font-semibold">The glasses will suggest next: </span>{next.reason}{" "}
-                  <span className="text-muted-foreground">The family can change it on the setup panel, and your note can too.</span>
+                  <span className="font-semibold">{plan ? "The glasses will load next: " : "The glasses will suggest next: "}</span>{plan ? next.reason.replace("Set by your therapist", "Set by you") : next.reason}{" "}
+                  <span className="text-muted-foreground">{plan ? "The family can still change it on the setup panel." : <><a href="#plan-form">Set the next session yourself</a>, or leave it to the glasses.</>}</span>
                 </p>
               );
             })()}
@@ -227,6 +266,34 @@ export function Doctor() {
               </div>
 
               <aside className="flex flex-col gap-6">
+                <Card className="no-print">
+                  <CardHeader><CardTitle>Set the next session</CardTitle><CardDescription>The glasses load it on the setup panel next time, once. The family can still change it.</CardDescription></CardHeader>
+                  <CardContent className="pt-3">
+                    <form id="plan-form" onSubmit={savePlan} className="flex flex-col gap-4">
+                      <fieldset className="m-0 flex flex-col gap-2 border-0 p-0">
+                        <legend className="mb-2 text-[14px] font-medium">Level</legend>
+                        <div className="seg">
+                          {PRESET_ORDER.map((p) => (
+                            <label key={p}><input type="radio" name="plan-preset" value={p} checked={form.preset === p} onChange={() => setPlanForm({ ...form, preset: p as Plan["preset"] })} /><span>{PRESET_LABEL[p]}</span></label>
+                          ))}
+                        </div>
+                      </fieldset>
+                      <fieldset className="m-0 flex flex-col gap-2 border-0 p-0">
+                        <legend className="mb-2 text-[14px] font-medium">Hint after</legend>
+                        <div className="seg">
+                          {HINT_DELAYS.map((d) => (
+                            <label key={d}><input type="radio" name="plan-delay" value={d} checked={form.hintDelayS === d} onChange={() => setPlanForm({ ...form, hintDelayS: d })} /><span>{d} s</span></label>
+                          ))}
+                        </div>
+                      </fieldset>
+                      {planMsg && <Alert variant={planMsg.kind}>{planMsg.text}</Alert>}
+                      <div className="flex flex-wrap gap-2">
+                        <Button type="submit">{plan ? "Update next session" : "Set next session"}</Button>
+                        {plan && <Button type="button" variant="outline" onClick={clearPlan}>Clear</Button>}
+                      </div>
+                    </form>
+                  </CardContent>
+                </Card>
                 {!demo && <Card className="no-print">
                   <CardHeader><CardTitle>Note for the family</CardTitle></CardHeader>
                   <CardContent className="pt-3">
