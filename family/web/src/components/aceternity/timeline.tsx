@@ -1,5 +1,5 @@
 // Timeline in the style of Aceternity UI: steps down a rail, with a beam that fills as you scroll.
-import { motion, useScroll, useTransform } from "motion/react";
+import { m, useScroll, useTransform } from "motion/react";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
 import { useRef, type ReactNode } from "react";
 
@@ -13,7 +13,7 @@ export function Timeline({ data }: { data: TimelineEntry[] }) {
   return (
     <ol ref={ref} className="relative mx-auto flex max-w-3xl flex-col gap-10 md:gap-14">
       <div aria-hidden="true" className="absolute top-2 bottom-2 left-[19px] w-px bg-border md:left-[23px]">
-        <motion.div style={{ height: reduce ? "100%" : height }} className="w-px bg-gradient-to-b from-flame via-side-l to-transparent" />
+        <m.div style={{ height: reduce ? "100%" : height }} className="w-px bg-gradient-to-b from-flame via-side-l to-transparent" />
       </div>
       {data.map((d, i) => (
         <li key={d.title} className="relative grid grid-cols-[40px_1fr] gap-5 md:grid-cols-[48px_1fr] md:gap-8">

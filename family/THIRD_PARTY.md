@@ -2,7 +2,7 @@
 
 | What | Where | Licence |
 |---|---|---|
-| [React Bits](https://reactbits.dev) components: BlurText, CountUp, Magnet, ShinyText, SpotlightCard, by David Haz | `web/src/components/reactbits/` (copied unchanged apart from a header) | MIT with the Commons Clause (free to use in projects; the components themselves may not be sold) |
+| [React Bits](https://reactbits.dev) components: BlurText, CountUp, Magnet, ShinyText, SpotlightCard, by David Haz | `web/src/components/reactbits/` (copied unchanged apart from a header; BlurText also swaps `motion.span` for `m.span` so motion can load lazily) | MIT with the Commons Clause (free to use in projects; the components themselves may not be sold) |
 | Component patterns from [shadcn/ui](https://ui.shadcn.com) (button, input, label, textarea, badge, card, alert, dialog, table, collapsible), written for Purna's tokens | `web/src/components/ui/` | MIT |
 | Effects in the style of [Aceternity UI](https://ui.aceternity.com) (lamp, spotlight, timeline, dot background), written for Purna | `web/src/components/aceternity/` | Original code; the visual ideas are credited to Aceternity UI |
 | [Radix UI](https://www.radix-ui.com) primitives, [motion](https://motion.dev), [lucide](https://lucide.dev) icons | npm dependencies | MIT / ISC |

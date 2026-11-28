@@ -1,8 +1,9 @@
 // From React Bits (https://reactbits.dev, github.com/DavidHDev/react-bits) by David Haz, MIT + Commons Clause.
-// Copied unchanged except this header; see THIRD_PARTY.md.
+// Copied unchanged except this header and one swap: `m.span` for `m.span`, so the page can load motion's
+// animation code lazily (LazyMotion in features.ts). See THIRD_PARTY.md.
 'use client';
 
-import { motion, MotionConfig, type Easing, type MotionStyle, type Transition } from 'motion/react';
+import { m, MotionConfig, type Easing, type MotionStyle, type Transition } from 'motion/react';
 import { useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 
 type Snapshot = Record<string, string | number>;
@@ -387,7 +388,7 @@ const BlurText = ({
       : pieceStyle;
 
     return (
-      <motion.span
+      <m.span
         aria-hidden="true"
         key={piece.key}
         className="inline-block will-change-[transform,filter,opacity]"
@@ -397,7 +398,7 @@ const BlurText = ({
         transition={transition}
       >
         {piece.content}
-      </motion.span>
+      </m.span>
     );
   };
 

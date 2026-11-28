@@ -1,6 +1,6 @@
 // The search path on the table, seen from above: lit diyas numbered in order and joined by a thread,
 // missed whole diyas dashed, chipped diyas as open rings with their gap.
-import { motion } from "motion/react";
+import { m } from "motion/react";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
 import type { SessionJson } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -43,7 +43,7 @@ export function Replay({ session, animate = true, replayKey = 0, className }: { 
         ),
       )}
       {order.length > 1 && (
-        <motion.polyline
+        <m.polyline
           key={replayKey}
           points={order.map((it) => `${it.x},${it.u}`).join(" ")}
           className="thread"
