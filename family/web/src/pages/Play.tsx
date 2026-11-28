@@ -96,8 +96,8 @@ export function Play() {
     requestAnimationFrame(() => document.getElementById("result-h")?.focus());
   }, []);
 
-  async function start() {
-    await unlock();
+  function start() {
+    void unlock(); // sounds load in the background; the table never waits for them
     const e = new PurnaEngine({ seed: Math.floor(Math.random() * 1e6), preset, hintDelayS: 6, drift: false, far: false });
     engine.current = e;
     t0.current = performance.now();
@@ -108,8 +108,10 @@ export function Play() {
     setSession(null);
     setStage("task");
     setCaption("");
-    requestAnimationFrame(() => tableRef.current?.focus());
   }
+
+  // Put keyboard focus on the table once it's on screen, so the arrow keys turn the head straight away.
+  useEffect(() => { if (stage === "task") tableRef.current?.focus(); }, [stage]);
 
   // The frame loop: feed the engine the time and head yaw, react to hints, end when the engine says so.
   useEffect(() => {
