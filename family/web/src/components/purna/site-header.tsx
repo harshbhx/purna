@@ -26,7 +26,7 @@ export function SiteHeader({ onExample }: { onExample: () => void }) {
   return (
     <header className={cn("sticky top-0 z-40 transition-[background,box-shadow,border] duration-300", scrolled ? "border-b border-border/70 bg-background/80 backdrop-blur-xl backdrop-saturate-150" : "border-b border-transparent")}>
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-5">
-        <a href="#top" className="no-underline" aria-label="Purna, back to top"><Logo /></a>
+        <a href="#top" className="no-underline"><Logo /><span className="sr-only">, back to top</span></a>
         <nav aria-label="Main" className="hidden items-center gap-1 lg:flex">
           {LINKS.map((l) => (
             <a key={l.href} href={l.href} className="rounded-lg px-3 py-2 text-[15px] text-muted-foreground no-underline transition-colors hover:bg-muted hover:text-foreground">{l.label}</a>
