@@ -102,3 +102,29 @@ test("on a phone the header folds into a menu", async ({ page, isMobile }) => {
   await menu.getByRole("link", { name: "How it works" }).click();
   await expect(menu).toBeHidden();
 });
+
+test("shares with a preview card and installs like an app: every file the page points to exists", async ({ page, request }) => {
+  await page.goto("/");
+  const meta = (sel: string) => page.locator(sel).getAttribute("content");
+  expect(await meta('meta[property="og:title"]')).toContain("Purna");
+  expect(await meta('meta[name="twitter:card"]')).toBe("summary_large_image");
+  const og = new URL((await meta('meta[property="og:image"]'))!);
+  const img = await request.get(og.pathname);
+  expect(img.status()).toBe(200);
+  expect(img.headers()["content-type"]).toContain("image/png");
+
+  const href = await page.locator('link[rel="manifest"]').getAttribute("href");
+  const man = await (await request.get(href!)).json();
+  expect(man).toMatchObject({ name: "Purna Family", start_url: "/", display: "standalone" });
+  expect(man.icons.some((i: { purpose: string }) => i.purpose === "maskable")).toBe(true);
+  for (const icon of man.icons) expect((await request.get(icon.src)).status()).toBe(200);
+  expect((await request.get((await page.locator('link[rel="apple-touch-icon"]').getAttribute("href"))!)).status()).toBe(200);
+});
+
+test("the therapist and join pages stay out of search results and don't advertise themselves", async ({ page }) => {
+  for (const path of ["/doctor", "/join"]) {
+    await page.goto(path);
+    await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", "noindex");
+    await expect(page.locator('meta[property="og:image"]')).toHaveCount(0);
+  }
+});
