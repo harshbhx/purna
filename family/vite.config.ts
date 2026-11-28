@@ -19,6 +19,7 @@ export default defineConfig({
         index: resolve(web, "index.html"),
         doctor: resolve(web, "doctor.html"),
         join: resolve(web, "join.html"),
+        docs: resolve(web, "docs.html"),
       },
       // Named library chunks: the landing, dashboard and therapist pages share them from the browser cache.
       output: {

@@ -14,7 +14,8 @@ test("home explains Purna, plays the night table once, and ships a strict CSP", 
   await expect(page.locator("#hero-table .nt-lamp.lit")).toHaveCount(12, { timeout: 15_000 });
   await expect(page.locator("#hero-caption")).toHaveText("The head turns, and the table is whole.");
   await expect(page.getByRole("button", { name: "Play again" })).toBeVisible();
-  await expect(page.getByText("A practice tool, not a medical device.", { exact: true })).toBeVisible();
+  await expect(page.getByText(/^A practice tool, not a medical device\./).first()).toBeVisible();
+  await expect(page.getByRole("link", { name: "Read the safety guide" })).toHaveAttribute("href", "/docs#safety");
   expect(problems).toEqual([]);
 });
 
@@ -98,7 +99,7 @@ test("on a phone the header folds into a menu", async ({ page, isMobile }) => {
   await page.goto("/");
   await page.getByRole("button", { name: "Open menu" }).click();
   const menu = page.getByRole("dialog");
-  await expect(menu.getByRole("link", { name: "Research" })).toBeVisible();
+  await expect(menu.getByRole("link", { name: "Docs" })).toHaveAttribute("href", "/docs");
   await menu.getByRole("link", { name: "How it works" }).click();
   await expect(menu).toBeHidden();
 });

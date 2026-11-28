@@ -80,6 +80,16 @@ for (const scheme of ["light", "dark"] as const) {
       await scan(page, "example dashboard in Hindi");
     });
 
+    test("every docs page", async ({ page }) => {
+      test.setTimeout(120_000); // 11 pages, each scanned
+      for (const id of ["overview", "safety", "setup", "carers", "therapists", "measures", "privacy", "terms", "accessibility", "evidence", "report"]) {
+        await page.goto(`/docs#${id}`);
+        await expect(page.locator("#doc-title")).toBeVisible();
+        await expect(page.getByRole("navigation", { name: "Documentation" }).locator(`a[href="#${id}"]`)).toHaveAttribute("aria-current", "page");
+        await scan(page, `docs: ${id}`);
+      }
+    });
+
     test("the error pages", async ({ page }) => {
       await page.goto("/doctor");
       await expect(page.getByRole("alert")).toBeVisible();

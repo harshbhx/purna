@@ -11,7 +11,7 @@ const LINKS = [
   { href: "#read", label: "Reading a session" },
   { href: "#families", label: "Families" },
   { href: "#therapists", label: "Therapists" },
-  { href: "#research", label: "Research" },
+  { href: "/docs", label: "Docs" },
 ];
 
 export function SiteHeader({ onExample }: { onExample: () => void }) {
