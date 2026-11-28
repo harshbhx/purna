@@ -7,6 +7,7 @@ import type { Me, SessionJson } from "@/lib/types";
 // The dashboard is only needed after pairing or "See an example", so it loads then, not with the landing page.
 const Dashboard = lazy(() => import("@/pages/Dashboard").then((m) => ({ default: m.Dashboard })));
 import { Landing } from "@/pages/Landing";
+import { getLang, STRINGS } from "@/lib/i18n";
 
 type View = { kind: "landing" } | { kind: "loading" } | { kind: "dash"; me: Me; demo: boolean };
 
@@ -29,7 +30,7 @@ export function App({ demo }: { demo: SessionJson[] }) {
         clearKey();
         setFamilyKey(null);
         setView({ kind: "landing" });
-        setFlash({ kind: "danger", text: "This family link isn't valid any more. Ask your family for a new invite link, or pair again with a code from the glasses." });
+        setFlash({ kind: "danger", text: STRINGS[getLang()].keyGone });
       } else {
         setView({ kind: "landing" });
         setFlash({ kind: "danger", text: (e as Error).message });
@@ -74,8 +75,8 @@ export function App({ demo }: { demo: SessionJson[] }) {
         familyKey={key}
         sessionsById={sessions.current}
         onReload={() => (key ? load(key) : Promise.resolve())}
-        onSignOut={() => toLanding("Signed out on this device. Use your invite link to come back.")}
-        onDeleted={() => toLanding("Everything is deleted. To start again, send a session from the glasses for a new code.")}
+        onSignOut={() => toLanding(STRINGS[getLang()].signedOut)}
+        onDeleted={() => toLanding(STRINGS[getLang()].deleted)}
       />
       </Suspense>
     );
