@@ -5,12 +5,14 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { Logo } from "./logo";
+import { ThemeToggle } from "./theme-toggle";
 
 const LINKS = [
   { href: "#how", label: "How it works" },
   { href: "#read", label: "Reading a session" },
   { href: "#families", label: "Families" },
   { href: "#therapists", label: "Therapists" },
+  { href: "/play", label: "Try it" },
   { href: "/docs", label: "Docs" },
 ];
 
@@ -33,12 +35,15 @@ export function SiteHeader({ onExample }: { onExample: () => void }) {
           ))}
         </nav>
         <div className="hidden items-center gap-2 lg:flex">
+          <ThemeToggle />
           <Button asChild variant="outline" size="sm"><a href="#code" className="no-underline">I have a code</a></Button>
           <Button size="sm" onClick={onExample}>See an example</Button>
         </div>
+        <div className="flex items-center gap-1 lg:hidden">
+        <ThemeToggle />
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
-            <Button variant="outline" size="icon" className="lg:hidden" aria-label="Open menu"><Menu /></Button>
+            <Button variant="outline" size="icon" aria-label="Open menu"><Menu /></Button>
           </DialogTrigger>
           <DialogContent className="top-3 translate-y-0 data-[state=open]:animate-[fade-in_160ms_ease-out]">
             <DialogTitle className="sr-only">Menu</DialogTitle>
@@ -55,6 +60,7 @@ export function SiteHeader({ onExample }: { onExample: () => void }) {
             </div>
           </DialogContent>
         </Dialog>
+        </div>
       </div>
     </header>
   );
