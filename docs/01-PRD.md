@@ -75,6 +75,7 @@ After a right-hemisphere stroke, many people stop attending to the left half of 
 | L13 | Drift (add-on): 8 diyas spawn at the right edge, move at 10 cm/s toward −x only; one glows softly (1 Hz, never flashing) for 2 s every 3–4 s; pinch during the glow = hit |
 | L14 | Far board (add-on): `PreviewBoard (stand-in)` 200 × 90 cm at (0, 0, −200); Easy 6+6, Standard 8+8, Hard 10+10, 18 cm diyas, 22 cm gap; far pinch; its own report numbers; not in the replay |
 | L15 | No score, timer, text or progress during a task |
+| L17 | Attention map: after the replay, warm light on the table where the head pointed during the task (`engine.attention()`, 14 strips); a slow fade, never a flash |
 | L16 | Debug-only `PurnaSelfTest` (prints PASS/FAIL per done criterion) and `PurnaDemoDirector` (plays a scripted session for recording); both off by default and never referenced by the controller |
 
 ## 7. Purna Family functional requirements
@@ -92,6 +93,9 @@ After a right-hemisphere stroke, many people stop attending to the left half of 
 | F9 | Gentle nudge on the dashboard if no session in 3 days ("No practice since Monday"). No push notifications |
 | F10 | Privacy: no names or identity from the glasses; display name is typed by the family; keys and tokens stored hashed; no analytics or third-party scripts |
 | F11 | The home page (top section) explains Purna in plain words and doubles as the landing page for judges |
+| F12 | Therapist plan: the doctor link sets the next session's level and hint delay; the glasses preselect it once (Core `chooseNext`), the family dashboard shows it, the next session clears it |
+| F13 | Try the table (`/play`): anyone plays the table in a browser on the real engine, with a narrow view to turn, the bell from the left, the replay, the attention map and the report; nothing is sent |
+| F14 | A light/dark switch in every header, remembered per device |
 
 ## 8. Report measures (Lens tile → field)
 
