@@ -58,3 +58,17 @@ test("an old invite link sends the family home with a reason, not an error", asy
   await expect(page.getByRole("heading", { level: 1 })).toHaveAccessibleName("Practice that makes the world whole again.");
   expect(problems).toEqual([]);
 });
+
+test("the landing links to an example therapist view that works without any link from a family", async ({ page }) => {
+  const problems = watchConsole(page);
+  await page.goto("/");
+  await page.locator("#doctor-demo-link").click();
+  await expect(page).toHaveURL(/\/doctor#demo$/);
+  await expect(page.getByRole("heading", { name: "Papa: Purna practice" })).toBeVisible();
+  await expect(page.locator("#demo-banner")).toContainText("not a real person");
+  await expect(page.locator("#table tbody tr")).toHaveCount(9);
+  await expect(page.locator("#next-step")).toContainText("The glasses will suggest next:");
+  await expect(page.locator("#reference")).toContainText("0.081");
+  await expect(page.locator("#note-form")).toHaveCount(0);
+  expect(problems).toEqual([]);
+});
