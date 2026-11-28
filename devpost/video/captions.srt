@@ -1,0 +1,75 @@
+1
+00:00:00,000 --> 00:00:07,000
+After a stroke on the right side of the brain, many people stop noticing the left half of the world.
+
+2
+00:00:07,000 --> 00:00:15,000
+They eat half the plate. Read half the page. And usually, they don't know it. It's called left spatial neglect.
+
+3
+00:00:15,000 --> 00:00:22,000
+Therapists train it with paper sheets in the clinic. But in one Indian study, only 7.6% of stroke survivors got therapy at all.
+
+4
+00:00:22,000 --> 00:00:30,000
+Purna brings that exercise home, onto your own dining table, through Snap SPECS.
+
+5
+00:00:30,000 --> 00:00:40,000
+Small clay diyas appear. Light the whole ones with a pinch. Leave the chipped ones alone.
+
+6
+00:00:40,000 --> 00:00:50,000
+No score. No timer. No failure sounds. Just lamps.
+
+7
+00:00:50,000 --> 00:01:03,000
+Ramesh lights the right half, and stops. He's sure he's done.
+
+8
+00:01:03,000 --> 00:01:12,000
+The bell comes from the left. It points to the side, never to the answer. The searching stays his.
+
+9
+00:01:12,000 --> 00:01:20,000
+And as he starts finding the left on his own, the beam fades.
+
+10
+00:01:20,000 --> 00:01:30,000
+When the table is done, a thread replays his search. For the first time, he can see the half he skipped.
+
+11
+00:01:30,000 --> 00:01:38,000
+Showing people where they looked improved neglect in a crossover study. Here it's on his own table.
+
+12
+00:01:38,000 --> 00:01:52,000
+Four measures in plain words. Practice result, not a diagnosis. One pinch sends it home.
+
+13
+00:01:52,000 --> 00:02:04,000
+His family types the code once. Every session arrives as one sentence and a trend line, the left side coming back.
+
+14
+00:02:04,000 --> 00:02:12,000
+The therapist gets a seven-day link with every number a cancellation test gives, and writes a note back.
+
+15
+00:02:12,000 --> 00:02:16,000
+And the site explains what the numbers mean.
+
+16
+00:02:16,000 --> 00:02:26,000
+Every rule is plain TypeScript, tested before Lens Studio opened. CLAD built the scene from our plan-lens brief, and LEAF checks each done criterion.
+
+17
+00:02:26,000 --> 00:02:36,000
+Three simulated searchers on two hundred tables prove the report tells left neglect from object neglect. 181 automated tests run on every change.
+
+18
+00:02:36,000 --> 00:02:43,000
+Purna is a practice tool, not a medical device, and it hasn't met a patient yet. That's next.
+
+19
+00:02:43,000 --> 00:02:45,000
+Purna. Whole.
