@@ -16,6 +16,7 @@ import CountUp from "@/components/reactbits/CountUp";
 import Magnet from "@/components/reactbits/Magnet";
 import ShinyText from "@/components/reactbits/ShinyText";
 import SpotlightCard from "@/components/reactbits/SpotlightCard";
+import { useResolvedTheme } from "@/lib/theme";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -44,6 +45,7 @@ function H2({ id, children }: { id: string; children: React.ReactNode }) {
 
 export function Landing({ demo, onPaired, onExample }: { demo: SessionJson[]; onPaired: (key: string) => void; onExample: () => void }) {
   const reduce = useReducedMotion();
+  const theme = useResolvedTheme();
   const recent = useMemo(() => demo.slice().sort((a, b) => b.startedAt.localeCompare(a.startedAt)), [demo]);
   const healthy = demo.find((s) => s.near.leftHits === s.near.leftTotal && s.near.fpChipLeft === 0) ?? demo[0];
   const neglect = demo.find((s) => s.near.leftHits < s.near.leftTotal) ?? demo[0];
@@ -273,7 +275,7 @@ export function Landing({ demo, onPaired, onExample }: { demo: SessionJson[]; on
           <p className="mt-4 mb-12 text-lg text-muted-foreground">Every choice traces to a published finding. <a href="https://github.com/harshbhx/purna/blob/main/docs/10-RESEARCH.md">Read all the research</a></p>
           <div className="grid gap-4 md:grid-cols-2">
             {reasons.map((r) => (
-              <SpotlightCard key={r.t} theme="light" spotlightColor="rgba(245, 158, 11, 0.22)" className="rounded-3xl p-7">
+              <SpotlightCard key={r.t} theme={theme} spotlightColor="rgba(245, 158, 11, 0.22)" className="rounded-3xl p-7">
                 <h3 className="m-0 text-xl font-semibold tracking-[-0.015em]">{r.t}</h3>
                 <p className="mt-3 mb-0 text-[16px] leading-relaxed text-muted-foreground">{r.b} <a href={r.href}>{r.src}</a></p>
               </SpotlightCard>

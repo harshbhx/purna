@@ -74,12 +74,12 @@ describe("attention map on the replay", () => {
 describe("theme switch", () => {
   afterEach(() => { document.documentElement.removeAttribute("data-theme"); localStorage.clear(); });
 
-  it("starts from the system, flips to dark and back, and remembers the choice", () => {
+  it("starts from the system, flips to dark and back, and remembers the choice", async () => {
     render(<ThemeToggle />);
     fireEvent.click(screen.getByRole("button", { name: "Switch to dark mode" }));
     expect(document.documentElement.getAttribute("data-theme")).toBe("dark");
     expect(localStorage.getItem(THEME_KEY)).toBe("dark");
-    fireEvent.click(screen.getByRole("button", { name: "Switch to light mode" }));
+    fireEvent.click(await screen.findByRole("button", { name: "Switch to light mode" }));
     expect(document.documentElement.getAttribute("data-theme")).toBe("light");
     expect(localStorage.getItem(THEME_KEY)).toBe("light");
   });
