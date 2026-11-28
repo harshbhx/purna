@@ -3,11 +3,18 @@
 import type { SessionJson } from "../../Assets/Scripts/Core/Report";
 import { newId, newPairCode, newSecret, normalizePairCode, sha256 } from "./lib/crypto";
 import { bearer, errorResponse, HttpError, json, readJson } from "./lib/http";
+import { callerIp, enforce, RETRY_AFTER_S, type RateLimiter } from "./lib/limits";
 import { cleanName, cleanNote, validateSession, validDeviceId } from "./lib/validate";
 
 export interface Env {
   DB: D1Database;
   ASSETS: Fetcher;
+  /** 10 pairing attempts a minute per caller IP: slows down guessing DIYA codes. */
+  PAIR_LIMIT: RateLimiter;
+  /** 20 sessions a minute per glasses (deviceId). */
+  SESSION_LIMIT: RateLimiter;
+  /** 10 notes a minute per doctor link, on top of the 50-note cap per link. */
+  NOTE_LIMIT: RateLimiter;
 }
 
 export const API_VERSION = "1.0.0";
@@ -98,6 +105,7 @@ async function postSession(req: Request, env: Env): Promise<Response> {
   const body = await readJson(req);
   if (!validDeviceId(body.deviceId)) throw new HttpError(400, "bad_device", "deviceId must be 32 hex characters.");
   const deviceId = body.deviceId;
+  await enforce(env.SESSION_LIMIT, `session:${deviceId}`);
   const session = validateSession(body.session);
   const now = Date.now();
 
@@ -150,6 +158,8 @@ async function postSession(req: Request, env: Env): Promise<Response> {
 // ---------- pairing ----------
 
 async function postPair(req: Request, env: Env): Promise<Response> {
+  const ip = callerIp(req);
+  if (ip) await enforce(env.PAIR_LIMIT, `pair:${ip}`);
   const body = await readJson(req);
   const code = typeof body.code === "string" ? normalizePairCode(body.code) : null;
   if (!code) throw new HttpError(400, "bad_code", "That code doesn't look right. It's like DIYA-7K3P.");
@@ -312,6 +322,7 @@ async function getDoctor(req: Request, env: Env): Promise<Response> {
 
 async function postDoctorNote(req: Request, env: Env): Promise<Response> {
   const { share, patient } = await doctor(req, env);
+  await enforce(env.NOTE_LIMIT, `note:${share.id}`);
   const body = await readJson(req);
   const text = cleanNote(body.text);
   if (!text) throw new HttpError(400, "bad_note", "A note is 1 to 1000 characters.");
@@ -355,7 +366,7 @@ export async function handleApi(req: Request, env: Env): Promise<Response> {
     throw new HttpError(404, "no_route", "Not found.");
   } catch (e) {
     const extra = isSessions ? CORS : {};
-    if (e instanceof HttpError) return errorResponse(e, extra);
+    if (e instanceof HttpError) return errorResponse(e, e.status === 429 && e.code === "slow_down" ? { ...extra, "retry-after": String(RETRY_AFTER_S) } : extra);
     console.error("purna-family error", e instanceof Error ? e.message : String(e));
     return errorResponse(new HttpError(500, "server_error", "Something went wrong on our side."), extra);
   }
