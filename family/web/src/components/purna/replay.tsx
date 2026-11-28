@@ -37,7 +37,7 @@ export function Replay({ session, animate = true, replayKey = 0, className }: { 
       <line x1="0" x2="0" y1={-D / 2} y2={D / 2} className="stroke-muted-foreground/50" strokeWidth=".3" strokeDasharray="1 1" />
       {near.items.map((it) =>
         it.kind === "whole" ? (
-          <circle key={it.id} cx={it.x} cy={it.u} r={r * 0.95} className={lit.has(it.id) ? "diya-lit" : "diya-dark"} />
+          lit.has(it.id) ? null : <circle key={it.id} cx={it.x} cy={it.u} r={r * 0.95} className="diya-dark" />
         ) : (
           <path key={it.id} d={chippedPath(it.x, it.u, r * 0.85, it.chip)} className={chippedLit.has(it.id) ? "diya-chip-lit" : "diya-chip"} />
         ),
@@ -52,6 +52,10 @@ export function Replay({ session, animate = true, replayKey = 0, className }: { 
           transition={{ duration: Math.min(4, 0.4 * order.length), ease: "easeInOut" }}
         />
       )}
+      {/* Lit diyas sit on top of the thread so their numbers stay readable. */}
+      {order.map((it) => (
+        <circle key={`lit-${it.id}`} cx={it.x} cy={it.u} r={r * 0.95} className="diya-lit" />
+      ))}
       {order.map((it, i) => (
         <text key={it.id} x={it.x} y={it.u + 0.95} textAnchor="middle" className="order">{i + 1}</text>
       ))}

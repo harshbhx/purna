@@ -9,6 +9,7 @@ import { Replay } from "@/components/purna/replay";
 import { SessionCard } from "@/components/purna/session-card";
 import { SiteFooter } from "@/components/purna/site-footer";
 import { SiteHeader } from "@/components/purna/site-header";
+import { ThreeSearchers } from "@/components/purna/three-searchers";
 import { TrendChart } from "@/components/purna/trend-chart";
 import BlurText from "@/components/reactbits/BlurText";
 import CountUp from "@/components/reactbits/CountUp";
@@ -174,6 +175,13 @@ export function Landing({ demo, onPaired, onExample }: { demo: SessionJson[]; on
               <figcaption className="mt-3 text-sm leading-relaxed text-muted-foreground">Numbers are the order they found the diyas, dashed circles were missed, open rings are chipped diyas. Example from a simulated player.</figcaption>
             </figure>
           </div>
+        </Section>
+
+        {/* Reading a session */}
+        <Section id="read" labelledBy="read-h" className="border-t border-border">
+          <H2 id="read-h">Three ways to search the same table</H2>
+          <p className="mt-4 mb-10 max-w-[60ch] text-lg leading-relaxed text-muted-foreground">One layout, three simulated searchers, run through the real Purna engine. Switch between them to see what each measure catches. These are scripted players, not patients.</p>
+          <ThreeSearchers />
         </Section>
 
         {/* Families */}

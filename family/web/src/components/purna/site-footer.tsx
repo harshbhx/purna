@@ -1,7 +1,7 @@
 import { Logo } from "./logo";
 
 const COLS: { title: string; links: { label: string; href: string }[] }[] = [
-  { title: "Purna", links: [{ label: "How it works", href: "/#how" }, { label: "For families", href: "/#families" }, { label: "For therapists", href: "/#therapists" }, { label: "I have a code", href: "/#code" }] },
+  { title: "Purna", links: [{ label: "How it works", href: "/#how" }, { label: "Reading a session", href: "/#read" }, { label: "For families", href: "/#families" }, { label: "For therapists", href: "/#therapists" }, { label: "I have a code", href: "/#code" }] },
   { title: "Project", links: [{ label: "Research behind it", href: "https://github.com/harshbhx/purna/blob/main/docs/10-RESEARCH.md" }, { label: "Source on GitHub", href: "https://github.com/harshbhx/purna" }, { label: "Design brief", href: "https://github.com/harshbhx/purna/blob/main/devpost/design-brief.md" }, { label: "Security", href: "https://github.com/harshbhx/purna/blob/main/SECURITY.md" }] },
   { title: "Built with", links: [{ label: "Snap SPECS and Lens Studio", href: "https://developers.specs.com/" }, { label: "Cloudflare Workers and D1", href: "https://developers.cloudflare.com/workers/" }, { label: "shadcn/ui and React Bits", href: "https://github.com/harshbhx/purna/blob/main/family/THIRD_PARTY.md" }] },
 ];

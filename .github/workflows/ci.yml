@@ -74,7 +74,7 @@ jobs:
       - name: Demo data is up to date
         run: |
           npm run sample
-          git diff --exit-code -- samples web/public/demo || { echo "::error::Demo sessions are stale. Run: cd family && npm run sample"; exit 1; }
+          git diff --exit-code -- samples web/public/demo web/src/data || { echo "::error::Demo sessions are stale. Run: cd family && npm run sample"; exit 1; }
 
   e2e:
     name: End-to-end (Chrome, phone + desktop)

@@ -39,6 +39,18 @@ mkdirSync(join(process.cwd(), "web", "public", "demo"), { recursive: true });
 writeFileSync(join(process.cwd(), "web", "public", "demo", "sessions.json"), JSON.stringify(out) + "\n");
 console.log(`wrote ${out.length} sessions to samples/ and web/public/demo/sessions.json`);
 
+// The landing's explainer: one table (seed 23), three simulated searchers. Bundled with the app.
+const THREE_SEED = 23;
+const three = (["healthy", "leftNeglect", "objectNeglect"] as const).map((player, i) => {
+  const s = runPlayer(player, THREE_SEED, { hintDelayS: 6 });
+  s.startedAt = new Date(base).toISOString();
+  s.sessionId = makeSessionId(base, (i + 1) / 10);
+  return { player, session: s };
+});
+mkdirSync(join(process.cwd(), "web", "src", "data"), { recursive: true });
+writeFileSync(join(process.cwd(), "web", "src", "data", "three.json"), JSON.stringify(three) + "\n");
+console.log("wrote web/src/data/three.json (seed " + THREE_SEED + ", three players)");
+
 const i = process.argv.indexOf("--post");
 if (i > 0) {
   const origin = process.argv[i + 1];
