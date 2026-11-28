@@ -116,7 +116,8 @@ export function Landing({ demo, onPaired, onExample }: { demo: SessionJson[]; on
                 <Magnet padding={40} magnetStrength={4}>
                   <Button size="lg" onClick={onExample}>See an example</Button>
                 </Magnet>
-                <Button asChild size="lg" variant="outline"><a href="#code" className="no-underline">I have a code</a></Button>
+                <Button asChild size="lg" variant="outline"><a id="try-table" href="/play" className="no-underline">Try the table yourself</a></Button>
+                <a href="#code" className="text-[15px]">I have a code</a>
               </div>
               <p className="mt-5 mb-0 flex items-center gap-2 text-sm text-muted-foreground"><ShieldCheck className="size-4" aria-hidden="true" />A practice tool, not a medical device. <a href="/docs#safety">Read the safety guide</a></p>
             </div>

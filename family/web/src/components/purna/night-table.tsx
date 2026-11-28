@@ -27,7 +27,7 @@ export function lightingOrder(items: ItemJson[]) {
   return { right, left, wholes };
 }
 
-function Lamp({ it, lit }: { it: ItemJson; lit: boolean }) {
+export function Lamp({ it, lit }: { it: Pick<ItemJson, "id" | "x" | "u" | "kind" | "chip">; lit: boolean }) {
   if (it.kind === "whole") {
     return (
       <g className={cn("nt-lamp", lit && "lit")} transform={`translate(${it.x} ${it.u})`} data-id={it.id}>
