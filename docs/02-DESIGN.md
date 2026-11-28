@@ -73,15 +73,15 @@ No camera shake, no flashes, nothing faster than 4 Hz.
 
 ## 6. Sound
 
-CLAD can generate these; keep them soft and short. Spatialise all except UI clicks.
+The files are ready in `Assets/Audio/` (mono, 48 kHz, 16-bit WAV). They are original: synthesised from sine partials and seeded noise by `tools/scripts/sounds.ts` (`cd tools && npm run sounds`), so there is nothing to license, and a test checks each one against this table. Spatialise all except UI clicks.
 
-| Sound | Character | Where |
-|---|---|---|
-| light | Warm, soft tone (like a small brass bowl, ~660 Hz), 0.4 s, gentle attack | At the diya |
-| tick | Quiet wooden tick, 0.08 s, low volume | At the diya |
-| bell | Soft temple bell, one strike, 1.5 s decay | HintSpeaker at the table's left edge |
-| ui | Soft click | UI |
-| replay | Very soft shimmer per segment (optional) | Thread head |
+| Sound | File | Character | Where |
+|---|---|---|---|
+| light | `light.wav` | Warm, soft tone (like a small brass bowl, 660 Hz), 0.4 s, 15 ms attack, −6 dBFS | At the diya |
+| tick | `tick.wav` | Quiet wooden tick, 0.08 s, −14 dBFS | At the diya |
+| bell | `bell.wav` | Soft temple bell over 784 Hz, one strike, about 40 dB down by 1.5 s, −3 dBFS | HintSpeaker at the table's left edge |
+| ui | `ui.wav` | Soft click, 0.05 s, −16 dBFS | UI |
+| replay | `replay.wav` | Very soft high shimmer per segment (optional), 0.35 s, −20 dBFS | Thread head |
 
 No music. No error buzz ever.
 
