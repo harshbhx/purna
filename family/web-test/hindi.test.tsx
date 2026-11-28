@@ -46,7 +46,7 @@ describe("The dashboard in Hindi", () => {
 
   it("switches with one button, remembers the choice, and marks the page as Hindi", async () => {
     await example();
-    const toggle = screen.getByRole("button", { name: "Show this page in Hindi" });
+    const toggle = screen.getByRole("button", { name: /Show this page in Hindi/ });
     expect(toggle.textContent).toContain("हिन्दी");
     fireEvent.click(toggle);
     expect(await screen.findByRole("heading", { name: "Papa का अभ्यास" })).toBeTruthy();
@@ -56,7 +56,7 @@ describe("The dashboard in Hindi", () => {
     expect(screen.getByText("पिछले सत्र")).toBeTruthy();
     const latest = document.querySelector("#latest .session-card")!;
     expect(latest.textContent).toMatch(/बाईं ओर \d+ में से \d+/);
-    fireEvent.click(screen.getByRole("button", { name: "Show this page in English" }));
+    fireEvent.click(screen.getByRole("button", { name: /Show this page in English/ }));
     expect(await screen.findByRole("heading", { name: "Papa’s practice" })).toBeTruthy();
     expect(localStorage.getItem("purna.lang")).toBe("en");
   });

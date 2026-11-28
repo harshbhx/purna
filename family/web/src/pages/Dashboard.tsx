@@ -136,7 +136,7 @@ export function Dashboard(props: {
     <div id="dash" lang={lang === "hi" ? "hi" : "en"} className="flex min-h-dvh flex-col bg-surface">
       <SkipLink />
       <AppHeader>
-        <Button id="lang-toggle" variant="ghost" size="sm" lang={lang === "hi" ? "en" : "hi"} aria-label={t.switchToLabel} onClick={() => { const next = lang === "hi" ? "en" : "hi"; saveLang(next); setLang(next); }}><Languages />{t.switchTo}</Button>
+        <Button id="lang-toggle" variant="ghost" size="sm" onClick={() => { const next = lang === "hi" ? "en" : "hi"; saveLang(next); setLang(next); }}><Languages /><span lang={lang === "hi" ? "en" : "hi"}>{t.switchTo}</span><span className="sr-only"> ({t.switchToLabel})</span></Button>
         {demo && <Badge id="demo-badge" variant="warn" className="hidden sm:inline-flex">{t.example}</Badge>}
         {!demo && <Button variant="ghost" size="sm" onClick={props.onSignOut}><LogOut />{t.signOut}</Button>}
         {demo && <Button variant="outline" size="sm" asChild><a href="/#code" className="no-underline">{t.pairGlasses}</a></Button>}

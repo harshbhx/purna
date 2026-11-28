@@ -132,7 +132,7 @@ test("the therapist and join pages stay out of search results and don't advertis
 test("the family dashboard switches to Hindi, keeps it after a reload, and never scrolls sideways", async ({ page }) => {
   await page.goto("/");
   await page.getByRole("button", { name: "See an example" }).first().click();
-  await page.getByRole("button", { name: "Show this page in Hindi" }).click();
+  await page.getByRole("button", { name: /Show this page in Hindi/ }).click();
   await expect(page.getByRole("heading", { name: "Papa का अभ्यास" })).toBeVisible();
   await expect(page.locator("html")).toHaveAttribute("lang", "hi");
   await expect(page.locator("#latest .session-card")).toContainText("बाईं ओर");
