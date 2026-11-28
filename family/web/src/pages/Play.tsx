@@ -4,7 +4,7 @@
 // right with dark diyas on the left and the bell rings from your left speaker. Then the replay, the
 // attention map and the report, as the family and the therapist would see them.
 import { Bell, Eye, Play as PlayIcon, RotateCcw, Stethoscope, Volume2 } from "lucide-react";
-import { useCallback, useEffect, useMemo, useRef, useState, type KeyboardEvent, type PointerEvent } from "react";
+import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState, type KeyboardEvent, type PointerEvent } from "react";
 import { AppHeader } from "@/components/purna/app-header";
 import { Lamp } from "@/components/purna/night-table";
 import { Replay } from "@/components/purna/replay";
@@ -32,6 +32,18 @@ const BEAM_OPACITY = [0, 0.35, 0.6, 0.9];
 export const PLAYED_KEY = "purna.played";
 
 type Stage = "setup" | "task" | "done";
+type View = "glasses" | "top";
+
+// three.js only downloads when the glasses view opens.
+const GlassesView = lazy(() => import("@/components/purna/glasses-view"));
+
+/** True when the browser can draw the 3D glasses view. */
+function canDraw3d(): boolean {
+  try {
+    const c = document.createElement("canvas");
+    return !!(c.getContext("webgl2") || c.getContext("webgl"));
+  } catch { return false; }
+}
 
 /** Head yaw for a view centred at x cm on the table (positive = turned left). */
 export const yawFor = (cx: number) => (Math.atan2(-cx, DIST) * 180) / Math.PI + 0; // + 0 turns -0 into 0
@@ -68,7 +80,10 @@ export function Play() {
   const [stage, setStage] = useState<Stage>("setup");
   const [preset, setPreset] = useState<Preset>("easy");
   const [neglect, setNeglect] = useState(false);
+  const [has3d] = useState(canDraw3d);
+  const [view, setView] = useState<View>(() => (canDraw3d() ? "glasses" : "top"));
   const [cx, setCx] = useState(0);
+  const [sel, setSel] = useState<number | null>(null);
   const [, setFrame] = useState(0);
   const [beam, setBeam] = useState(3);
   const [cue, setCue] = useState<"none" | "hint1" | "hint2">("none");
@@ -93,7 +108,6 @@ export function Play() {
       const prev = JSON.parse(sessionStorage.getItem(PLAYED_KEY) || "[]") as SessionJson[];
       sessionStorage.setItem(PLAYED_KEY, JSON.stringify([s, ...prev].slice(0, 9)));
     } catch { /* private mode */ }
-    requestAnimationFrame(() => document.getElementById("result-h")?.focus());
   }, []);
 
   function start() {
@@ -108,10 +122,14 @@ export function Play() {
     setSession(null);
     setStage("task");
     setCaption("");
+    setSel(null);
   }
 
   // Put keyboard focus on the table once it's on screen, so the arrow keys turn the head straight away.
-  useEffect(() => { if (stage === "task") tableRef.current?.focus(); }, [stage]);
+  useEffect(() => {
+    if (stage === "task") tableRef.current?.focus();
+    if (stage === "done") document.getElementById("result-h")?.focus();
+  }, [stage]);
 
   // The frame loop: feed the engine the time and head yaw, react to hints, end when the engine says so.
   useEffect(() => {
@@ -156,6 +174,23 @@ export function Play() {
 
   function onKey(ev: KeyboardEvent<HTMLDivElement>) {
     if (stage !== "task") return;
+    if (view === "glasses" && ev.target === ev.currentTarget && ["Enter", " ", "ArrowUp", "ArrowDown"].includes(ev.key)) {
+      // In the glasses view, Up and Down pick a diya in view (a ring shows which); Enter pinches it.
+      const e = engine.current!;
+      const seen = e.items("near").filter((it) => Math.abs(it.x - cxRef.current) < VIEW / 2 - 1).sort((a, b) => a.x - b.x || a.u - b.u);
+      ev.preventDefault();
+      if (!seen.length) return;
+      const i = seen.findIndex((it) => it.id === sel);
+      if (ev.key === "ArrowUp" || ev.key === "ArrowDown") {
+        const next = i < 0 ? 0 : (i + (ev.key === "ArrowDown" ? 1 : -1) + seen.length) % seen.length;
+        setSel(seen[next].id);
+        return;
+      }
+      const pick = i >= 0 ? seen[i] : seen.slice().sort((a, b) => Math.abs(a.x - cxRef.current) - Math.abs(b.x - cxRef.current))[0];
+      setSel(pick.id);
+      pinch(pick);
+      return;
+    }
     if (ev.key === "ArrowLeft" || ev.key === "a") { turnTo(cxRef.current - 4); ev.preventDefault(); }
     if (ev.key === "ArrowRight" || ev.key === "d") { turnTo(cxRef.current + 4); ev.preventDefault(); }
   }
@@ -205,13 +240,22 @@ export function Play() {
                   ))}
                 </div>
               </fieldset>
+              {has3d && (
+                <fieldset className="m-0 flex flex-col gap-2 border-0 p-0">
+                  <legend className="mb-2 text-[14px] font-medium">View</legend>
+                  <div className="seg">
+                    <label><input type="radio" name="play-view" value="glasses" checked={view === "glasses"} onChange={() => setView("glasses")} /><span>Through the glasses (3D)</span></label>
+                    <label><input type="radio" name="play-view" value="top" checked={view === "top"} onChange={() => setView("top")} /><span>Top-down</span></label>
+                  </div>
+                </fieldset>
+              )}
               <label className="flex max-w-[60ch] items-start gap-3 text-[14.5px] leading-relaxed">
                 <input id="feel-neglect" type="checkbox" className="mt-1 size-4 accent-[var(--left)]" checked={neglect} onChange={(ev) => setNeglect(ev.target.checked)} />
                 <span><span className="font-medium">Feel neglect.</span> Fades the left part of whatever you look at, roughly how left spatial neglect feels from the inside: nothing seems missing, you just don't notice it. Turn further left to find what's there.</span>
               </label>
               <ul className="m-0 flex flex-col gap-1 pl-5 text-[14px] text-muted-foreground">
                 <li>Move the mouse over the table, drag on a phone, or use the arrow keys to turn your head.</li>
-                <li>Click or tap a diya to pinch it. Tab moves between the diyas in view.</li>
+                <li>Click or tap a diya to pinch it. In the top-down view, Tab moves between the diyas in view; in the glasses view, the up and down arrows pick one and Enter pinches it.</li>
                 <li>Stuck for 6 seconds with diyas still dark on the left? Listen.</li>
               </ul>
               <div><Button id="play-start" size="lg" onClick={start}><PlayIcon />Start</Button></div>
@@ -233,12 +277,21 @@ export function Play() {
               tabIndex={0}
               role="application"
               aria-roledescription="practice table"
-              aria-label={`Practice table. Arrow keys turn your head; Tab moves between the diyas in view; Enter lights one. Head turned ${Math.abs(yaw)} degrees ${yaw >= 0 ? "left" : "right"}.`}
+              aria-label={view === "glasses"
+                ? `Practice table, seen through the glasses. Left and right arrows turn your head; up and down pick a diya in view; Enter pinches it. Head turned ${Math.abs(yaw)} degrees ${yaw >= 0 ? "left" : "right"}.`
+                : `Practice table. Arrow keys turn your head; Tab moves between the diyas in view; Enter lights one. Head turned ${Math.abs(yaw)} degrees ${yaw >= 0 ? "left" : "right"}.`}
+              data-view={view}
+              data-lit={lit.size}
               onPointerMove={onPointer}
               onPointerDown={onPointer}
               onKeyDown={onKey}
-              className="relative touch-none overflow-hidden rounded-2xl bg-night outline-none focus-visible:ring-2 focus-visible:ring-flame"
+              className={`relative touch-none overflow-hidden rounded-2xl bg-night outline-none focus-visible:ring-2 focus-visible:ring-flame ${view === "glasses" ? "aspect-[16/10] max-h-[68vh] w-full" : ""}`}
             >
+              {view === "glasses" ? (
+                <Suspense fallback={<p className="m-0 p-6 text-night-muted">Putting the glasses on…</p>}>
+                  <GlassesView items={items} lit={lit} selected={sel} yawDeg={yawFor(cx)} beam={beam} cue={cue} neglect={neglect} sizeCm={SIZE[preset]} onPinch={pinch} />
+                </Suspense>
+              ) : (
               <svg viewBox={`${-W / 2 - 5} ${-D / 2 - 3} ${W + 10} ${D + 9}`} className="mx-auto block h-auto max-h-[62vh] w-full select-none">
                 <defs>
                   <radialGradient id="nt-glow"><stop offset="0" stopColor="#ffb23f" stopOpacity=".55" /><stop offset="1" stopColor="#ffb23f" stopOpacity="0" /></radialGradient>
@@ -279,6 +332,7 @@ export function Play() {
                 <rect x={viewL} y={-D / 2} width={VIEW} height={D} fill="none" stroke="#f6ede1" strokeOpacity=".25" strokeWidth=".3" strokeDasharray="1 1" pointerEvents="none" />
                 <text x="0" y={D / 2 + 4.5} textAnchor="middle" fill="#bfae9c" fontSize="1.9">you sit here</text>
               </svg>
+              )}
               {caption && cue !== "none" && (
                 <p className="pointer-events-none absolute top-3 left-3 m-0 flex items-center gap-1.5 rounded-full bg-black/60 px-3 py-1 text-[13px] text-[#f6ede1]">
                   <Bell className="size-3.5" aria-hidden="true" />{caption}
@@ -286,7 +340,15 @@ export function Play() {
               )}
             </div>
             <p className="sr-only" aria-live="assertive">{cue !== "none" ? caption : ""}</p>
-            <p className="m-0 text-[13px] text-muted-foreground">The dashed box is what the glasses show right now. The table runs for up to 90 seconds.</p>
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <p className="m-0 text-[13px] text-muted-foreground">{view === "glasses" ? "The bright frame is where the glasses can draw; the room is always there." : "The dashed box is what the glasses show right now."} The table runs for up to 90 seconds.</p>
+              {has3d && (
+                <div className="seg" role="radiogroup" aria-label="View">
+                  <label><input type="radio" name="play-view-live" checked={view === "glasses"} onChange={() => setView("glasses")} /><span>Glasses (3D)</span></label>
+                  <label><input type="radio" name="play-view-live" checked={view === "top"} onChange={() => setView("top")} /><span>Top-down</span></label>
+                </div>
+              )}
+            </div>
           </section>
         )}
 
