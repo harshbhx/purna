@@ -42,7 +42,7 @@ purna/                                  ← the Lens Studio project folder = the
 │   ├── web/     the React app (Vite root): index.html, doctor.html, join.html
 │   │   ├── public/   _headers (CSP), favicon.svg, fonts/ (Mukta, OFL), demo/sessions.json
 │   │   └── src/      pages/ (Landing, Dashboard, Doctor, Join), components/{ui (shadcn/ui), reactbits, aceternity, purna},
-│   │                 lib/ (api, csv, format, session, types), hooks/, styles.css (Tailwind v4 tokens)
+│   │                 lib/ (api, csv, format, session, types), hooks/, data/three.json (explainer), styles.css (Tailwind v4 tokens)
 │   ├── dist/    build output the Worker serves (git-ignored)
 │   ├── scripts/make-sample.ts         demo sessions from the real engine + simulated players
 │   ├── samples/*.json                 the same demo sessions, one file each (also used by tests)
@@ -335,9 +335,9 @@ D1 enforces foreign keys; `DELETE /me` still deletes child rows explicitly in on
 - Rate limiting: use Cloudflare's Workers rate-limiting binding if available on the account (check the docs when deploying); otherwise rely on the size limits.
 - Responses never echo raw input in HTML; the web app renders all text with `textContent`.
 
-### 6.5 Web app (`family/public`)
+### 6.5 Web app (`family/web`)
 
-React 18 + Vite + Tailwind v4, built to `family/dist` and served by the same Worker (`[assets] directory = "./dist"`). Components: shadcn/ui patterns over Radix primitives, React Bits (BlurText, CountUp, SpotlightCard, ShinyText, Magnet), and Aceternity-style effects (lamp, spotlight, scroll timeline, dot background). Fonts are bundled (Geist) or self-hosted (Mukta). CSP keeps `script-src 'self'` with no inline scripts; `style-src` allows `'unsafe-inline'` because Radix's scroll lock and motion set inline styles. All user text is rendered by React as text.
+React 18 + Vite + Tailwind v4, built to `family/dist` and served by the same Worker (`[assets] directory = "./dist"`). Components: shadcn/ui patterns over Radix primitives, React Bits (BlurText, CountUp, SpotlightCard, ShinyText, Magnet), and Aceternity-style effects (lamp, spotlight, scroll timeline, dot background). Fonts are bundled (Geist) or self-hosted (Mukta). CSP keeps `script-src 'self'` with no inline scripts; `style-src` allows `'unsafe-inline'` because Radix's scroll lock and motion set inline styles. All user text is rendered by React as text. The landing's explainer bundles `web/src/data/three.json`: one layout (seed 23) played by the three bench searchers, written by `npm run sample` and checked for freshness in CI.
 
 | Page | Purpose |
 |---|---|
