@@ -20,7 +20,7 @@ Paste-ready: [`devpost/STORY.md`](../devpost/STORY.md). Fill every **[after CLAD
 - [ ] Tagline, elevator pitch, story, built-with tags
 - [ ] LEAF results in "How we built it"
 - [ ] Testing instructions for judges
-- [ ] Every number matches the README and CI (tests 181; bench numbers from `docs/img/bench.svg`)
+- [ ] Every number matches the README and CI (tests 200; bench numbers from `docs/img/bench.svg`)
 
 ## 3. Repository
 

@@ -11,7 +11,7 @@ A SPECS Lens for people who miss the left side of the world after a stroke,<br>a
 [![CI](https://github.com/harshbhx/purna/actions/workflows/ci.yml/badge.svg)](https://github.com/harshbhx/purna/actions/workflows/ci.yml)
 [![Deploy](https://github.com/harshbhx/purna/actions/workflows/deploy.yml/badge.svg)](https://github.com/harshbhx/purna/actions/workflows/deploy.yml)
 ![Core coverage](https://img.shields.io/badge/core%20coverage-98.9%25-2f7d4f)
-![Tests](https://img.shields.io/badge/tests-181-2f7d4f)
+![Tests](https://img.shields.io/badge/tests-200-2f7d4f)
 [![License: MIT](https://img.shields.io/badge/license-MIT-c8651b)](LICENSE)
 
 [purna.dualmindlab.tech](https://purna.dualmindlab.tech) · Built for **Learn AR with SPECS, Round 2** · [Why it's built this way](docs/10-RESEARCH.md)
@@ -102,7 +102,7 @@ These are **simulated players, not patients**. The bench proves the measures sep
 | Part | State |
 |---|---|
 | Core logic: layout, hints, beam fading, metrics, report | ✅ logic proven (47 tests) |
-| Purna Family: landing, API, database, web app, doctor view | ✅ works end to end in Chrome, WCAG 2.1 AA checked (134 tests) |
+| Purna Family: landing, API, database, web app, doctor view | ✅ works end to end in Chrome, WCAG 2.1 AA checked, rate-limited (140 tests) |
 | Lens scene in Lens Studio (CLAD) | 🛠️ in progress; LEAF results land here |
 | How it feels to a real stroke survivor | ❓ feel unproven, not tested with patients |
 
@@ -126,7 +126,7 @@ flowchart LR
 - **One engine, two homes.** `Assets/Scripts/Core` has no Lens Studio globals. The Lens calls it every frame; Node tests run the same files.
 - **One contract.** The session JSON is [`purna.session.v1`](docs/03-ARCHITECTURE.md#5-data-contract-purnasessionv1). The Worker validates every field and size.
 - **The web app** is React with [shadcn/ui](https://ui.shadcn.com) components, motion from [React Bits](https://reactbits.dev) (BlurText, CountUp, SpotlightCard, ShinyText, Magnet) and effects in the style of [Aceternity UI](https://ui.aceternity.com) (the lamp under the code form, the spotlight, the scroll timeline), built with Vite and Tailwind into static files the same Worker serves. Credits: [`family/THIRD_PARTY.md`](family/THIRD_PARTY.md).
-- **Private by default.** The glasses send no identity; the family types a name. Family keys and doctor tokens are stored only as SHA-256 hashes; doctor links expire and can be revoked; "Delete everything" removes it all.
+- **Private by default.** The glasses send no identity; the family types a name. Family keys and doctor tokens are stored only as SHA-256 hashes; doctor links expire and can be revoked; pairing, uploads and notes are rate-limited; "Delete everything" removes it all.
 
 <img src="docs/img/doctor.png" alt="The therapist view on desktop: a table of nine sessions with left and right found, Centre of Cancellation, asymmetries, search order, hints and head turn, above a trend chart">
 
@@ -134,8 +134,8 @@ flowchart LR
 
 | Suite | Command | What it proves |
 |---|---|---|
-| Core + patient bench | `cd tools && npm test` | Layout rules on 500 seeds × 3 levels, hint timing, beam fading, metrics, the engine's phases, the bench (47 tests, coverage gate 85%) |
-| Worker + local D1 | `cd family && npm test` | Every API route and error, field-by-field validation, crypto, and the engine → server contract over every preset and add-on (68 tests) |
+| Core, patient bench, sounds | `cd tools && npm test` | Layout rules on 500 seeds × 3 levels, hint timing, beam fading, metrics, the engine's phases, the bench, and each sound against the design spec (60 tests, coverage gate 85%) |
+| Worker + local D1 | `cd family && npm test` | Every API route and error, field-by-field validation, crypto, the engine → server contract over every preset and add-on, and the rate limits on pairing, uploads and notes (74 tests) |
 | Web app | `npm run test:web` | React components in jsdom: the night-table animation and reduced motion, replay and trend SVGs, the app shell, dashboard dialogs and therapist view, CSV export with formula-injection guards, the API client, the three-searcher explainer (one layout, verdicts from the numbers, arrow-key tabs), and every dashboard tool against a fake server: share and stop sharing, invite, import, delete, sign out (38 tests) |
 | End to end | `npm run test:e2e` | Real Chrome against the production build on `wrangler dev`: the landing (animation, reduced motion, no sideways scroll from 320 to 1440 px, phone menu), pair, dashboard, replay, doctor link, CSV, note, invite, import, delete; stopping a doctor link, the print layout, dead links; a keyboard-only walk (skip link, tabs, Enter and Escape with focus returned); and axe WCAG 2.1 AA scans of every screen and dialog in light and dark mode. Each runs on phone and desktop (28 tests) |
 
