@@ -51,7 +51,7 @@ test("See an example opens a labelled demo dashboard and a session replay", asyn
   await page.goto("/");
   await page.getByRole("button", { name: "See an example" }).first().click();
   await expect(page.getByRole("heading", { name: /Papa.s practice/ })).toBeVisible();
-  await expect(page.locator("#demo-badge")).toBeVisible();
+  await expect(page.locator("#demo-badge")).toBeAttached(); // hidden below 640 px; the "simulated data" notice says it on every screen
   await expect(page.getByText(/simulated data/)).toBeVisible();
   await expect(page.locator("#dash .session-card")).toHaveCount(9);
   await expect(page.locator("#trend svg polyline")).toHaveCount(2);
@@ -127,4 +127,20 @@ test("the therapist and join pages stay out of search results and don't advertis
     await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", "noindex");
     await expect(page.locator('meta[property="og:image"]')).toHaveCount(0);
   }
+});
+
+test("the family dashboard switches to Hindi, keeps it after a reload, and never scrolls sideways", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "See an example" }).first().click();
+  await page.getByRole("button", { name: "Show this page in Hindi" }).click();
+  await expect(page.getByRole("heading", { name: "Papa का अभ्यास" })).toBeVisible();
+  await expect(page.locator("html")).toHaveAttribute("lang", "hi");
+  await expect(page.locator("#latest .session-card")).toContainText("बाईं ओर");
+  for (const width of [320, 390, 768]) {
+    await page.setViewportSize({ width, height: 800 });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth), `width ${width}`).toBeLessThanOrEqual(0);
+  }
+  await page.reload();
+  await page.getByRole("button", { name: "See an example" }).first().click();
+  await expect(page.getByRole("heading", { name: "Papa का अभ्यास" })).toBeVisible();
 });
