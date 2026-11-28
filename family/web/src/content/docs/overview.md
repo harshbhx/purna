@@ -14,6 +14,7 @@ Purna is a practice tool for people who miss the left side of the world after a 
 | A therapist or doctor | [Guide for therapists](#therapists) |
 | Wondering what the numbers mean | [What the numbers mean](#measures) |
 | Wondering what happens to the data | [Privacy](#privacy) |
+| Curious how it feels | [Try the table in your browser](https://purna.dualmindlab.tech/play), on the same engine as the glasses |
 
 ## Who it's for
 

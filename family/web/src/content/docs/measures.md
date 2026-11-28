@@ -13,6 +13,10 @@ Each session gives a few numbers. Here they are in plain words first, then exact
 
 Every report also says: "Practice result, not a diagnosis."
 
+## Where the head pointed
+
+After the replay, the table lights up where the head pointed during the task: brighter strips are where it pointed longest. On the family site and in the therapist view, the replay shows the same warm light. A side that stays dark was never looked at, even if a diya there was found by chance. The map splits the table into 14 strips of 5 cm and counts where the centre of the view landed, about ten times a second.
+
 ## Reading them sensibly
 
 - **One session is a snapshot.** Tiredness, mood and the day all play a part. Look at the trend over weeks.

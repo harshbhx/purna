@@ -1,8 +1,8 @@
 # LAPTOP-PROMPT: one prompt for the laptop agent
 
-The code, tests, CI and deploy workflow are already on [github.com/harshbhx/purna](https://github.com/harshbhx/purna). What's left needs your laptop: the Lens Studio project, CLAD, and the Cloudflare secrets.
+The code, tests and CI are on [github.com/harshbhx/purna](https://github.com/harshbhx/purna), and Purna Family is live at [purna.dualmindlab.tech](https://purna.dualmindlab.tech): Cloudflare Workers Builds deploys every push to `main`. What's left needs your laptop: the Lens Studio project and CLAD.
 
-**You do three things:** install Lens Studio 5.23.2 and sign in, approve logins when asked (GitHub, Cloudflare, Snap), and paste the prompt below into Claude Code (any folder).
+**You do three things:** install Lens Studio 5.23.2 and sign in, approve logins when asked (GitHub, Snap), and paste the prompt below into Claude Code (any folder).
 
 ---
 
@@ -17,13 +17,8 @@ PART A: Lens Studio project in the repo (Snap's CLAD setup; the order matters)
 5. Back up devpost/, run: npx skills add challengepost/learn-specs --all -y , then restore devpost/design-brief.md and devpost/plan-lens-answers.md if the pack touched them. Tell me if the installed plan-lens template's headings differ from our brief's.
 6. Open issue "Add the SPECS Lens Studio project", commit the project files on a branch (respect .gitignore; keep .meta files), PR, wait for CI, merge.
 
-PART B: turn on CD (Purna Family → purna.dualmindlab.tech, my Cloudflare account; dualmindlab.tech is a zone there)
-1. npx wrangler d1 create purna (in family/) → note the database id. Don't commit it.
-2. Create a Cloudflare API token with Workers Scripts:Edit, D1:Edit, Workers Routes:Edit and Zone:Read for dualmindlab.tech.
-3. gh secret set CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID and PURNA_D1_DATABASE_ID on harshbhx/purna. Never paste these into chat summaries, Notion or Devpost.
-4. gh workflow run "Deploy Purna Family" and watch it. It migrates D1, deploys, and smoke-tests https://purna.dualmindlab.tech. From now on every green merge to main deploys by itself.
-5. If the account has the Workers rate-limiting binding, add one on POST /api/v1/pair (10/min per IP) via issue → PR.
-6. Smoke test as a family: cd family && npm ci && npm run sample -- --post https://purna.dualmindlab.tech <32 random hex chars> ; pair with the printed DIYA code as "Papa"; make a doctor link; open it in a private window. Send me the code and both links.
+PART B: check the live site (already deployed by Cloudflare Workers Builds from main; nothing to set up)
+1. Smoke test as a family: cd family && npm ci && npm run sample -- --post https://purna.dualmindlab.tech <32 random hex chars> ; pair with the printed DIYA code as "Papa"; make a doctor link; open it in a private window; set the next session there; then Delete everything. Send me a one-line result (no codes or keys).
 
 PART C: issues for the remaining work
 In ~/purna: bash tools/create-issues.sh (creates labels and one issue per open task in docs/04-TASKS.md; finished ✅ tasks are skipped).

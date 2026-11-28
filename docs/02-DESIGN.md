@@ -67,6 +67,7 @@ UI Kit default font. Rule of thumb: body text at least 0.6° tall.
 | Beam level change | 0.8 s fade |
 | Drift | Constant 10 cm/s toward −x; "flicker" = the flame glows brighter and softer once a second (1 Hz, smooth) for 2 s, never fully off |
 | Replay | Thread grows segment by segment, 0.4 s each, a small spark at the head; missed diyas pulse (1.2 s loop) |
+| Attention map | After the thread finishes: 14 warm strips across the table (`flame`, opacity 0.05–0.45 ∝ `engine.attention()`), fading in over 1.2 s and staying, dimmer, under the report card. A slow fade only: never pulses or flashes |
 | Report card | Fades in 0.5 s after the replay ends |
 
 No camera shake and no flashing. **Nothing in the Lens may change brightness more than three times a second** (WCAG 2.3.1's photosensitive-seizure limit), and nothing switches fully on and off: use smooth fades. This matters more than usual here, because seizures are a common complication after stroke (`10-RESEARCH.md` S6–S7). The fastest change allowed anywhere is the hint pulse (about 1.7 per second).
@@ -87,7 +88,7 @@ No music. No error buzz ever.
 
 ## 7. Setup panel
 
-Title "Purna", subtitle "Set up today's practice". Above the Start button, one line in `textSoft`: "Sit down, with someone nearby. Stop if you feel dizzy, sick or unwell." Difficulty and Hint after arrive preselected from `suggestNext()` (Core `Next.ts`: two clean sessions in a row → a step harder, a hard session → a step easier), with its one-line reason in `textSoft` under them. Rows (UI Kit):
+Title "Purna", subtitle "Set up today's practice". Above the Start button, one line in `textSoft`: "Sit down, with someone nearby. Stop if you feel dizzy, sick or unwell." Difficulty and Hint after arrive preselected from `chooseNext(briefs, plan)`: the therapist's plan from `GET /api/v1/devices/:id/next` when there is one ("Set by your therapist on 3 Dec: Easy, hint after 4 s."), otherwise `suggestNext()` (Core `Next.ts`: two clean sessions in a row → a step harder, a hard session → a step easier), with its one-line reason in `textSoft` under them. Rows (UI Kit):
 1. Difficulty: segmented Easy / **Standard** / Hard
 2. Hint after: segmented 4 s / **6 s** / 10 s
 3. Start with the beam: switch (on)
@@ -145,6 +146,12 @@ Contrast: all text ≥ 4.5:1 on its background in both themes (check with a cont
 2. **Dashboard:** greeting ("Papa's practice"), nudge if > 3 days, newest session card on top (summary sentence + two mini bars), trend chart, list of earlier sessions, doctor notes, buttons: Share with doctor · Invite family · Import from Logger · Delete everything.
 3. **Session detail:** the 2D replay (SVG, animates once, replay button), the four measures in plain words, technical numbers under "Details for the therapist".
 4. **Doctor view:** header with expiry date, the glasses' next-session suggestion, progress tiles, table of sessions (date, preset, L/R found, CoC, ego/allo asymmetry, best r, crossings, revisits, hints, max left turn), trend with a day-to-day band (median session-to-session change around a 3-session rolling mean: "a change inside it may be chance"), "Where the time went" (seconds to find a diya per third, earliest vs latest, and time turned left), "Context from published tests" (the Bells Test CoC reference as a dashed line, Apples Test note, and why these are context, never a cut-off; `10-RESEARCH.md` M7–M9), notes box, Download CSV, Print. `/doctor#demo` shows the same view with the labelled demo sessions and notes switched off.
+
+**Try the table (`/play`):** the night table as a game anyone can play with a mouse, on the real engine: only a window the width of the glasses' view shows its diyas, the head turns with the mouse or arrow keys, the bell rings in the left ear, then the replay with the attention map and the report card. A "Feel neglect" switch fades the left of whatever you look at. Linked from the hero ("Try the table yourself") and the header ("Try it").
+
+**Therapist plan:** a "Set the next session" card in the therapist view (level and hint delay as segmented radio groups; Set, Update, Clear); the family dashboard shows "The therapist set the next session on …".
+
+**Light and dark:** a sun/moon button in every header switches theme and remembers it on that device; until pressed, the site follows the system.
 
 **Hindi:** the family's own screens (the dashboard, its dialogs, a session, and the sign-out, delete and join messages) switch to Hindi with a button in the header ("हिन्दी" / "English"), remembered on that device, with `lang` set on the page. Sentences built from numbers (the session summary, the measures, the nudge) are composed in Hindi word order in `lib/i18n.ts`, not translated word by word. The landing stays in English, and so does the therapist view, because therapists work in English. Server error messages are still English.
 

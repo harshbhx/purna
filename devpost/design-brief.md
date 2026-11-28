@@ -57,6 +57,7 @@ Ramesh, 64, had a right-side stroke in March and now misses the left half of his
 - Drift (add-on): diyas only ever move leftward. The one to pinch glows softly once a second; it never flashes.
 - A task ends when every whole diya is lit or its time runs out: Drift 45 s, table 90 s, far board 60 s. Session about 4 minutes.
 - Replay: right after the last task, the thread draws through the lit table diyas in the order they were lit, about 0.4 s per step, while missed whole diyas pulse. Table only (default); the far board shows as its own numbers on the report.
+- Attention map: when the thread finishes, warm light fades up across the table (over about a second) where his head pointed during the task, brighter where he looked longest; the half he never looked at stays dark. It stays, dimmer, under the report card. A slow fade, never a pulse.
 - Report card: after the replay. Four tiles: Left vs right; Chipped-diya test; Search order (with path crossings and revisits); Head turn. One line underneath: "Practice result, not a diagnosis. Share it with your therapist."
 - If something needs attention out of view: the bell from the left.
 
@@ -98,7 +99,8 @@ Add-on criteria (only if built): Drift diyas only ever move left; the far board 
 - Head yaw: compute it from the camera's forward vector with `yawFromForward()` (positive = turned left). Give `PurnaController` a yaw-override input that tests can set; when set, it's used instead of the camera.
 - Remove the template's `SIKExamples` object; keep `SpectaclesInteractionKit`.
 - The diyas are the product: make them look good. Warm clay bodies, a small flickering flame when lit, chipped diyas with a clean cut-out on one side that reads clearly at 65 cm. Sounds: use the files in `Assets/Audio` (`light.wav` on light, `tick.wav` for chipped, `bell.wav` for the hint, `ui.wav` for buttons, `replay.wav` optional for the thread); don't generate new ones.
-- Next session: keep the last 3 sessions' `SessionBrief` (from `briefOf(report)` in `Assets/Scripts/Core/Next.ts`) in persistent storage, and preselect the setup panel with `suggestNext(briefs)`, showing its `reason`. Don't write your own rules.
+- Next session: keep the last 3 sessions' `SessionBrief` (from `briefOf(report)` in `Assets/Scripts/Core/Next.ts`) in persistent storage. When the setup panel opens, ask `GET https://purna.dualmindlab.tech/api/v1/devices/<deviceId>/next` with `InternetModule.fetch` (5 s timeout) for a plan the therapist set; preselect the panel with `chooseNext(briefs, plan)` (plan = null on any failure) and show its `reason`. Don't write your own rules.
+- Attention map: after the replay, draw `engine.attention()` (14 numbers, left edge first, each a share of time) as 14 thin emissive strips lying on the table, 5 cm wide each, warm `flame` colour, opacity 0.05 + 0.4 × value / max; fade in over 1.2 s; never pulse.
 - Send to family uses `InternetModule.fetch` to POST the session JSON to the endpoint in `docs/03-ARCHITECTURE.md`; on any failure, print the JSON to the Logger.
 
 ## After the build: judge it
