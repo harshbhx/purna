@@ -32,11 +32,15 @@ We wanted that exercise at home, on the person's own dining table, in something 
 4. Stuck on the right for 6 seconds with dark diyas still on the left? A **temple bell rings from the left** and a soft beam pulses there. Six seconds more, the beam sweeps left. **The hint points to the side, never to the answer.** The beam fades as the person starts finding left diyas on their own.
 5. When the table is done, a glowing **thread replays the search path**. The numbers show the order the diyas were found; the ones missed pulse where they were. The person sees their own blind half.
 6. A report card shows four measures in plain words, labelled "Practice result, not a diagnosis". One pinch sends it home.
+7. Next time, the setup panel suggests the level: two clean sessions in a row step it up, a hard one steps it down, with a one-line reason the carer can override.
+
+Every diya can be pinched with a ray from a hand resting in the lap, so nobody has to reach across the body with their stronger hand.
 
 **Purna Family** ([purna.dualmindlab.tech](https://purna.dualmindlab.tech)) is the web side:
 
 - **Families** type the code shown on the glasses once (like `DIYA-7K3P`). Then every session arrives as one plain sentence, two left/right bars and a trend line, and brothers and sisters join with an invite link.
 - **Therapists** get a read-only link that lasts 7 days and can be stopped at any time: every session with the numbers a cancellation test gives (Centre of Cancellation, egocentric and allocentric asymmetry, search order, crossings, revisits, head turn), a 2D replay, CSV export, a print layout, and a notes box that sends a note back to the family.
+- The therapist view also shows each person's usual day-to-day change as a band on the trend (so a lucky day isn't read as recovery), where the searching time went across the table, and published cancellation-test references as context, never as a pass/fail line. Anyone can open [an example](https://purna.dualmindlab.tech/doctor#demo).
 - **"Three ways to search the same table"** on the home page explains the measures: one layout, played by three simulated searchers through the real engine. Switch between them and the measures that give each one away light up.
 
 **[after CLAD]** Add-ons built: warm-up with diyas drifting leftward only / far board at 2 m (keep only what passed LEAF).
@@ -53,7 +57,7 @@ We wanted that exercise at home, on the person's own dining table, in something 
 
 **Purna Family** is a Cloudflare Worker with D1. Family keys and doctor tokens are 32 random bytes and stored only as SHA-256 hashes. The web app is React with shadcn/ui, React Bits and Aceternity-style effects, behind a strict Content Security Policy (no third-party scripts). A **contract test** runs the real engine through every level, add-on and searcher and checks that each session passes the server's validator, so the glasses and the server can't drift apart.
 
-**Tested like a product.** 200 automated tests: Core, bench and sounds 60, Worker and local D1 74, web components 38, and 28 end-to-end tests in real Chrome at phone and desktop sizes. The end-to-end suite runs axe accessibility checks (WCAG 2.1 AA) on every screen in light and dark mode, walks the keyboard path, and plays the whole family loop: pair, share with the doctor, note back, delete everything. GitHub Actions runs it all on every pull request and deploys after green CI on main.
+**Tested like a product.** 223 automated tests: Core, bench and sounds 68, Worker and local D1 74, web components 48, and 33 end-to-end tests in real Chrome at phone and desktop sizes. The end-to-end suite runs axe accessibility checks (WCAG 2.1 AA) on every screen in light and dark mode, walks the keyboard path, and plays the whole family loop: pair, share with the doctor, note back, delete everything. GitHub Actions runs it all on every pull request and deploys after green CI on main.
 
 ## Challenges we ran into
 
@@ -108,6 +112,8 @@ We wanted that exercise at home, on the person's own dining table, in something 
 ## Testing instructions for judges
 
 1. **The Lens:** open the project in Lens Studio 5.x, press Preview. Pick Standard, then Start. Light the right-side diyas and wait 6 s to hear the bell from the left. Light everything, watch the replay, read the report. **[after CLAD: any preview tips, e.g. right-drag to turn the head]**
-2. **Purna Family:** open https://purna.dualmindlab.tech and press **See an example**: a labelled demo dashboard from simulated sessions. Open any session for its replay and measures.
+2. **Purna Family:** open https://purna.dualmindlab.tech and press **See an example**: a labelled demo dashboard from simulated sessions. Open any session for its replay and measures. The therapist side is at https://purna.dualmindlab.tech/doctor#demo.
+
+A one-page guide for judges is in the repo: `JUDGES.md`.
 3. **Three ways to search:** on the home page, switch between the three searchers under "Three ways to search the same table".
 4. **Tests:** `cd tools && npm ci && npm test`, then `cd family && npm ci && npm test && npm run test:web && npm run test:e2e`.

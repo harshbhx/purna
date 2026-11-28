@@ -39,11 +39,13 @@ Ramesh, 64, had a right-side stroke in March and now misses the left half of his
 - Pinch a whole diya: it lights with a small flame and a soft, warm tone.
 - Pinch a chipped diya: a quiet neutral tick, nothing else. No red flash, no error buzz.
 - Pinch a lit diya: nothing visible; logged as a revisit.
-- Setup panel (used by the carer): Difficulty (Easy 8+8 / Standard 12+12 / Hard 16+16), Hint delay (4 / 6 / 10 s, default 6), Beam starts on/off, Drift warm-up on/off, Far board on/off, Share with family on/off (off by default), and a big Start button.
+- No reaching: every diya on the table can be pinched with SIK's ray from a hand resting in his lap, as well as by touch. A right-hemisphere stroke often weakens the left arm, so lighting a left diya must never mean reaching across the body.
+- Setup panel (used by the carer): Difficulty (Easy 8+8 / Standard 12+12 / Hard 16+16) and Hint delay (4 / 6 / 10 s) arrive preselected with what the glasses suggest from the last sessions, with a one-line reason under them ("Every diya found without hints, twice in a row. Try Hard."); the carer can change either. Then Beam starts on/off, Drift warm-up on/off, Far board on/off, Share with family on/off (off by default), and a big Start button.
 - Report card: Replay, Send to family (only shown if sharing is on), Done.
 - Far board: far pinch with SIK's ray, so he never stands or reaches.
 - Targets are big (5 cm or more) and highlight when aimed at.
 - Voice (if any) and the button that does the same job: no voice. Stroke can affect speech; pinch is enough.
+- Add-on, only after the done criteria pass: "Look to light" on the setup panel (off by default) for people who can't pinch. Holding the head on a diya for 1.5 s fills a ring around it and then counts as a pinch; chipped diyas still only tick. Everything else, hints and replay included, is unchanged.
 
 ## When things show
 - During a task: only the diyas and the beam. No score, timer, text or progress bar.
@@ -94,7 +96,8 @@ Add-on criteria (only if built): Drift diyas only ever move left; the far board 
 - The logic already exists as plain TypeScript in `Assets/Scripts/Core/` (PurnaEngine, Layout, CueEngine, Metrics, Drift, Report) with Node tests in `tools/`. Do not reimplement it. Write one component, `PurnaController`, that calls `engine.start()`, feeds `engine.tick(t, yawDeg)` every frame, calls `engine.pinch(t, itemId, yawDeg)` on a SIK pinch, draws what the engine returns, plays the bell and pulses/sweeps the beam on `frame.cue`, and calls `engine.report()` at the end. See `docs/03-ARCHITECTURE.md`.
 - Head yaw: compute it from the camera's forward vector with `yawFromForward()` (positive = turned left). Give `PurnaController` a yaw-override input that tests can set; when set, it's used instead of the camera.
 - Remove the template's `SIKExamples` object; keep `SpectaclesInteractionKit`.
-- The diyas are the product: make them look good. Warm clay bodies, a small flickering flame when lit, chipped diyas with a clean cut-out on one side that reads clearly at 65 cm. Sounds: a soft warm tone on light, a quiet wooden tick for chipped, a soft temple bell for the hint.
+- The diyas are the product: make them look good. Warm clay bodies, a small flickering flame when lit, chipped diyas with a clean cut-out on one side that reads clearly at 65 cm. Sounds: use the files in `Assets/Audio` (`light.wav` on light, `tick.wav` for chipped, `bell.wav` for the hint, `ui.wav` for buttons, `replay.wav` optional for the thread); don't generate new ones.
+- Next session: keep the last 3 sessions' `SessionBrief` (from `briefOf(report)` in `Assets/Scripts/Core/Next.ts`) in persistent storage, and preselect the setup panel with `suggestNext(briefs)`, showing its `reason`. Don't write your own rules.
 - Send to family uses `InternetModule.fetch` to POST the session JSON to the endpoint in `docs/03-ARCHITECTURE.md`; on any failure, print the JSON to the Logger.
 
 ## After the build: judge it

@@ -87,7 +87,7 @@ No music. No error buzz ever.
 
 ## 7. Setup panel
 
-Title "Purna", subtitle "Set up today's practice". Rows (UI Kit):
+Title "Purna", subtitle "Set up today's practice". Difficulty and Hint after arrive preselected from `suggestNext()` (Core `Next.ts`: two clean sessions in a row → a step harder, a hard session → a step easier), with its one-line reason in `textSoft` under them. Rows (UI Kit):
 1. Difficulty: segmented Easy / **Standard** / Hard
 2. Hint after: segmented 4 s / **6 s** / 10 s
 3. Start with the beam: switch (on)
@@ -144,6 +144,8 @@ Contrast: all text ≥ 4.5:1 on its background in both themes (check with a cont
    - No card grids, no all-caps labels, no arrow links, no scroll-triggered animations.
 2. **Dashboard:** greeting ("Papa's practice"), nudge if > 3 days, newest session card on top (summary sentence + two mini bars), trend chart, list of earlier sessions, doctor notes, buttons: Share with doctor · Invite family · Import from Logger · Delete everything.
 3. **Session detail:** the 2D replay (SVG, animates once, replay button), the four measures in plain words, technical numbers under "Details for the therapist".
-4. **Doctor view:** header with expiry date, table of sessions (date, preset, L/R found, CoC, ego/allo asymmetry, best r, crossings, revisits, hints, max left turn), trend, notes box, Download CSV, Print.
+4. **Doctor view:** header with expiry date, the glasses' next-session suggestion, progress tiles, table of sessions (date, preset, L/R found, CoC, ego/allo asymmetry, best r, crossings, revisits, hints, max left turn), trend with a day-to-day band (median session-to-session change around a 3-session rolling mean: "a change inside it may be chance"), "Where the time went" (seconds to find a diya per third, earliest vs latest, and time turned left), "Context from published tests" (the Bells Test CoC reference as a dashed line, Apples Test note, and why these are context, never a cut-off; `10-RESEARCH.md` M7–M9), notes box, Download CSV, Print. `/doctor#demo` shows the same view with the labelled demo sessions and notes switched off.
+
+**Sharing and install:** the home page has Open Graph and Twitter preview tags with a 1200 × 630 image of the night table (left half dark), and a web manifest with maskable icons so families can add it to their home screen. The therapist and join pages are `noindex` and carry no preview.
 
 **Accessibility:** WCAG 2.1 AA, checked with axe on every screen in both colour modes in CI. Skip link on every page; keyboard reachable with visible focus; dialogs give focus back to what opened them; tabs move with the arrow keys; tables that scroll sideways are focusable regions; labels on every input; charts have text equivalents; links in text are underlined; `prefers-reduced-motion` respected; no colour-only meaning. Below 1024 px the header folds into a menu.

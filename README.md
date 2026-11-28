@@ -11,7 +11,7 @@ A SPECS Lens for people who miss the left side of the world after a stroke,<br>a
 [![CI](https://github.com/harshbhx/purna/actions/workflows/ci.yml/badge.svg)](https://github.com/harshbhx/purna/actions/workflows/ci.yml)
 [![Deploy](https://github.com/harshbhx/purna/actions/workflows/deploy.yml/badge.svg)](https://github.com/harshbhx/purna/actions/workflows/deploy.yml)
 ![Core coverage](https://img.shields.io/badge/core%20coverage-98.9%25-2f7d4f)
-![Tests](https://img.shields.io/badge/tests-200-2f7d4f)
+![Tests](https://img.shields.io/badge/tests-223-2f7d4f)
 [![License: MIT](https://img.shields.io/badge/license-MIT-c8651b)](LICENSE)
 
 [purna.dualmindlab.tech](https://purna.dualmindlab.tech) · Built for **Learn AR with SPECS, Round 2** · [Why it's built this way](docs/10-RESEARCH.md)
@@ -90,6 +90,8 @@ These are **simulated players, not patients**. The bench proves the measures sep
 
 ## For judges
 
+**Start with [JUDGES.md](JUDGES.md)**: a one-minute summary, a two-minute tour (including the [example therapist view](https://purna.dualmindlab.tech/doctor#demo)), the evidence for each criterion, honest status, and answers to the questions you'll likely have.
+
 | Criterion | Where to look |
 |---|---|
 | **Design** | One spatial moment done well: stuck, a bell from the left, the head turns. Layout in cm for a seated person, colours for an additive display, no score or timer during the task ([design](docs/02-DESIGN.md)) |
@@ -101,8 +103,8 @@ These are **simulated players, not patients**. The bench proves the measures sep
 
 | Part | State |
 |---|---|
-| Core logic: layout, hints, beam fading, metrics, report | ✅ logic proven (47 tests) |
-| Purna Family: landing, API, database, web app, doctor view | ✅ works end to end in Chrome, WCAG 2.1 AA checked, rate-limited (140 tests) |
+| Core logic: layout, hints, beam fading, metrics, report, next-session suggestion | ✅ logic proven (55 tests) |
+| Purna Family: landing, API, database, web app, doctor view | ✅ works end to end in Chrome, WCAG 2.1 AA checked, rate-limited (155 tests) |
 | Lens scene in Lens Studio (CLAD) | 🛠️ in progress; LEAF results land here |
 | How it feels to a real stroke survivor | ❓ feel unproven, not tested with patients |
 
@@ -134,10 +136,10 @@ flowchart LR
 
 | Suite | Command | What it proves |
 |---|---|---|
-| Core, patient bench, sounds | `cd tools && npm test` | Layout rules on 500 seeds × 3 levels, hint timing, beam fading, metrics, the engine's phases, the bench, and each sound against the design spec (60 tests, coverage gate 85%) |
+| Core, patient bench, sounds | `cd tools && npm test` | Layout rules on 500 seeds × 3 levels, hint timing, beam fading, metrics, the engine's phases, the bench, the next-session suggestion, and each sound against the design spec (68 tests, coverage gate 85%) |
 | Worker + local D1 | `cd family && npm test` | Every API route and error, field-by-field validation, crypto, the engine → server contract over every preset and add-on, and the rate limits on pairing, uploads and notes (74 tests) |
-| Web app | `npm run test:web` | React components in jsdom: the night-table animation and reduced motion, replay and trend SVGs, the app shell, dashboard dialogs and therapist view, CSV export with formula-injection guards, the API client, the three-searcher explainer (one layout, verdicts from the numbers, arrow-key tabs), and every dashboard tool against a fake server: share and stop sharing, invite, import, delete, sign out (38 tests) |
-| End to end | `npm run test:e2e` | Real Chrome against the production build on `wrangler dev`: the landing (animation, reduced motion, no sideways scroll from 320 to 1440 px, phone menu), pair, dashboard, replay, doctor link, CSV, note, invite, import, delete; stopping a doctor link, the print layout, dead links; a keyboard-only walk (skip link, tabs, Enter and Escape with focus returned); and axe WCAG 2.1 AA scans of every screen and dialog in light and dark mode. Each runs on phone and desktop (28 tests) |
+| Web app | `npm run test:web` | React components in jsdom: the night-table animation and reduced motion, replay and trend SVGs, the app shell, dashboard dialogs and therapist view, CSV export with formula-injection guards, the API client, the three-searcher explainer (one layout, verdicts from the numbers, arrow-key tabs), every dashboard tool against a fake server (share and stop sharing, invite, import, delete, sign out), and the therapist view's day-to-day band, where-the-time-went chart, context card and example mode (48 tests) |
+| End to end | `npm run test:e2e` | Real Chrome against the production build on `wrangler dev`: the landing (animation, reduced motion, no sideways scroll from 320 to 1440 px, phone menu), pair, dashboard, replay, doctor link, CSV, note, invite, import, delete; stopping a doctor link, the print layout, dead links; a keyboard-only walk (skip link, tabs, Enter and Escape with focus returned); axe WCAG 2.1 AA scans of every screen and dialog in light and dark mode; the link preview and install files; and the example therapist view. Each runs on phone and desktop (33 tests) |
 
 **CI** ([`ci.yml`](.github/workflows/ci.yml)) runs all of it on every pull request, builds the web app, puts coverage in the job summary, lints the shell scripts, and fails if the bench chart or demo data are stale. **CD** ([`deploy.yml`](.github/workflows/deploy.yml)) runs after CI passes on `main`: builds the web app, applies D1 migrations, runs `wrangler deploy`, then smoke-tests the live site.
 
@@ -159,7 +161,7 @@ npm run sample -- --post http://localhost:8787 0123456789abcdef0123456789abcdef 
 | Path | What |
 |---|---|
 | [`devpost/`](devpost) | The plan-lens answers, the design brief CLAD builds from, the Devpost story and the video script |
-| [`docs/`](docs) | [PRD](docs/01-PRD.md) · [design](docs/02-DESIGN.md) · [architecture](docs/03-ARCHITECTURE.md) · [tasks](docs/04-TASKS.md) · [prompts](docs/05-PROMPTS.md) · [testing](docs/06-TESTING.md) · [submission](docs/07-SUBMISSION.md) · [research](docs/10-RESEARCH.md) |
+| [`docs/`](docs) | [PRD](docs/01-PRD.md) · [design](docs/02-DESIGN.md) · [architecture](docs/03-ARCHITECTURE.md) · [tasks](docs/04-TASKS.md) · [prompts](docs/05-PROMPTS.md) · [testing](docs/06-TESTING.md) · [submission](docs/07-SUBMISSION.md) · [live review](docs/08-LIVE-REVIEW.md) · [research](docs/10-RESEARCH.md) |
 | [`Assets/Scripts/Core/`](Assets/Scripts/Core) | The engine: layout, hints, metrics, report |
 | [`tools/`](tools) | Core tests, the patient bench, the bench chart |
 | [`family/`](family) | Purna Family: Worker (`src/`), D1 migration, React web app (`web/`), all its tests |
