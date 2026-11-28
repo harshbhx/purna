@@ -21,7 +21,7 @@ Paste-ready: [`devpost/STORY.md`](../devpost/STORY.md). Fill every **[after CLAD
 - [ ] Gallery: upload `devpost/gallery/01–05` (1500 × 1000), then add Lens preview screenshots
 - [ ] LEAF results in "How we built it"
 - [ ] Testing instructions for judges
-- [ ] Every number matches the README and CI (tests 283; bench numbers from `docs/img/bench.svg`)
+- [ ] Every number matches the README and CI (tests 286; bench numbers from `docs/img/bench.svg`)
 
 ## 3. Repository
 

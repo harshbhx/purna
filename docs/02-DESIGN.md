@@ -149,6 +149,12 @@ Contrast: all text ≥ 4.5:1 on its background in both themes (check with a cont
 
 **Try the table (`/play`):** the night table as a game anyone can play with a mouse, on the real engine: only a window the width of the glasses' view shows its diyas, the head turns with the mouse or arrow keys, the bell rings in the left ear, then the replay with the attention map and the report card. A "Feel neglect" switch fades the left of whatever you look at. Linked from the hero ("Try the table yourself") and the header ("Try it").
 
+**Glasses view (3D):** `/play` opens in a three.js dining room seen from the chair: the room and table are always drawn, the diyas only inside the Spectacles display's frame (about 32° × 37°), which is outlined. Left/right turns the head; a click, or Up/Down then Enter, pinches. The top-down view stays one click away and is the accessible fallback (and the default without WebGL).
+
+**Explained words:** in the docs and the therapist view, the first use of each glossary term on a page has a dotted underline; pointing at it, focusing it or tapping it shows a card with its meaning, and following it opens the term in the glossary (`/docs#glossary/<slug>`). One list feeds both: `web/src/data/glossary.ts`.
+
+**The logo** lights once when a page opens and then its flame sways and its glow breathes slowly; still with reduced motion; never a brightness flash.
+
 **Therapist plan:** a "Set the next session" card in the therapist view (level and hint delay as segmented radio groups; Set, Update, Clear); the family dashboard shows "The therapist set the next session on …".
 
 **Light and dark:** a sun/moon button in every header switches theme and remembers it on that device; until pressed, the site follows the system.

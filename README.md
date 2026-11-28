@@ -11,12 +11,12 @@
 [![CI](https://img.shields.io/github/actions/workflow/status/harshbhx/purna/ci.yml?branch=main&style=flat-square&label=CI&logo=githubactions&logoColor=white&labelColor=17140f)](https://github.com/harshbhx/purna/actions/workflows/ci.yml)
 [![Live](https://img.shields.io/github/actions/workflow/status/harshbhx/purna/live.yml?branch=main&style=flat-square&label=live%20site&logo=cloudflare&logoColor=white&labelColor=17140f)](https://github.com/harshbhx/purna/actions/workflows/live.yml)
 [![Uptime](https://img.shields.io/website?url=https%3A%2F%2Fpurna.dualmindlab.tech%2Fapi%2Fv1%2Fhealth&style=flat-square&label=purna.dualmindlab.tech&labelColor=17140f&up_message=online)](https://purna.dualmindlab.tech)
-![Tests](https://img.shields.io/badge/tests-283%20passing-047857?style=flat-square&labelColor=17140f)
+![Tests](https://img.shields.io/badge/tests-286%20passing-047857?style=flat-square&labelColor=17140f)
 ![Coverage](https://img.shields.io/badge/engine%20coverage-99%25-047857?style=flat-square&labelColor=17140f)
 [![WCAG 2.1 AA](https://img.shields.io/badge/WCAG%202.1-AA%20checked-1f6feb?style=flat-square&labelColor=17140f)](ACCESSIBILITY.md)
 [![MIT](https://img.shields.io/badge/license-MIT-c2410c?style=flat-square&labelColor=17140f)](LICENSE)
 
-**[For judges](JUDGES.md)** &nbsp;·&nbsp; [Features](#-what-no-one-else-does) &nbsp;·&nbsp; [How it works](#-a-session-in-four-minutes) &nbsp;·&nbsp; [Built with](#-how-its-built) &nbsp;·&nbsp; [Tests](#-tests) &nbsp;·&nbsp; [Accessibility](ACCESSIBILITY.md)
+**[For judges](JUDGES.md)** &nbsp;·&nbsp; [Features](#-what-no-one-else-does) &nbsp;·&nbsp; [How it works](#-a-session-in-four-minutes) &nbsp;·&nbsp; [Numbers](#-by-the-numbers) &nbsp;·&nbsp; [Research](#-the-research-behind-it) &nbsp;·&nbsp; [Built with](#-how-its-built) &nbsp;·&nbsp; [Tests](#-tests) &nbsp;·&nbsp; [Accessibility](ACCESSIBILITY.md)
 
 </div>
 
@@ -30,9 +30,9 @@ After a stroke on the right side of the brain, many people stop noticing the lef
 <br>
 
 <div align="center">
-<a href="https://purna.dualmindlab.tech/play"><img src="docs/img/readme/play.gif" width="92%" alt="The diya table in the browser: only the diyas inside a narrow window, as wide as the glasses' view, are shown. The player lights two diyas on the right and stalls; a caption says a bell rings from the left; the view turns left and lights the diyas there."></a>
+<a href="https://purna.dualmindlab.tech/play"><img src="docs/img/readme/glasses.gif" width="92%" alt="The 3D glasses view in the browser: a dining room and a wooden table, with clay diyas drawn only inside a bright frame where the glasses can draw. The player lights diyas, turns the head left, and the diyas on the left come into the frame."></a>
 <br>
-<sub><b>No glasses needed.</b> The same engine as the Lens, in your browser: only what's in your view shows, so you have to turn. <a href="https://purna.dualmindlab.tech/play"><b>Play it</b></a></sub>
+<sub><b>No glasses needed.</b> A 3D dining room in your browser, on the same engine as the Lens. Diyas appear only inside the frame the glasses can draw, so you have to turn your head. <a href="https://purna.dualmindlab.tech/play"><b>Play it</b></a></sub>
 </div>
 
 <br>
@@ -69,16 +69,23 @@ From a 7-day read-only link, the therapist picks the next level and hint delay. 
 <tr>
 <td width="50%" valign="top">
 
-### 🪔 Play it, and feel it
+### 🪔 Play it in 3D, and feel it
 
-[**/play**](https://purna.dualmindlab.tech/play) runs the Lens's engine in a browser with a view as narrow as the glasses'. Tick **Feel neglect** and the left of whatever you look at fades away, so a son or daughter can feel what their father can't see.
+[**/play**](https://purna.dualmindlab.tech/play) puts you at the table through simulated Spectacles (three.js): the room is always there, the diyas only inside the display's frame. A top-down view works with screen readers. Tick **Feel neglect** and the left of whatever you look at fades away.
+
+<img src="docs/img/readme/play.gif" alt="The top-down view: a dark table where only a window of diyas is visible; the view turns left to find more.">
 
 </td>
 <td width="50%" valign="top">
 
-### ◐ Two kinds of neglect from one table
+### 📖 Docs that explain themselves
 
-Chipped diyas with the gap on a known side separate *"my left"* from *"each object's left"*, after the Ota and Apples cancellation tests. A simulated patient bench proves the report tells them apart.
+[Safety, setup, guides, results and research](https://purna.dualmindlab.tech/docs), searchable, in light and dark. Every medical or technical word has a dotted underline: point at it for its meaning, follow it to a [42-term glossary](https://purna.dualmindlab.tech/docs#glossary).
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/img/readme/docs-dark.png">
+  <img src="docs/img/readme/docs-light.png" alt="The docs: a menu with search, the Safety page with its header, a stroke warning-signs table, and an On this page list.">
+</picture>
 
 </td>
 </tr>
@@ -115,6 +122,48 @@ sequenceDiagram
     T->>W: a note, and the next session
     W-->>F: both, on the dashboard
 ```
+
+## ✦ By the numbers
+
+<table>
+<tr>
+<td align="center" width="25%"><h3>4.4%</h3><sub>of the time the simulated <b>left-neglect</b> searcher's head pointed at the left half of the table, against <b>49.9%</b> for the healthy one</sub></td>
+<td align="center" width="25%"><h3>196 / 200</h3><sub>layouts where it missed at least one left diya; on the other 4, hints and head turn still gave it away</sub></td>
+<td align="center" width="25%"><h3>5.6</h3><sub>chipped-on-left diyas lit per session by the <b>object-neglect</b> searcher, against 0 for the others</sub></td>
+<td align="center" width="25%"><h3>286</h3><sub>automated tests on every change, 99% of the engine's lines covered, axe-checked in light and dark</sub></td>
+</tr>
+</table>
+
+| Average over 200 layouts | Healthy | Left neglect | Object neglect |
+|---|:-:|:-:|:-:|
+| Left diyas found | 100% | **64.8%** | 100% |
+| Hints per session | 0 | **2.92** | 0.01 |
+| Centre of Cancellation | 0.000 | **0.198** | 0.000 |
+| Chipped-on-left diyas lit | 0 | 0 | **5.63** |
+| Furthest head turn left | 27.1° | **16.4°** | 28.9° |
+| Head on the left half of the table | 49.9% | **4.4%** | 51.9% |
+
+<sub>Three scripted searchers play the real engine on the same 200 layouts. <b>Simulated players, not patients</b>: this shows the measures separate search styles, not that Purna helps anyone. Details: <a href="https://purna.dualmindlab.tech/docs#results">Results so far</a>.</sub>
+
+## ✦ The research behind it
+
+Every design choice traces to a finding we opened and read. A few of them:
+
+| Finding | What Purna does | Source |
+|---|---|---|
+| Neglect follows about 40% of right-hemisphere strokes | Built for the left side first | [UEA review](https://ueaeprints.uea.ac.uk/id/eprint/78250/1/Accepted_Manuscript.pdf) |
+| Targets with a gap on one side separate "my left" from "each object's left" | Whole and chipped diyas | [Ota test](https://pmc.ncbi.nlm.nih.gov/articles/PMC3358702), [Apples Test](https://pmc.ncbi.nlm.nih.gov/articles/PMC3486857/figure/pone-0047821-g001) |
+| Showing patients where they looked improved neglect and self-awareness | The replay and the attention map | [Kobe University thesis](https://da.lib.kobe-u.ac.jp/da/kernel/D1008330/D1008330.pdf) |
+| Leftward smooth pursuit reduces neglect; rightward may worsen it | The warm-up only moves left (a test enforces it) | [Review](https://www.elsevier.es/es-revista-international-journal-clinical-health-psychology-355-articulo-virtual-reality-eye-movement-training-S1697260025000870) |
+| Fixed cut-offs give false positives that depend on how many targets were found | References as context, never pass/fail | [J Int Neuropsychol Soc 2020](https://www.psy.ox.ac.uk/publications/1098321) |
+| Family-led rehabilitation didn't reduce death or dependency in a large trial | Family watches; the therapist runs therapy | [ATTEND, Lancet 2017](https://researchonline.lshtm.ac.uk/4052645) |
+| About 10% of people develop epilepsy after a stroke | Nothing flashes faster than 3 times a second | [Nandan et al. 2023](https://doaj.org/article/61eb6837ea194f9a896517436d04e9a0) |
+| Whether neglect therapy improves daily life is very uncertain | "Practice", never "treatment" | [Cochrane review](https://pmc.ncbi.nlm.nih.gov/articles/PMC8247630/) |
+
+More: [Evidence and limits](https://purna.dualmindlab.tech/docs#evidence) on the site, and every source in [`docs/10-RESEARCH.md`](docs/10-RESEARCH.md). Words you don't know? The [glossary](https://purna.dualmindlab.tech/docs#glossary).
+
+> [!TIP]
+> **Clinicians:** Purna hasn't been used with patients yet. If you treat neglect and would look at it, review the measures or run a small, ethics-approved pilot, see [pilot Purna with us](https://purna.dualmindlab.tech/docs#therapists) or write to [harshbhx@gmail.com](mailto:harshbhx@gmail.com).
 
 ## ✦ How it's built
 
@@ -178,8 +227,8 @@ Three scripted searchers play the real engine on 200 layouts each. The left-negl
 |---|---|:-:|---|
 | 🧠 Engine + bench | `cd tools && npm test` | 79 | Layout on 500 seeds × 3 levels, hint timing, metrics, attention map, next session, sounds. 99% line coverage |
 | ☁️ Worker + D1 | `cd family && npm test` | 84 | Every API route and error, field-by-field validation, the engine → server contract, rate limits, retention, the therapist plan |
-| ⚛️ Web app | `npm run test:web` | 71 | Components in jsdom, the browser table on the real engine, the plan form, theme switch, docs, Hindi |
-| 🌐 End to end | `npm run test:e2e` | 49 × 2 | Real Chrome on phone and desktop: every flow, keyboard only, axe in light and dark |
+| ⚛️ Web app | `npm run test:web` | 72 | Components in jsdom, the browser table on the real engine, the plan form, theme switch, docs, Hindi |
+| 🌐 End to end | `npm run test:e2e` | 51 × 2 | Real Chrome on phone and desktop: every flow, keyboard only, axe in light and dark |
 
 <details>
 <summary><b>Run it yourself</b></summary>
