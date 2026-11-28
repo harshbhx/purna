@@ -3,7 +3,7 @@
 // Layout: the menu and search on the left, the page in the middle, "On this page" on the right (wide screens).
 import {
   Accessibility, ArrowLeft, ArrowRight, BarChart3, BookOpen, Clock, FileText, Flag, FlaskConical, Glasses, HeartHandshake,
-  BookA, ClipboardCheck, Lock, Pencil, Phone, Printer, Search, ShieldAlert, Stethoscope, TriangleAlert, type LucideIcon,
+  BookA, Boxes, Check, ClipboardCheck, Gavel, Link2, Lock, Pencil, Phone, Search, ShieldAlert, Stethoscope, TriangleAlert, type LucideIcon,
 } from "lucide-react";
 import { Children, isValidElement, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import Markdown, { type Components } from "react-markdown";
@@ -28,23 +28,37 @@ import evidence from "@/content/docs/evidence.md?raw";
 import report from "@/content/docs/report.md?raw";
 import results from "@/content/docs/results.md?raw";
 import glossary from "@/content/docs/glossary.md?raw";
+import judges from "@/content/docs/judges.md?raw";
+import architecture from "@/content/docs/architecture.md?raw";
 
-export interface DocPage { id: string; title: string; group: string; body: string; desc: string; icon: LucideIcon }
+export interface DocPage { id: string; title: string; group: string; body: string; desc: string; icon: LucideIcon; summary?: string[]; related?: string[] }
 
 export const DOCS: DocPage[] = [
-  { id: "overview", title: "Overview", group: "Start", body: overview, icon: BookOpen, desc: "What Purna is, who it's for, and where to begin." },
-  { id: "safety", title: "Safety", group: "Start", body: safety, icon: ShieldAlert, desc: "Read before the first session: who shouldn't use it, a safe space, when to stop." },
-  { id: "setup", title: "Setting up the glasses", group: "Start", body: setup, icon: Glasses, desc: "Get the Lens onto Spectacles, run a session, link it to the family site." },
-  { id: "carers", title: "Guide for carers", group: "Guides", body: carers, icon: HeartHandshake, desc: "Your part: set it up, sit nearby, keep it gentle, share with the therapist." },
-  { id: "therapists", title: "Guide for therapists", group: "Guides", body: therapists, icon: Stethoscope, desc: "Reading the results, setting the next session, limits, and how to pilot it with us." },
-  { id: "measures", title: "What the numbers mean", group: "Reference", body: measures, icon: BarChart3, desc: "Each result in plain words, then exactly how it's worked out." },
-  { id: "results", title: "Results so far", group: "Reference", body: results, icon: ClipboardCheck, desc: "What we tested and the numbers: the patient bench, 286 tests, accessibility." },
-  { id: "evidence", title: "Evidence and limits", group: "Reference", body: evidence, icon: FlaskConical, desc: "The research behind every design choice, with sources, and what isn't known." },
-  { id: "glossary", title: "Glossary", group: "Reference", body: glossary, icon: BookA, desc: "Every term used here, from allocentric neglect to WCAG, in plain words." },
-  { id: "privacy", title: "Privacy", group: "Policies", body: privacy, icon: Lock, desc: "What's stored, where, for how long, and your rights wherever you live." },
-  { id: "terms", title: "Terms of use", group: "Policies", body: terms, icon: FileText, desc: "Plain-language terms for using Purna and Purna Family." },
-  { id: "accessibility", title: "Accessibility", group: "Policies", body: accessibility, icon: Accessibility, desc: "What we check, what isn't perfect yet, and how to tell us." },
-  { id: "report", title: "Report a problem", group: "Help", body: report, icon: Flag, desc: "Safety concerns, bugs and security problems: how to reach us." },
+  { id: "overview", title: "Overview", group: "Start", body: overview, icon: BookOpen, desc: "What Purna is, who it's for, and where to begin.", related: ["judges", "safety", "results"] },
+  { id: "judges", title: "For judges", group: "Start", body: judges, icon: Gavel, desc: "Purna in one minute, a five-minute tour, every criterion, the numbers, honest status.",
+    summary: ["Try the 3D table at /play first, with headphones", "Every criterion mapped to evidence", "Simulated players, not patients: all numbers say so"], related: ["results", "architecture", "evidence"] },
+  { id: "safety", title: "Safety", group: "Start", body: safety, icon: ShieldAlert, desc: "Read before the first session: who shouldn't use it, a safe space, when to stop.",
+    summary: ["Purna can't detect a stroke: know the warning signs and call your local emergency number", "Ask a doctor first about seizures, serious conditions or implants; adults only", "Sit down, with someone nearby; stop at dizziness, headache or any new symptom"], related: ["setup", "carers", "report"] },
+  { id: "setup", title: "Setting up the glasses", group: "Start", body: setup, icon: Glasses, desc: "Get the Lens onto Spectacles, run a session, link it to the family site.",
+    summary: ["Send the Lens from Lens Studio to your Spectacles", "A session takes about four minutes, seated at a table", "Sharing is off until you turn it on; the first send shows a DIYA code"], related: ["safety", "carers", "measures"] },
+  { id: "carers", title: "Guide for carers", group: "Guides", body: carers, icon: HeartHandshake, desc: "Your part: set it up, sit nearby, keep it gentle, share with the therapist.",
+    summary: ["You set it up and stay nearby; the therapist plans the practice", "Encourage, don't point: the searching is the exercise", "Look at weeks, not single days; share a doctor link when the therapist asks"], related: ["safety", "therapists", "privacy"] },
+  { id: "therapists", title: "Guide for therapists", group: "Guides", body: therapists, icon: Stethoscope, desc: "Reading the results, setting the next session, limits, and how to pilot it with us.",
+    summary: ["A 7-day read-only link shows every session and measure; you can set the next session", "Published cut-offs don't carry over: watch change over time", "Not yet used with patients: we'd value your review or a small pilot"], related: ["measures", "results", "evidence"] },
+  { id: "measures", title: "What the numbers mean", group: "Reference", body: measures, icon: BarChart3, desc: "Each result in plain words, then exactly how it's worked out.",
+    summary: ["Four results on the report: left vs right, chipped diyas, search order, head turn", "Plus the attention map: where the head pointed on the table", "Definitions and formulas for therapists"], related: ["results", "glossary", "therapists"] },
+  { id: "results", title: "Results so far", group: "Reference", body: results, icon: ClipboardCheck, desc: "What we tested and the numbers: the patient bench, 286 tests, accessibility.",
+    summary: ["The measures separate three simulated search styles on 200 layouts each", "286 automated tests run on every change", "Nothing yet from patients or real glasses"], related: ["evidence", "measures", "architecture"] },
+  { id: "evidence", title: "Evidence and limits", group: "Reference", body: evidence, icon: FlaskConical, desc: "The research behind every design choice, with sources, and what isn't known.",
+    summary: ["Every design choice traces to a published finding, linked here", "Whether neglect training helps daily life is uncertain, so Purna claims nothing", "Next: clinician review, then an ethics-approved pilot"], related: ["results", "glossary", "judges"] },
+  { id: "architecture", title: "How it's built", group: "Reference", body: architecture, icon: Boxes, desc: "One engine in three places, the data contract, the server, security, tests and releases.",
+    summary: ["One TypeScript engine runs on the glasses, in the tests and in the browser", "Every session is one checked, versioned JSON document", "286 tests gate every change; Cloudflare deploys from main"], related: ["results", "privacy", "judges"] },
+  { id: "glossary", title: "Glossary", group: "Reference", body: glossary, icon: BookA, desc: "Every term used here, from allocentric neglect to WCAG, in plain words.", related: ["measures", "evidence"] },
+  { id: "privacy", title: "Privacy", group: "Policies", body: privacy, icon: Lock, desc: "What's stored, where, for how long, and your rights wherever you live.",
+    summary: ["No names, faces, camera images or location from the glasses", "Keys stored only as hashes; doctor links expire; unpaired data deleted after 30 days", "Delete everything removes it all, any time"], related: ["terms", "architecture", "report"] },
+  { id: "terms", title: "Terms of use", group: "Policies", body: terms, icon: FileText, desc: "Plain-language terms for using Purna and Purna Family.", related: ["privacy", "safety"] },
+  { id: "accessibility", title: "Accessibility", group: "Policies", body: accessibility, icon: Accessibility, desc: "What we check, what isn't perfect yet, and how to tell us.", related: ["results", "report"] },
+  { id: "report", title: "Report a problem", group: "Help", body: report, icon: Flag, desc: "Safety concerns, bugs and security problems: how to reach us.", related: ["safety", "privacy"] },
 ];
 
 const GROUP_STYLE: Record<string, string> = {
@@ -105,6 +119,7 @@ const MD: Components = {
     </div>
   ),
   a: ({ href, children }) => <a href={href}>{children}</a>,
+  img: ({ src, alt }) => <img src={src} alt={alt ?? ""} loading="lazy" className="mt-6 block h-auto w-full rounded-2xl border border-border bg-card" />,
   code: ({ children }) => <code className="rounded-md border border-border bg-muted px-1.5 py-0.5 font-mono text-[0.88em]">{children}</code>,
   table: ({ children }) => (
     <div role="region" aria-label="Table, scrolls sideways on small screens" tabIndex={0} className="doc-table mt-6 max-w-full overflow-x-auto rounded-2xl border border-border bg-card focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring">
@@ -137,6 +152,11 @@ function useActiveSection(ids: string[]) {
 export function Docs() {
   const [page, setPage] = useState<DocPage>(pageFromHash);
   const [q, setQ] = useState("");
+  const [copied, setCopied] = useState(false);
+  async function copyLink() {
+    const url = `${location.origin}/docs#${page.id}`;
+    try { await navigator.clipboard.writeText(url); setCopied(true); setTimeout(() => setCopied(false), 1800); } catch { /* no clipboard: the address bar has it */ }
+  }
   useEffect(() => {
     const on = () => {
       setPage(pageFromHash());
@@ -181,13 +201,13 @@ export function Docs() {
       <AppHeader wide>
         <Button variant="ghost" size="sm" asChild><a href="/" className="no-underline">Purna home</a></Button>
         <Button variant="ghost" size="sm" asChild className="hidden sm:inline-flex"><a href="/play" className="no-underline">Try the table</a></Button>
-        <Button variant="outline" size="sm" aria-label="Print this page" onClick={() => window.print()}><Printer /><span className="hidden sm:inline">Print this page</span></Button>
+        <Button variant="outline" size="sm" asChild className="hidden md:inline-flex"><a href="#judges" className="no-underline">For judges</a></Button>
       </AppHeader>
 
       <div className="doc-band no-print border-b border-border">
-        <div className="mx-auto flex max-w-[1240px] flex-wrap items-center justify-between gap-3 px-4 py-3 text-[13.5px] text-muted-foreground sm:px-5">
+        <div className="mx-auto flex max-w-[1240px] flex-wrap items-center justify-between gap-x-6 gap-y-1.5 px-4 py-2.5 text-[13px] text-muted-foreground sm:px-5">
           <span><a href="#overview" className="text-muted-foreground no-underline hover:text-foreground">Docs</a><span aria-hidden="true"> / </span>{page.group}<span aria-hidden="true"> / </span><span className="text-foreground">{page.title}</span></span>
-          <span className="hidden items-center gap-1.5 sm:flex"><Phone className="size-3.5 text-danger" aria-hidden="true" />Emergency? Call your local emergency number.</span>
+          <span id="emergency" className="flex items-center gap-1.5"><Phone className="size-3.5 shrink-0 text-danger" aria-hidden="true" /><span>Purna can’t detect a stroke. Sudden face drooping, arm weakness, speech or vision problems: call your local emergency number now. <a href="#safety">Signs to look for</a>.</span></span>
         </div>
       </div>
 
@@ -243,10 +263,7 @@ export function Docs() {
             </div>
           </nav>
 
-          <div id="emergency" className="mt-2 hidden rounded-2xl border border-[color-mix(in_srgb,var(--danger)_35%,transparent)] bg-danger-bg p-4 text-[14px] leading-relaxed lg:block">
-            <p className="m-0 flex items-center gap-2 font-semibold text-danger"><Phone className="size-4" aria-hidden />In an emergency</p>
-            <p className="m-0 mt-1.5">Purna can’t detect a stroke. Sudden face drooping, arm weakness, speech or vision problems: call your local emergency number now. <a href="#safety">Signs to look for</a>.</p>
-          </div>
+
         </aside>
 
         <article id="doc-body" tabIndex={-1} className="doc outline-none" aria-labelledby="doc-title">
@@ -267,11 +284,24 @@ export function Docs() {
                 )}
               </div>
             </div>
+            <div className="no-print mt-6 flex flex-wrap items-center gap-2 border-t border-border pt-4 text-[13.5px]">
+              <Button type="button" variant="outline" size="sm" onClick={copyLink}>{copied ? <Check /> : <Link2 />}{copied ? "Link copied" : "Copy link"}</Button>
+              <Button variant="ghost" size="sm" asChild><a href={`${SOURCE}${page.id}.md`} className="no-underline"><Pencil />Edit on GitHub</a></Button>
+              <Button variant="ghost" size="sm" asChild><a href={`mailto:harshbhx@gmail.com?subject=${encodeURIComponent(`Purna docs: ${page.title}`)}`} className="no-underline">Ask a question</a></Button>
+              <span role="status" className="sr-only">{copied ? "Link copied" : ""}</span>
+            </div>
           </header>
 
-          <div id="emergency-inline" className="mt-4 rounded-2xl border border-[color-mix(in_srgb,var(--danger)_35%,transparent)] bg-danger-bg px-4 py-3 text-[14px] leading-relaxed lg:hidden">
-            <span className="font-semibold text-danger">In an emergency: </span>Purna can’t detect a stroke. Call your local emergency number now. <a href="#safety">Signs to look for</a>.
-          </div>
+          {page.summary && (
+            <section aria-labelledby="in-short" className="doc-short mt-6 rounded-2xl border border-border bg-surface px-5 py-4">
+              <h2 id="in-short" className="m-0 text-[13px] font-semibold tracking-[0.02em] text-muted-foreground">In short</h2>
+              <ul className="m-0 mt-2 grid list-none gap-1.5 p-0 text-[15.5px] leading-snug">
+                {page.summary.map((t) => <li key={t} className="flex gap-2.5"><Check className="mt-0.5 size-4 shrink-0 text-success" aria-hidden="true" />{t}</li>)}
+              </ul>
+            </section>
+          )}
+
+
 
           {isHome && (
             <div className="mt-10 grid gap-8">
@@ -322,9 +352,29 @@ export function Docs() {
             ))}
           </div>
 
+          {page.related && page.related.length > 0 && (
+            <section aria-labelledby="related-h" className="no-print mt-12">
+              <h2 id="related-h" className="m-0 text-[15px] font-semibold text-muted-foreground">Read next</h2>
+              <ul className="m-0 mt-3 grid list-none gap-3 p-0 sm:grid-cols-3">
+                {page.related.map((id) => DOCS.find((d) => d.id === id)).filter((d): d is DocPage => !!d).map((d) => {
+                  const I = d.icon;
+                  return (
+                    <li key={d.id}>
+                      <a href={`#${d.id}`} className="doc-card flex h-full flex-col gap-1.5 rounded-2xl border border-border bg-card p-4 no-underline hover:border-foreground/30">
+                        <I className="size-4.5 text-muted-foreground" aria-hidden="true" />
+                        <span className="text-[15px] font-semibold text-foreground">{d.title}</span>
+                        <span className="text-[13.5px] leading-snug text-muted-foreground">{d.desc}</span>
+                      </a>
+                    </li>
+                  );
+                })}
+              </ul>
+            </section>
+          )}
+
           <div className="no-print mt-12 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border bg-surface px-5 py-4 text-[14px]">
-            <span className="text-muted-foreground">Something unclear or wrong on this page? <a href="mailto:harshbhx@gmail.com">Tell us</a>.</span>
-            <a href={`${SOURCE}${page.id}.md`} className="inline-flex items-center gap-1.5 no-underline"><Pencil className="size-3.5" aria-hidden="true" />Suggest an edit on GitHub</a>
+            <span className="text-muted-foreground">Something unclear or wrong on this page? <a href={`mailto:harshbhx@gmail.com?subject=${encodeURIComponent(`Purna docs: ${page.title}`)}`}>Tell us</a>, or suggest an edit on GitHub.</span>
+            <a href="#report" className="no-underline">Report a problem</a>
           </div>
 
           <nav aria-label="Previous and next page" className="no-print mt-6 grid gap-3 sm:grid-cols-2">

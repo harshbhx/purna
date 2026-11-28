@@ -2,7 +2,7 @@
 import { expect, test } from "@playwright/test";
 import { watchConsole } from "./helpers";
 
-const PAGES = ["overview", "safety", "setup", "carers", "therapists", "measures", "results", "evidence", "glossary", "privacy", "terms", "accessibility", "report"];
+const PAGES = ["overview", "judges", "safety", "setup", "carers", "therapists", "measures", "results", "evidence", "architecture", "glossary", "privacy", "terms", "accessibility", "report"];
 
 test("the footer's Safety link opens the safety page", async ({ page }) => {
   await page.goto("/");
@@ -43,7 +43,7 @@ test("printing keeps the page and drops the menus", async ({ page, isMobile }) =
   await page.emulateMedia({ media: "print" });
   await expect(page.locator("#doc-title")).toBeVisible();
   await expect(page.getByRole("navigation", { name: "Documentation" })).toBeHidden();
-  await expect(page.getByRole("button", { name: "Print this page" })).toBeHidden();
+  await expect(page.getByRole("button", { name: "Copy link" })).toBeHidden();
 });
 
 test("hard words explain themselves and lead to the glossary", async ({ page }) => {
