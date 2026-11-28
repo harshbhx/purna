@@ -55,7 +55,7 @@ purna/                                  ← the Lens Studio project folder = the
 ├── devpost/                            design-brief.md, plan-lens-answers.md
 ├── docs/                               this pack
 ├── .github/workflows/ci.yml            core, family, e2e and script checks on every push / PR
-├── .github/workflows/deploy.yml        after CI passes on main: D1 migrations, wrangler deploy, smoke test
+├── .github/workflows/live.yml          after each push to main and daily: checks the live site (deploys run in Cloudflare Workers Builds)
 ├── docs/img/                           README visuals (bench chart, GIFs, doctor view)
 ├── AGENTS.md, README.md, LICENSE (MIT), .gitignore
 ```
@@ -232,7 +232,8 @@ Printed to the Logger as one line `PURNA_SESSION {json}` and POSTed to Purna Fam
   },
   "far": null,
   "drift": null,
-  "head": { "maxLeftDeg": 24.1, "maxRightDeg": 17.9, "pctTimeLeft": 0.38 },
+  "head": { "maxLeftDeg": 24.1, "maxRightDeg": 17.9, "pctTimeLeft": 0.38,
+            "attention": [0, 0, 0.01, 0.02, 0.04, 0.08, 0.15, 0.2, 0.18, 0.14, 0.1, 0.05, 0.02, 0.01] },
   "cues": { "hint1": 2, "hint2": 1, "beamEnd": 2 },
   "summary": "Found 9 of 12 on the left and 12 of 12 on the right. 3 hints. Turned up to 24° left."
 }
@@ -251,6 +252,7 @@ Field definitions:
 - `timeByColumnS` = mean seconds to find a lit diya in the left / centre / right third (time since the previous lit, or task start); `null` entries if none.
 - `drift` (add-on): `{ "flickers": 12, "hits": 9, "misses": 2 }`.
 - `head.pctTimeLeft` = share of yaw samples during tasks with yaw > 5°.
+- `head.attention` (optional; older builds leave it out) = Core `attentionMap`: during the table task only, the share of yaw samples whose view centre landed on each of 14 strips of the table (5 cm each, left edge first). A yaw θ points at x = −65·tan θ on the table's centre line; turns past an edge count for the edge strip. The validator accepts 1–32 numbers from 0 to 1.
 
 ---
 
@@ -293,9 +295,14 @@ Auth: `Authorization: Bearer <familyKey>` for `/me/*`; `Bearer <shareToken>` for
 | `DELETE /me` | family | `{ confirm: <display name> }` | `204` (everything removed) |
 | `GET /doctor` | share | – | `{ patient: { name }, sessions: [full JSON], notes }` · `410` expired/revoked |
 | `POST /doctor/notes` | share | `{ text }` (1–1000 chars) | `201 { id, createdAt }` |
+| `POST /doctor/plan` | share | `{ preset, hintDelayS }` (easy/standard/hard; 4, 6 or 10) | `201 { plan: { preset, hintDelayS, setAt } }`; replaces any earlier plan |
+| `DELETE /doctor/plan` | share | – | `204` |
+| `GET /devices/:deviceId/next` | none (from the Lens) | – | `{ plan }` or `{ plan: null }`; CORS `*`; 20/min per device |
 | `GET /health` | none | – | `{ ok: true, version }` |
 
-`SessionCard` = `{ id, startedAt, preset, summary, leftPct, rightPct, coc, hints, maxLeftDeg, endedBy }`.
+`SessionCard` = `{ id, startedAt, preset, summary, leftPct, rightPct, coc, hints, maxLeftDeg, endedBy }`. `GET /me` and `GET /doctor` also return `plan` (or `null`).
+
+**Therapist plan:** the doctor link can set the next session's level and hint delay. The Lens asks `GET /devices/:deviceId/next` when its setup panel opens and preselects it with Core `chooseNext(briefs, plan)` ("Set by your therapist on 3 Dec: Easy, hint after 4 s."); without a plan, or offline, it falls back to `suggestNext`. The next session stored from that patient's glasses deletes the plan, so it applies once. One row per patient in `plans` (`migrations/0002_plans.sql`), removed by Delete everything.
 
 **Pairing flow:** a session from an unknown `deviceId` is stored unlinked; the device gets a code `DIYA-XXXX` (alphabet `23456789ABCDEFGHJKMNPQRSTUVWXYZ`, 72 h). Later sends from the same unpaired device get the same code until it expires, then a fresh one. `POST /pair` accepts the code typed loosely (`diya 7k3p`, `7K3P`), creates the patient, links the device and all its earlier sessions. The code is **kept** on the paired device so a second attempt gets `409 Already paired` rather than `404`. Later sessions from that device link automatically. A resend of the same `sessionId` from the same device is a no-op `200`.
 
@@ -356,6 +363,10 @@ React 18 + Vite + Tailwind v4, built to `family/dist` and served by the same Wor
 | `/doctor#t=<token>` | Read-only: patient name, every measure per session, trends, CSV download (formula-safe), print layout, notes box (≤ 50 notes per link). The token moves from the URL to sessionStorage on load |
 | `/docs#<page>` | The docs: safety, setup, guides, measures, privacy, terms, accessibility, evidence, report. Markdown in `web/src/content/docs`, rendered with react-markdown (no raw HTML) |
 | `/doctor#demo` | The same view filled from `demo/sessions.json`, labelled as simulated, notes off. No API call |
+| `/play` | **Try the table:** the real `PurnaEngine` in the browser. Only a 37 cm window of the 70 cm table shows its diyas (SPECS' ~32° view at 65 cm); the mouse, a drag or the arrow keys turn the head (yaw = atan(−x/65)). Clicks pinch; the bell plays through a stereo panner hard left; then the replay with the attention map and the report card. "Feel neglect" fades the left of the view. Nothing is sent: sessions stay in sessionStorage |
+| `/doctor#played` | The therapist view filled with the sessions played on `/play` in this tab |
+
+**Theme:** light and dark follow the system until the header switch is pressed; the choice is saved per device (`purna.theme`) and `public/theme.js` (a same-origin script, so the CSP holds) applies it before the page paints. CSS dark tokens apply under `[data-theme=dark]`, or under the system setting when no choice is saved.
 
 Charts are hand-drawn SVG (`assets/charts.js`): trend = two lines (left %, right %) over session dates; replay = table rectangle, diyas as circles (whole/chipped icons), thread in lit order.
 
@@ -367,6 +378,6 @@ Charts are hand-drawn SVG (`assets/charts.js`): trend = two lines (left %, right
 - `family/`: vitest 4 with `@cloudflare/vitest-plugin` (the renamed `vitest-pool-workers`): real Worker + local D1, migrations applied in setup; jsdom unit tests for the browser code; Playwright end-to-end in Chrome.
 - LEAF scenarios in `Assets/Tests` run in Lens Studio (not in CI).
 - `.github/workflows/ci.yml`: every suite on push to `main` and on PRs, read-only permissions, coverage in the job summary, stale-artifact checks for the bench chart and demo data.
-- `.github/workflows/deploy.yml` (CD): runs when CI passes on `main` (or by hand). Applies D1 migrations, deploys the Worker, smoke-tests `/api/v1/health` and the CSP header. Needs secrets `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `PURNA_D1_DATABASE_ID`; skips with a notice without them. The Lens has no CD: it ships from Lens Studio.
+- **CD is Cloudflare Workers Builds:** the Worker `purna-family` is connected to this repo (root `family/`, production branch `main`). Every push to `main` runs `npm run build`, then a deploy command that writes the D1 id from the build variable `PURNA_D1_DATABASE_ID` into `wrangler.toml`, applies D1 migrations and runs `wrangler deploy`. No Cloudflare keys live in GitHub. `.github/workflows/live.yml` then checks the live site (health, every page, security headers) after each push and daily. The Lens has no CD: it ships from Lens Studio.
 
 Details: `06-TESTING.md`.
