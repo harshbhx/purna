@@ -63,9 +63,9 @@ Status 28 Nov, all in CI:
 | Suite | Command | Count |
 |---|---|---|
 | Core + patient bench + sounds | `cd tools && npm test` | 68 tests (47 Core and bench, 8 next-session suggestion, 13 sounds), 98.9% Core lines |
-| Worker + local D1 (API, validator, crypto, engine contract, rate limits) | `cd family && npm test` | 74 tests |
-| React web app in jsdom (night table, replay, trend, app shell, therapist view, CSV, API client; the three-searcher explainer; every dashboard tool against a fake server) | `npm run test:web` | 53 tests |
-| End-to-end, real Chrome vs the production build on `wrangler dev` (phone + desktop) | `npm run test:e2e` | 36 tests on 2 viewports: landing animation, reduced motion, no sideways scroll from 320 to 1440 px, phone menu, every family and doctor flow, stopping a doctor link, print layout, dead links, a keyboard-only walk, and axe WCAG 2.1 A/AA scans of every screen and dialog in light and dark (`e2e/a11y.spec.ts`) |
+| Worker + local D1 (API, validator, crypto, engine contract, rate limits, retention clean-up) | `cd family && npm test` | 79 tests |
+| React web app in jsdom (night table, replay, trend, app shell, therapist view, CSV, API client; the three-searcher explainer; every dashboard tool against a fake server) | `npm run test:web` | 64 tests |
+| End-to-end, real Chrome vs the production build on `wrangler dev` (phone + desktop) | `npm run test:e2e` | 42 tests on 2 viewports: landing animation, reduced motion, no sideways scroll from 320 to 1440 px, phone menu, every family and doctor flow, stopping a doctor link, print layout, dead links, a keyboard-only walk, and axe WCAG 2.1 A/AA scans of every screen and dialog in light and dark (`e2e/a11y.spec.ts`) |
 
 The **contract test** runs the real engine with the simulated players through every preset × far board × warm-up and checks each session passes the server's validator and fits in 64 KB, so the Lens and Purna Family can't drift apart.
 
