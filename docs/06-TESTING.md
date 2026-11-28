@@ -62,8 +62,8 @@ Status 28 Nov, all in CI:
 
 | Suite | Command | Count |
 |---|---|---|
-| Core + patient bench | `cd tools && npm test` | 47 tests, 98.9% lines |
-| Worker + local D1 (API, validator, crypto, engine contract) | `cd family && npm test` | 68 tests |
+| Core + patient bench + sounds | `cd tools && npm test` | 60 tests (47 Core and bench, 13 sounds), 98.9% Core lines |
+| Worker + local D1 (API, validator, crypto, engine contract, rate limits) | `cd family && npm test` | 74 tests |
 | React web app in jsdom (night table, replay, trend, app shell, therapist view, CSV, API client; the three-searcher explainer; every dashboard tool against a fake server) | `npm run test:web` | 38 tests |
 | End-to-end, real Chrome vs the production build on `wrangler dev` (phone + desktop) | `npm run test:e2e` | 28 tests on 2 viewports: landing animation, reduced motion, no sideways scroll from 320 to 1440 px, phone menu, every family and doctor flow, stopping a doctor link, print layout, dead links, a keyboard-only walk, and axe WCAG 2.1 A/AA scans of every screen and dialog in light and dark (`e2e/a11y.spec.ts`) |
 

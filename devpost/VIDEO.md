@@ -71,7 +71,7 @@ Voice is calm and slow, like explaining to a family. Music: none, or a soft orig
 | 2:04 | Desktop: share with doctor, the therapist view, table and replay. Note back. | The therapist gets a seven-day link with every number a cancellation test gives, and writes a note back. |
 | 2:12 | "Three ways to search the same table": switch tabs, highlighted measures. | And the site explains what the numbers mean. |
 | 2:16 | Code: `Assets/Scripts/Core`, then the bench chart, then GitHub Actions green. | Every rule is plain TypeScript, tested before Lens Studio opened. CLAD built the scene from our plan-lens brief, and LEAF checks each done criterion. |
-| 2:26 | Bench chart close-up. | Three simulated searchers on two hundred tables prove the report tells left neglect from object neglect. 181 automated tests run on every change. |
+| 2:26 | Bench chart close-up. | Three simulated searchers on two hundred tables prove the report tells left neglect from object neglect. Two hundred automated tests run on every change. |
 | 2:36 | Back to the lit table, whole. Text: "Practice tool, not a medical device. Simulated players, not patients." | Purna is a practice tool, not a medical device, and it hasn't met a patient yet. That's next. |
 | 2:43 | Logo: Purna पूर्ण. "purna.dualmindlab.tech". | Purna. Whole. |
 
@@ -86,3 +86,18 @@ Voice is calm and slow, like explaining to a family. Music: none, or a soft orig
 3. **Phone (390 px, Chrome device mode):** pair with the code, dashboard, open a session.
 4. **Desktop (1440 px):** share with doctor, the therapist view, a note, "Three ways to search the same table".
 5. **Code and CI:** `Assets/Scripts/Core` in the editor, `docs/img/bench.svg`, the GitHub Actions run list.
+
+## Ready now (made without the Lens)
+
+| File | Where it goes | Notes |
+|---|---|---|
+| `devpost/video/thumbnail.png` | YouTube thumbnail | 1280 × 720, the night table with the left half dark and "Look left." |
+| `devpost/video/captions.srt` | YouTube captions | 19 cues, timed to the script above, ends at 2:45 |
+| `01-hero-night-table.mp4` | 0:07–0:15 | 1080p, the site's night table animation |
+| `02-explainer-three-searchers.mp4` | 2:12–2:16 | 1080p, switching the three searchers |
+| `03-family-phone-pair-and-dashboard.mp4` | 1:52–2:04 | Phone (780 × 1688): typing the code, the dashboard, a session's replay |
+| `04-therapist-link-and-note.mp4` | 2:04–2:12 | 1080p: share with doctor, the therapist view, a note back |
+| `05-dashboard-dark-broll.mp4` | spare | 1080p dark mode |
+| `06-bench-chart.png` | 2:26–2:36 | 1080p still of `docs/img/bench.svg` |
+
+The clips were recorded from the production build with demo sessions from simulated players, so they need no labelling beyond the closing "simulated players, not patients" card. They are shared with Harsh rather than committed. **Still to record:** every Lens Studio preview shot (shot list 1–2), the paper cancellation sheet (0:15), and the code and GitHub Actions shots (shot list 5).

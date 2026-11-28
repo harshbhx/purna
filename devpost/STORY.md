@@ -53,7 +53,7 @@ We wanted that exercise at home, on the person's own dining table, in something 
 
 **Purna Family** is a Cloudflare Worker with D1. Family keys and doctor tokens are 32 random bytes and stored only as SHA-256 hashes. The web app is React with shadcn/ui, React Bits and Aceternity-style effects, behind a strict Content Security Policy (no third-party scripts). A **contract test** runs the real engine through every level, add-on and searcher and checks that each session passes the server's validator, so the glasses and the server can't drift apart.
 
-**Tested like a product.** 181 automated tests: Core 47, Worker and local D1 68, web components 38, and 28 end-to-end tests in real Chrome at phone and desktop sizes. The end-to-end suite runs axe accessibility checks (WCAG 2.1 AA) on every screen in light and dark mode, walks the keyboard path, and plays the whole family loop: pair, share with the doctor, note back, delete everything. GitHub Actions runs it all on every pull request and deploys after green CI on main.
+**Tested like a product.** 200 automated tests: Core, bench and sounds 60, Worker and local D1 74, web components 38, and 28 end-to-end tests in real Chrome at phone and desktop sizes. The end-to-end suite runs axe accessibility checks (WCAG 2.1 AA) on every screen in light and dark mode, walks the keyboard path, and plays the whole family loop: pair, share with the doctor, note back, delete everything. GitHub Actions runs it all on every pull request and deploys after green CI on main.
 
 ## Challenges we ran into
 
@@ -67,7 +67,7 @@ We wanted that exercise at home, on the person's own dining table, in something 
 
 - The replay. Showing people where they looked improved neglect and self-awareness in a crossover study, and on the glasses it's one glowing thread on their own table.
 - Every design choice traces to a published finding, listed with sources in `docs/10-RESEARCH.md`.
-- Privacy by design: nothing identifying leaves the glasses, keys are stored as one-way hashes, doctor links expire, and one button deletes everything.
+- Privacy by design: nothing identifying leaves the glasses, keys are stored as one-way hashes, doctor links expire, pairing and notes are rate-limited, and one button deletes everything.
 - A family site that passes automated accessibility checks on every screen, in both colour modes, with no sideways scrolling from 320 to 1440 px.
 
 ## What we learned
@@ -81,7 +81,7 @@ We wanted that exercise at home, on the person's own dining table, in something 
 - Sessions with real stroke survivors and their therapists, with ethics approval. Today the feel is unproven and the measures are validated only on simulated players.
 - Hindi and Gujarati voice and text on the glasses and the family site.
 - A far board across the room, and furniture other than the dining table.
-- Rate limiting on pairing before any public use.
+- Longer pairing codes or a global rate limit before any public use (today's limits are per Cloudflare location).
 
 **Purna is a practice tool, not a medical device. It doesn't diagnose or treat.**
 
@@ -103,7 +103,7 @@ We wanted that exercise at home, on the person's own dining table, in something 
 - **Third-party code in the family site:** React Bits components (BlurText, CountUp, Magnet, ShinyText, SpotlightCard; MIT + Commons Clause), components following shadcn/ui's patterns over Radix UI (MIT), and effects written for Purna after Aceternity UI's patterns. Credits and licences in `family/THIRD_PARTY.md`.
 - **Fonts:** Mukta by Ek Type and Geist by Vercel, both SIL Open Font License, self-hosted.
 - **Research:** the clinical findings behind each design choice are cited in `docs/10-RESEARCH.md`. No patient data was used; every session shown is from simulated players.
-- **Sound and music:** **[after CLAD: source of the bell and tones; no copyrighted music in the video]**.
+- **Sound and music:** the light tone, tick, temple bell, click and shimmer are original, synthesised in code by `tools/scripts/sounds.ts` and tested against the design spec. The video uses no music beyond these sounds.
 
 ## Testing instructions for judges
 

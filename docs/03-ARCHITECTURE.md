@@ -30,11 +30,13 @@ purna/                                  ← the Lens Studio project folder = the
 │   │   ├── FieldView.ts, DiyaView.ts, BeamView.ts, HintAudio.ts,
 │   │   ├── ReplayView.ts, SetupPanel.ts, ReportCard.ts, FamilySender.ts
 │   │   └── Debug/PurnaSelfTest.ts, Debug/PurnaDemoDirector.ts   (off by default)
+│   ├── Audio/                          light, tick, bell, ui, replay .wav (original, from tools/scripts/sounds.ts)
 │   └── Tests/                          ← CLAD: LEAF scenarios c1–c5 (+ a1, a2)
 ├── tools/                              ← Node tests for Core (vitest) + patient bench
 │   ├── package.json, vitest.config.ts, tsconfig.json (Core, ES2019), tsconfig.test.json
 │   ├── test/*.test.ts, test/bench.ts
 │   └── scripts/bench-chart.ts         draws docs/img/bench.svg from the bench
+│       scripts/sounds.ts, make-sounds.ts   synthesise Assets/Audio/*.wav (npm run sounds)
 ├── family/                             ← Purna Family (Cloudflare)
 │   ├── wrangler.toml, package.json, tsconfig.json, vitest.config.ts
 │   ├── migrations/0001_init.sql
@@ -291,7 +293,7 @@ Auth: `Authorization: Bearer <familyKey>` for `/me/*`; `Bearer <shareToken>` for
 
 **Pairing flow:** a session from an unknown `deviceId` is stored unlinked; the device gets a code `DIYA-XXXX` (alphabet `23456789ABCDEFGHJKMNPQRSTUVWXYZ`, 72 h). Later sends from the same unpaired device get the same code until it expires, then a fresh one. `POST /pair` accepts the code typed loosely (`diya 7k3p`, `7K3P`), creates the patient, links the device and all its earlier sessions. The code is **kept** on the paired device so a second attempt gets `409 Already paired` rather than `404`. Later sessions from that device link automatically. A resend of the same `sessionId` from the same device is a no-op `200`.
 
-**Known limit:** 4-character codes (31⁴ ≈ 920k) could be guessed by a determined attacker during the 72 h window; the prize would be an unnamed stranger's practice numbers. Add the Workers rate-limiting binding on `/pair` before any real use (§6.4).
+**Guessing codes:** 4-character codes (31⁴ ≈ 920k) live 72 h. Pairing is limited to 10 tries a minute per caller IP (§6.4), so one caller would need weeks to cover the space; many IPs together still could, and the prize would be an unnamed stranger's practice numbers. Longer codes or a global limit are the next step before real patient use.
 
 **Device ID** (Lens): 16 random bytes hex, stored with persistent storage if the platform provides it (check on device; in the preview it may be new each run, which only means a new pairing code; fine for the demo).
 
@@ -332,7 +334,7 @@ D1 enforces foreign keys; `DELETE /me` still deletes child rows explicitly in on
 - `session.schema === "purna.session.v1"`; ≤ 64 items and ≤ 600 events per field; every number finite; strings ≤ 300 chars; `preset` in the enum; `startedAt` parses as a date.
 - `deviceId` = 32 hex chars. `name` 1–40 chars, trimmed. Note text 1–1000 chars.
 - `POST /sessions` allows CORS `*` (no cookies are ever used). All other routes are same-origin.
-- Rate limiting: use Cloudflare's Workers rate-limiting binding if available on the account (check the docs when deploying); otherwise rely on the size limits.
+- Rate limits (Cloudflare's Rate Limiting binding, `src/lib/limits.ts`): `POST /pair` 10 a minute per caller IP (`CF-Connecting-IP`, which Cloudflare sets and clients can't forge; no IP in local dev means no limit), `POST /sessions` 20 a minute per `deviceId`, `POST /doctor/notes` 10 a minute per doctor link on top of the 50-note cap. Over the limit: `429 slow_down` with `Retry-After: 60` and a plain message. The binding counts per Cloudflare location and is approximate, so these slow down guessing and floods rather than set exact quotas; a strict global limit would need a Durable Object.
 - Responses never echo raw input in HTML; the web app renders all text with `textContent`.
 
 ### 6.5 Web app (`family/web`)
@@ -352,7 +354,7 @@ Charts are hand-drawn SVG (`assets/charts.js`): trend = two lines (left %, right
 
 ## 7. Tests and CI
 
-- `tools/`: vitest on Core + patient bench, coverage ≥ 85% on `Assets/Scripts/Core`.
+- `tools/`: vitest on Core + patient bench + sounds (each WAV checked against 02-DESIGN §6 and byte for byte against the committed file), coverage ≥ 85% on `Assets/Scripts/Core`.
 - `family/`: vitest 4 with `@cloudflare/vitest-plugin` (the renamed `vitest-pool-workers`): real Worker + local D1, migrations applied in setup; jsdom unit tests for the browser code; Playwright end-to-end in Chrome.
 - LEAF scenarios in `Assets/Tests` run in Lens Studio (not in CI).
 - `.github/workflows/ci.yml`: every suite on push to `main` and on PRs, read-only permissions, coverage in the job summary, stale-artifact checks for the bench chart and demo data.
