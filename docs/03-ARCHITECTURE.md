@@ -25,6 +25,7 @@ purna/                                  ← the Lens Studio project folder = the
 │   │   │   ├── PathMetrics.ts          pearson, segment crossing
 │   │   │   ├── Metrics.ts              per-field results, head stats
 │   │   │   ├── Report.ts               session JSON, summary sentence, Logger line
+│   │   │   ├── Next.ts                 suggestNext(): next session's level and hint delay
 │   │   │   └── PurnaEngine.ts          the one object the Lens talks to
 │   │   ├── PurnaController.ts          ← CLAD: feeds the engine, draws its output
 │   │   ├── FieldView.ts, DiyaView.ts, BeamView.ts, HintAudio.ts,
@@ -140,6 +141,11 @@ export function headStats(samples: {t:number; yaw:number}[]): HeadStats;
 export const SESSION_SCHEMA = "purna.session.v1";
 export function summarySentence(s: SessionJson): string;
 export function logLine(s: SessionJson): string;                     // "PURNA_SESSION {json}"
+
+// Next.ts — what to try next time (setup panel preselects it)
+export interface SessionBrief { preset; hintDelayS; leftHits; leftTotal; rightHits; rightTotal; hints }
+export function briefOf(s: SessionJson): SessionBrief;               // keep the last 3 in persistent storage
+export function suggestNext(recentNewestFirst: SessionBrief[]): NextStep;  // { preset, hintDelayS, change, reason }
 
 // PurnaEngine.ts — the only object the Lens needs
 export class PurnaEngine {
@@ -339,7 +345,7 @@ D1 enforces foreign keys; `DELETE /me` still deletes child rows explicitly in on
 
 ### 6.5 Web app (`family/web`)
 
-React 18 + Vite + Tailwind v4, built to `family/dist` and served by the same Worker (`[assets] directory = "./dist"`). Components: shadcn/ui patterns over Radix primitives, React Bits (BlurText, CountUp, SpotlightCard, ShinyText, Magnet), and Aceternity-style effects (lamp, spotlight, scroll timeline, dot background). Fonts are bundled (Geist) or self-hosted (Mukta). CSP keeps `script-src 'self'` with no inline scripts; `style-src` allows `'unsafe-inline'` because Radix's scroll lock and motion set inline styles. All user text is rendered by React as text. The landing's explainer bundles `web/src/data/three.json`: one layout (seed 23) played by the three bench searchers, written by `npm run sample` and checked for freshness in CI.
+React 18 + Vite + Tailwind v4, built to `family/dist` and served by the same Worker (`[assets] directory = "./dist"`). Components: shadcn/ui patterns over Radix primitives, React Bits (BlurText, CountUp, SpotlightCard, ShinyText, Magnet), and Aceternity-style effects (lamp, spotlight, scroll timeline, dot background). Fonts are bundled (Geist) or self-hosted (Mukta). CSP keeps `script-src 'self'` with no inline scripts; `style-src` allows `'unsafe-inline'` because Radix's scroll lock and motion set inline styles. All user text is rendered by React as text. Loading: the dashboard is a lazy chunk (fetched after pairing or "See an example"); motion runs inside `LazyMotion` (`MotionRoot`), components use `m.*`; libraries are split into `react`, `motion`, `radix` and `vendor` chunks shared by every page. First load of `/` is about 454 KB of JavaScript before compression (was 516 KB). The landing's explainer bundles `web/src/data/three.json`: one layout (seed 23) played by the three bench searchers, written by `npm run sample` and checked for freshness in CI.
 
 | Page | Purpose |
 |---|---|
@@ -347,6 +353,7 @@ React 18 + Vite + Tailwind v4, built to `family/dist` and served by the same Wor
 | `/#s=<id>` (dialog on `/`) | Session detail: plain summary, 2D table replay (SVG: lit order thread, missed diyas), four measures, therapist numbers |
 | `/join#k=<key>` | Saves the family key, redirects to `/` |
 | `/doctor#t=<token>` | Read-only: patient name, every measure per session, trends, CSV download (formula-safe), print layout, notes box (≤ 50 notes per link). The token moves from the URL to sessionStorage on load |
+| `/doctor#demo` | The same view filled from `demo/sessions.json`, labelled as simulated, notes off. No API call |
 
 Charts are hand-drawn SVG (`assets/charts.js`): trend = two lines (left %, right %) over session dates; replay = table rectangle, diyas as circles (whole/chipped icons), thread in lit order.
 
