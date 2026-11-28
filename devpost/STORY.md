@@ -38,7 +38,7 @@ Every diya can be pinched with a ray from a hand resting in the lap, so nobody h
 
 **Purna Family** ([purna.dualmindlab.tech](https://purna.dualmindlab.tech)) is the web side:
 
-- **Families** type the code shown on the glasses once (like `DIYA-7K3P`). Then every session arrives as one plain sentence, two left/right bars and a trend line, and brothers and sisters join with an invite link.
+- **Families** type the code shown on the glasses once (like `DIYA-7K3P`). The dashboard switches to Hindi with one button. Then every session arrives as one plain sentence, two left/right bars and a trend line, and brothers and sisters join with an invite link.
 - **Therapists** get a read-only link that lasts 7 days and can be stopped at any time: every session with the numbers a cancellation test gives (Centre of Cancellation, egocentric and allocentric asymmetry, search order, crossings, revisits, head turn), a 2D replay, CSV export, a print layout, and a notes box that sends a note back to the family.
 - The therapist view also shows each person's usual day-to-day change as a band on the trend (so a lucky day isn't read as recovery), where the searching time went across the table, and published cancellation-test references as context, never as a pass/fail line. Anyone can open [an example](https://purna.dualmindlab.tech/doctor#demo).
 - **"Three ways to search the same table"** on the home page explains the measures: one layout, played by three simulated searchers through the real engine. Switch between them and the measures that give each one away light up.
@@ -57,7 +57,7 @@ Every diya can be pinched with a ray from a hand resting in the lap, so nobody h
 
 **Purna Family** is a Cloudflare Worker with D1. Family keys and doctor tokens are 32 random bytes and stored only as SHA-256 hashes. The web app is React with shadcn/ui, React Bits and Aceternity-style effects, behind a strict Content Security Policy (no third-party scripts). A **contract test** runs the real engine through every level, add-on and searcher and checks that each session passes the server's validator, so the glasses and the server can't drift apart.
 
-**Tested like a product.** 223 automated tests: Core, bench and sounds 68, Worker and local D1 74, web components 48, and 33 end-to-end tests in real Chrome at phone and desktop sizes. The end-to-end suite runs axe accessibility checks (WCAG 2.1 AA) on every screen in light and dark mode, walks the keyboard path, and plays the whole family loop: pair, share with the doctor, note back, delete everything. GitHub Actions runs it all on every pull request and deploys after green CI on main.
+**Tested like a product.** 231 automated tests: Core, bench and sounds 68, Worker and local D1 74, web components 53, and 36 end-to-end tests in real Chrome at phone and desktop sizes. The end-to-end suite runs axe accessibility checks (WCAG 2.1 AA) on every screen in light and dark mode, walks the keyboard path, and plays the whole family loop: pair, share with the doctor, note back, delete everything. GitHub Actions runs it all on every pull request and deploys after green CI on main.
 
 ## Challenges we ran into
 
@@ -83,7 +83,7 @@ Every diya can be pinched with a ray from a hand resting in the lap, so nobody h
 ## What's next for Purna
 
 - Sessions with real stroke survivors and their therapists, with ethics approval. Today the feel is unproven and the measures are validated only on simulated players.
-- Hindi and Gujarati voice and text on the glasses and the family site.
+- Hindi and Gujarati on the glasses, Gujarati on the family site (the family dashboard already switches to Hindi).
 - A far board across the room, and furniture other than the dining table.
 - Longer pairing codes or a global rate limit before any public use (today's limits are per Cloudflare location).
 
