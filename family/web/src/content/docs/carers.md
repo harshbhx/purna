@@ -30,7 +30,7 @@ On Purna Family you'll see one sentence per session and a trend over time. The s
 
 ## Sharing with the therapist
 
-On the dashboard, **Share with doctor** makes a read-only link that works for 7 days. Send it to the therapist. You can stop it at any time with **Stop sharing**. The therapist can leave you a note, which appears on your dashboard.
+On the dashboard, **Share with doctor** makes a read-only link that works for 7 days. Send it to the therapist. You can stop it at any time with **Stop sharing**. The therapist can leave you a note, which appears on your dashboard. They can also **set the next session**: the glasses then suggest that level and hint delay on the setup panel, and your dashboard says so. You can still change it if the day calls for it.
 
 ## Looking after yourself
 

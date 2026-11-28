@@ -25,6 +25,8 @@ The view shows:
 - **Where the time went:** seconds to find a diya in the left, centre and right thirds, earliest vs latest, and the share of time the head was turned left.
 - **Context from published tests** (see below).
 - **Each session's replay.**
+- **Where the head pointed:** each replay is painted with warm light where the head pointed during the table task, so a half that was never looked at stays dark.
+- **Set the next session:** choose the level and the hint delay for the next session. The glasses load it on their setup panel once, with the line "Set by your therapist", and the family sees it on their dashboard. The carer can still change it on the day. Clear it to let the glasses suggest the next step themselves.
 - **A note box:** your note appears on the family's dashboard. Up to 50 notes per link.
 
 ## The measures

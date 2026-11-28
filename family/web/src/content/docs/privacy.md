@@ -15,17 +15,18 @@ Purna handles results from a health-related practice, so we collect as little as
 
 | Data | Where it comes from | Why |
 |---|---|---|
-| Session results: positions of the diyas, which were lit and when, hints, head turn angles, the summary sentence, the settings used | The glasses, when sharing is on | To show the family and the therapist how practice is going |
+| Session results: positions of the diyas, which were lit and when, hints, head turn angles and where the head pointed on the table, the summary sentence, the settings used | The glasses, when sharing is on | To show the family and the therapist how practice is going |
 | A random device ID (32 characters) | The glasses | To link sessions from the same glasses |
 | A display name, such as "Papa" | Typed by the family when pairing | To label the dashboard. It doesn't need to be a real name |
 | Notes from the therapist | Written on the doctor link | To pass advice to the family |
+| The next session's level and hint delay, if the therapist sets one | Chosen on the doctor link | So the glasses can load it. It is deleted when the next session arrives |
 | Family keys and doctor-link tokens | Created by the server | To let you in. Stored only as one-way SHA-256 hashes, so even a copy of the database can't open a dashboard |
 
 We **don't** collect email addresses, phone numbers, dates of birth, medical records, photos, or anything from the glasses' cameras or microphones.
 
 ## On your device
 
-The site uses no cookies. Your browser keeps the family link and your language choice in local storage, and a therapist's link token in session storage (cleared when the tab closes). **Sign out here** removes the family link from that device.
+The site uses no cookies. Your browser keeps the family link, your language and your light or dark choice in local storage, and a therapist's link token in session storage (cleared when the tab closes). **Try the table** (/play) runs entirely in your browser: what you play there is kept in session storage for that tab only and is never sent to us. **Sign out here** removes the family link from that device.
 
 ## Where it's kept
 
