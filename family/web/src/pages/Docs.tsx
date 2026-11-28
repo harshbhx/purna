@@ -94,7 +94,7 @@ export function Docs() {
                   {DOCS.filter((d) => d.group === g).map((d) => (
                     <li key={d.id}>
                       <a href={`#${d.id}`} aria-current={d.id === page.id ? "page" : undefined}
-                        className={cn("block rounded-lg px-3 py-1.5 text-[15px] no-underline transition-colors", d.id === page.id ? "bg-foreground text-background" : "text-foreground hover:bg-muted")}>
+                        className={cn("block rounded-lg px-3 py-1.5 text-[15px] no-underline", d.id === page.id ? "bg-foreground text-background" : "text-foreground hover:bg-muted")}>
                         {d.title}
                       </a>
                     </li>

@@ -85,6 +85,7 @@ for (const scheme of ["light", "dark"] as const) {
       for (const id of ["overview", "safety", "setup", "carers", "therapists", "measures", "privacy", "terms", "accessibility", "evidence", "report"]) {
         await page.goto(`/docs#${id}`);
         await expect(page.locator("#doc-title")).toBeVisible();
+        await expect(page.getByRole("navigation", { name: "Documentation" }).locator(`a[href="#${id}"]`)).toHaveAttribute("aria-current", "page");
         await scan(page, `docs: ${id}`);
       }
     });
