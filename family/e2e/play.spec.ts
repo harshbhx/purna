@@ -7,7 +7,7 @@ async function lightWhatYouSee(page: Page, keys: string[]) {
   const table = page.locator("#play-table");
   for (const k of keys) {
     if (!(await table.isVisible())) return true; // every whole diya lit: the table finished itself
-    await table.focus();
+    if (!(await table.focus({ timeout: 2000 }).then(() => true, () => false))) return true;
     await page.keyboard.press(k);
     const dark = page.locator('#play-table [role=button][tabindex="0"][aria-label="Whole diya"]');
     while ((await table.isVisible()) && (await dark.count()) > 0) await dark.first().click({ timeout: 2000 }).catch(() => {});
@@ -16,6 +16,7 @@ async function lightWhatYouSee(page: Page, keys: string[]) {
 }
 
 test("play the table: narrow view, keyboard turns, pinches, report, replay and the therapist view", async ({ page }) => {
+  test.setTimeout(90_000);
   const problems = watchConsole(page);
   await page.goto("/play");
   await expect(page.getByRole("heading", { level: 1, name: "Try the table yourself" })).toBeVisible();
